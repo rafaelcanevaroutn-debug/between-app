@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    background-color: #060D18;
+    color: #FFFFFF;
+    font-family: 'DM Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  #root {
+    width: 100%;
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  .dot-grid {
+    background-image: radial-gradient(circle, #122030 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, #00C4CC, #00A889);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .gradient-border-top {
+    border-top: 3px solid;
+    border-image: linear-gradient(90deg, #00C4CC, #00A889) 1;
+  }
+  .btn-gradient {
+    background: linear-gradient(135deg, #00C4CC, #00A889);
+    transition: all 0.3s ease;
+  }
+  .btn-gradient:hover {
+    box-shadow: 0 0 24px rgba(0, 196, 204, 0.5);
+    transform: translateY(-1px);
+  }
+  .btn-outline {
+    border: 1px solid #00C4CC;
+    color: #00C4CC;
+    transition: all 0.3s ease;
+  }
+  .btn-outline:hover {
+    box-shadow: 0 0 20px rgba(0, 196, 204, 0.3);
+    background: rgba(0, 196, 204, 0.08);
+  }
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+  .card-hover:hover {
+    border-color: rgba(0, 196, 204, 0.5) !important;
+    box-shadow: 0 0 30px rgba(0, 196, 204, 0.15);
+    transform: translateY(-3px);
+  }
+  .glow-cyan {
+    box-shadow: 0 0 40px rgba(0, 196, 204, 0.2);
+  }
+}
+
+@keyframes glowPulse {
+  0%   { filter: drop-shadow(0 0 8px #00C4CC); }
+  33%  { filter: drop-shadow(0 0 20px #8B5CF6); }
+  66%  { filter: drop-shadow(0 0 20px #00A889); }
+  100% { filter: drop-shadow(0 0 8px #00C4CC); }
+}
+
+@keyframes siriRing {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(2.4); opacity: 0;   }
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.8); }
+}
+
+@keyframes siriPulse {
+  0%   {
+    filter: drop-shadow(0 0 10px #00C4CC) drop-shadow(0 0 20px #00C4CC);
+    transform: translateY(-50%) scale(1);
+  }
+  25%  {
+    filter: drop-shadow(0 0 15px #8B5CF6) drop-shadow(0 0 35px #8B5CF6);
+    transform: translateY(-50%) scale(1.05);
+  }
+  50%  {
+    filter: drop-shadow(0 0 20px #00A889) drop-shadow(0 0 40px #00A889);
+    transform: translateY(-50%) scale(1.08);
+  }
+  75%  {
+    filter: drop-shadow(0 0 15px #00C4CC) drop-shadow(0 0 30px #8B5CF6);
+    transform: translateY(-50%) scale(1.03);
+  }
+  100% {
+    filter: drop-shadow(0 0 10px #00C4CC) drop-shadow(0 0 20px #00C4CC);
+    transform: translateY(-50%) scale(1);
+  }
+}
