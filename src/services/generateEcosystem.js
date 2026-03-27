@@ -37,6 +37,8 @@ const FALLBACK = {
 }
 
 export async function generateEcosystem({ nombre, nicho, descripcion }) {
+  console.log('generateEcosystem() llamado con:', { nombre, nicho, descripcion })
+
   try {
     const response = await fetch('/api/generate', {
       method: 'POST',
@@ -45,17 +47,20 @@ export async function generateEcosystem({ nombre, nicho, descripcion }) {
     })
 
     if (!response.ok) {
+      console.log('CAYENDO AL FALLBACK: response.ok =', response.ok, '| status:', response.status)
       return getFallback(nombre, nicho)
     }
 
     const parsed = await response.json()
 
     if (!parsed.cuentas || parsed.cuentas.length !== 5) {
+      console.log('CAYENDO AL FALLBACK: parsed.cuentas inválido:', parsed)
       return getFallback(nombre, nicho)
     }
 
     return parsed.cuentas
-  } catch {
+  } catch (error) {
+    console.log('CAYENDO AL FALLBACK: excepción capturada:', error)
     return getFallback(nombre, nicho)
   }
 }
@@ -63,8 +68,16 @@ export async function generateEcosystem({ nombre, nicho, descripcion }) {
 function getFallback(nombre, nicho) {
   const base = FALLBACK[nicho] || FALLBACK['Marca Personal']
   const slug = nombre.toLowerCase().replace(/\s+/g, '').slice(0, 12)
-  return base.map((c, i) => ({
-    ...c,
-    handle: i === 0 ? `@${slug}` : `@${slug}${c.handle.replace('@tu_cuenta', '')}`,
-  }))
+  const firstName = nombre.split(' ')[0]
+  return base.map((c, i) => {
+    const suffix = c.handle.replace('@tu_cuenta', '') // ej: 'inversiones', 'casas', ''
+    const channelNombre = i === 0
+      ? firstName
+      : `${firstName} ${suffix.charAt(0).toUpperCase() + suffix.slice(1)}`
+    return {
+      ...c,
+      nombre: channelNombre,
+      handle: i === 0 ? `@${slug}` : `@${slug}${suffix}`,
+    }
+  })
 }

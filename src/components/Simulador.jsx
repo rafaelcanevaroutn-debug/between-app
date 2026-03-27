@@ -4,47 +4,43 @@ import {
 } from 'recharts'
 import { generateEcosystem } from '../services/generateEcosystem'
 
+import startups1 from '../assets/nichos/startups-1.jpg'
+import startups2 from '../assets/nichos/startups-2.jpg'
+import startups3 from '../assets/nichos/startups-3.jpg'
+import startups4 from '../assets/nichos/startups-4.jpg'
+import startups5 from '../assets/nichos/startups-5.jpg'
+import startups6 from '../assets/nichos/startups-6.jpg'
+import inmobiliarias1 from '../assets/nichos/inmobiliarias-1.jpg'
+import inmobiliarias2 from '../assets/nichos/inmobiliarias-2.jpg'
+import inmobiliarias3 from '../assets/nichos/inmobiliarias-3.jpg'
+import inmobiliarias4 from '../assets/nichos/inmobiliarias-4.jpg'
+import inmobiliarias5 from '../assets/nichos/inmobiliarias-5.jpg'
+import inmobiliarias6 from '../assets/nichos/inmobiliarias-6.jpg'
+import gastronomia1 from '../assets/nichos/gastronomia-1.jpg'
+import gastronomia2 from '../assets/nichos/gastronomia-2.jpg'
+import gastronomia3 from '../assets/nichos/gastronomia-3.jpg'
+import gastronomia4 from '../assets/nichos/gastronomia-4.jpg'
+import gastronomia5 from '../assets/nichos/gastronomia-5.jpg'
+import gastronomia6 from '../assets/nichos/gastronomia-6.jpg'
+import fitness1 from '../assets/nichos/fitness-1.jpg'
+import fitness2 from '../assets/nichos/fitness-2.jpg'
+import fitness3 from '../assets/nichos/fitness-3.jpg'
+import fitness4 from '../assets/nichos/fitness-4.jpg'
+import fitness5 from '../assets/nichos/fitness-5.jpg'
+import fitness6 from '../assets/nichos/fitness-6.jpg'
+import marcapersonal1 from '../assets/nichos/marcapersonal-1.jpg'
+import marcapersonal2 from '../assets/nichos/marcapersonal-2.jpg'
+import marcapersonal3 from '../assets/nichos/marcapersonal-3.jpg'
+import marcapersonal4 from '../assets/nichos/marcapersonal-4.jpg'
+import marcapersonal5 from '../assets/nichos/marcapersonal-5.jpg'
+import marcapersonal6 from '../assets/nichos/marcapersonal-6.jpg'
+
 const NICHO_IMAGES = {
-  Startups: [
-    'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/574071/pexels-photo-574071.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/1181271/pexels-photo-1181271.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/7688336/pexels-photo-7688336.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg?w=200&h=300&fit=crop',
-  ],
-  Inmobiliarias: [
-    'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?w=200&h=300&fit=crop',
-  ],
-  Gastronomía: [
-    'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/1640772/pexels-photo-1640772.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/3184183/pexels-photo-3184183.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?w=200&h=300&fit=crop',
-  ],
-  Fitness: [
-    'https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/841130/pexels-photo-841130.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/2261477/pexels-photo-2261477.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/703016/pexels-photo-703016.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/2827400/pexels-photo-2827400.jpeg?w=200&h=300&fit=crop',
-  ],
-  'Marca Personal': [
-    'https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/3182781/pexels-photo-3182781.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/2608517/pexels-photo-2608517.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?w=200&h=300&fit=crop',
-    'https://images.pexels.com/photos/3184357/pexels-photo-3184357.jpeg?w=200&h=300&fit=crop',
-  ],
+  Startups: [startups1, startups2, startups3, startups4, startups5, startups6],
+  Inmobiliarias: [inmobiliarias1, inmobiliarias2, inmobiliarias3, inmobiliarias4, inmobiliarias5, inmobiliarias6],
+  Gastronomía: [gastronomia1, gastronomia2, gastronomia3, gastronomia4, gastronomia5, gastronomia6],
+  Fitness: [fitness1, fitness2, fitness3, fitness4, fitness5, fitness6],
+  'Marca Personal': [marcapersonal1, marcapersonal2, marcapersonal3, marcapersonal4, marcapersonal5, marcapersonal6],
 }
 
 const NICHO_CUENTAS = {
@@ -139,13 +135,15 @@ function VideoThumb({ nicho, thumbIdx, handle, titulo }) {
   const src = imgs[thumbIdx % imgs.length]
   const views = fakeViews(handle, thumbIdx)
   return (
-    <div className="relative overflow-hidden" style={{ aspectRatio: '3/4', background: '#111' }}>
-      <img
-        src={src}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover"
-        loading="lazy"
-      />
+    <div className="overflow-hidden" style={{
+      position: 'relative',
+      width: '100%',
+      aspectRatio: '3/4',
+      backgroundColor: '#111',
+      backgroundImage: `url(${src})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    }}>
       <div
         className="absolute inset-0"
         style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)' }}
@@ -184,11 +182,12 @@ function VideoThumb({ nicho, thumbIdx, handle, titulo }) {
 
 function TikTokCard({ cuenta, foto, nombreUsuario, cardIndex, nicho }) {
   const [hovered, setHovered] = useState(false)
-  const { handle, nombre, videos = [] } = cuenta
+  const { handle, nombre, bio, videos = [] } = cuenta
   const style = CARD_STYLES[cardIndex] || CARD_STYLES[0]
   const followers = FAKE_FOLLOWERS[cardIndex] || 1200
   const videoCount = FAKE_VIDEOS[cardIndex] || 12
   const displayName = nombre || nombreUsuario || 'Usuario'
+  const avatarSrc = foto || `https://api.dicebear.com/9.x/lorelei/svg?seed=${encodeURIComponent((handle || '') + cardIndex)}&backgroundColor=0a1628`
 
   return (
     <div
@@ -230,16 +229,7 @@ function TikTokCard({ cuenta, foto, nombreUsuario, cardIndex, nicho }) {
             className="rounded-full overflow-hidden"
             style={{ width: 48, height: 48, background: style.avatarBg }}
           >
-            {foto ? (
-              <img src={foto} alt="" className="w-full h-full object-cover block" />
-            ) : (
-              <div
-                className="w-full h-full flex items-center justify-center font-bold text-white"
-                style={{ fontSize: 20, background: style.avatarBg }}
-              >
-                {displayName.charAt(0).toUpperCase()}
-              </div>
-            )}
+            <img src={avatarSrc} alt="" className="w-full h-full object-cover block" />
           </div>
         </div>
 
@@ -249,6 +239,11 @@ function TikTokCard({ cuenta, foto, nombreUsuario, cardIndex, nicho }) {
             {displayName}
           </p>
           <p style={{ color: '#888', fontSize: 11, marginTop: 2 }}>{handle}</p>
+          {bio && (
+            <p style={{ color: '#aaa', fontSize: 9, marginTop: 4, lineHeight: 1.35 }}>
+              {bio}
+            </p>
+          )}
         </div>
 
         {/* Seguir button */}
@@ -283,7 +278,7 @@ function TikTokCard({ cuenta, foto, nombreUsuario, cardIndex, nicho }) {
           <VideoThumb
             key={i}
             nicho={nicho}
-            thumbIdx={i}
+            thumbIdx={cardIndex + i}
             handle={handle}
             titulo={videos[i] || ''}
           />
