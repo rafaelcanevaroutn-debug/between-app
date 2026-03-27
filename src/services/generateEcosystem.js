@@ -51,6 +51,7 @@ export async function generateEcosystem({ nombre, nicho, descripcion }) {
       return getFallback(nombre, nicho)
     }
 
+    console.log('RESPUESTA CRUDA:', await response.clone().text())
     const parsed = await response.json()
 
     if (!parsed.cuentas || parsed.cuentas.length !== 5) {
