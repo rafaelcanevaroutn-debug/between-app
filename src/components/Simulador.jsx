@@ -81,12 +81,6 @@ const NICHO_CUENTAS = {
   ],
 }
 
-const PASOS_LOADING = [
-  { texto: 'Analizando tu perfil...', icono: '🔍' },
-  { texto: 'Diseñando tus canales...', icono: '🎨' },
-  { texto: 'Armando identidad visual...', icono: '✦' },
-  { texto: 'Generando tu ecosistema...', icono: '🚀' },
-]
 
 const gradStyle = {
   background: 'linear-gradient(135deg,#00C4CC,#00A889)',
@@ -494,7 +488,6 @@ export default function Simulador() {
   const [descripcion, setDescripcion] = useState('')
   const [foto, setFoto] = useState(null)
   const [fase, setFase] = useState('form')
-  const [pasoActual, setPasoActual] = useState(0)
   const [cuentas, setCuentas] = useState([])
   const fileRef = useRef(null)
 
@@ -508,30 +501,10 @@ export default function Simulador() {
     reader.readAsDataURL(file)
   }
 
-  const handleGenerar = async () => {
-    setFase('loading')
-    setPasoActual(0)
-    setCuentas([])
-
-    let step = 0
-    const iv = setInterval(() => {
-      step++
-      if (step < PASOS_LOADING.length) {
-        setPasoActual(step)
-      } else {
-        clearInterval(iv)
-      }
-    }, 1500)
-
-    try {
-      const resultado = await generateEcosystem({ nombre, nicho, descripcion })
-      clearInterval(iv)
-      setCuentas(resultado)
-      setTimeout(() => setFase('resultado'), 300)
-    } catch {
-      clearInterval(iv)
-      setFase('resultado')
-    }
+  const handleGenerar = () => {
+    const resultado = generateEcosystem({ nombre, nicho, descripcion })
+    setCuentas(resultado)
+    setFase('resultado')
   }
 
   const reset = () => {
@@ -542,6 +515,7 @@ export default function Simulador() {
     setFoto(null)
     setCuentas([])
   }
+
 
   return (
     <section className="py-24 dot-grid" style={{ background: '#060D18' }}>
@@ -724,60 +698,6 @@ export default function Simulador() {
           </div>
         )}
 
-        {/* ── LOADING ── */}
-        {fase === 'loading' && (
-          <div className="max-w-md mx-auto fade-in-up">
-            <div
-              className="rounded-3xl p-10 flex flex-col gap-7"
-              style={{ background: '#0A1628', border: '1px solid #122030', boxShadow: '0 0 60px rgba(0,196,204,0.07)' }}
-            >
-              <p className="text-center text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: '#00C4CC' }}>
-                Generando tu ecosistema
-              </p>
-              {PASOS_LOADING.map(({ texto, icono }, i) => {
-                const done = i < pasoActual
-                const active = i === pasoActual
-                return (
-                  <div
-                    key={texto}
-                    className="flex items-start gap-4 transition-all duration-500"
-                    style={{ opacity: done || active ? 1 : 0.35 }}
-                  >
-                    <div
-                      className="w-9 h-9 rounded-full flex items-center justify-center text-sm shrink-0 transition-all duration-500"
-                      style={{
-                        background: done ? 'linear-gradient(135deg,#00C4CC,#00A889)' : active ? 'rgba(0,196,204,0.15)' : '#122030',
-                        border: active ? '1px solid #00C4CC' : '1px solid transparent',
-                        boxShadow: active ? '0 0 16px rgba(0,196,204,0.4)' : 'none',
-                      }}
-                    >
-                      {done
-                        ? <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7L5.5 10L11.5 4" stroke="#060D18" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                        : <span>{icono}</span>
-                      }
-                    </div>
-                    <div className="flex-1 pt-1.5">
-                      <p
-                        className="text-sm font-medium"
-                        style={{ color: active ? '#fff' : done ? '#00C4CC' : '#7A9AB0' }}
-                      >
-                        {texto}
-                      </p>
-                      {active && (
-                        <div className="mt-2.5 h-1 rounded-full overflow-hidden" style={{ background: '#122030' }}>
-                          <div
-                            className="h-full rounded-full"
-                            style={{ background: 'linear-gradient(90deg,#00C4CC,#00A889)', animation: 'progress 1.4s ease-out forwards' }}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        )}
 
         {/* ── RESULTADO ── */}
         {fase === 'resultado' && (
