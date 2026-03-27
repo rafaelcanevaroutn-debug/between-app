@@ -1,16 +1,14 @@
 import emailjs from '@emailjs/browser'
 
-export async function sendLeadEmail(email, source) {
-  console.log('Intentando enviar email...')
-  console.log('Service ID:', 'service_oa2fogh')
-  console.log('Template ID:', 'template_krbfmwh')
-  console.log('Public Key:', 'wdLYsdAZun-gZ6i7S')
-  console.log('Params:', { email, source })
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID
+const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 
+export async function sendLeadEmail(email, source) {
   try {
-    const result = await emailjs.send(
-      'service_oa2fogh',
-      'template_krbfmwh',
+    await emailjs.send(
+      SERVICE_ID,
+      TEMPLATE_ID,
       {
         email: email,
         source: source,
@@ -18,14 +16,10 @@ export async function sendLeadEmail(email, source) {
         message: 'Nuevo lead desde: ' + source,
         time: new Date().toLocaleString('es-AR'),
       },
-      'wdLYsdAZun-gZ6i7S'
+      PUBLIC_KEY
     )
-    console.log('SUCCESS:', result)
     return true
-  } catch (error) {
-    console.error('ERROR COMPLETO:', error)
-    console.error('Status:', error.status)
-    console.error('Text:', error.text)
+  } catch {
     return false
   }
 }

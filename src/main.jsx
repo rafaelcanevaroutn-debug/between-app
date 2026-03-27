@@ -4,7 +4,7 @@ import emailjs from '@emailjs/browser'
 import './index.css'
 import App from './App.jsx'
 
-emailjs.init('wdLYsdAZun-gZ6i7S')
+emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY)
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

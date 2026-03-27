@@ -1,5 +1,3 @@
-import Anthropic from '@anthropic-ai/sdk'
-
 const FALLBACK = {
   Inmobiliarias: [
     { handle: '@tu_cuenta', nombre: 'Nombre principal', bio: 'Propiedades premium en tu ciudad. El mercado inmobiliario en tiempo real.', videos: ['5 errores al comprar tu primera propiedad', 'Cómo invertir con poco capital', 'El barrio que va a explotar este año'], enfoque: 'Cuenta principal' },
@@ -39,56 +37,25 @@ const FALLBACK = {
 }
 
 export async function generateEcosystem({ nombre, nicho, descripcion }) {
-  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY
-
-  if (!apiKey || apiKey === 'your-api-key-here') {
-    return getFallback(nombre, nicho)
-  }
-
   try {
-    const client = new Anthropic({ apiKey, dangerouslyAllowBrowser: true })
-
-    const response = await client.messages.create({
-      model: 'claude-haiku-4-5',
-      max_tokens: 1500,
-      system: 'Sos un estratega de contenido para Between, un estudio de marca personal. Respondé SOLO en JSON válido, sin markdown ni backticks.',
-      messages: [
-        {
-          role: 'user',
-          content: `Generá un ecosistema de 5 cuentas de TikTok para:
-Nombre: ${nombre}
-Nicho: ${nicho}
-Descripción: ${descripcion || 'No especificada'}
-
-Devolvé exactamente este JSON con handles creativos y específicos para el nicho (en minúsculas, sin espacios, máximo 20 chars):
-{
-  "cuentas": [
-    {
-      "handle": "@handle_sin_espacios",
-      "nombre": "Nombre visible corto",
-      "bio": "Bio corta de máximo 80 caracteres que describa el canal",
-      "videos": ["Título video 1 corto", "Título video 2 corto", "Título video 3 corto"],
-      "enfoque": "Descripción del enfoque en 3 palabras"
-    }
-  ]
-}
-
-Importante: los handles deben derivar del nombre "${nombre}" + sufijo del nicho. Los títulos de videos deben ser específicos para "${nicho}".`,
-        },
-      ],
+    const response = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, nicho, descripcion }),
     })
 
-    const raw = response.content[0].text.trim()
-    const parsed = JSON.parse(raw)
+    if (!response.ok) {
+      return getFallback(nombre, nicho)
+    }
+
+    const parsed = await response.json()
 
     if (!parsed.cuentas || parsed.cuentas.length !== 5) {
       return getFallback(nombre, nicho)
     }
 
     return parsed.cuentas
-
-  } catch (err) {
-    console.warn('API error, usando fallback:', err.message)
+  } catch {
     return getFallback(nombre, nicho)
   }
 }
