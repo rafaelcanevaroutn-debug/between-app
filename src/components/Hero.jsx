@@ -1,28 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import astronauta from '../assets/astronauta.jpg'
 import Particles from './Particles'
 import Typewriter from './Typewriter'
 import { sendLeadEmail } from '../services/emailjs'
 
-const gradientText = {
-  background: 'linear-gradient(135deg, #00C4CC, #00A889)',
-  WebkitBackgroundClip: 'text',
-  backgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  color: 'transparent',
-  textShadow: 'none',
-  filter: 'drop-shadow(0 0 12px rgba(0,196,204,0.4))',
-}
+const PHRASES = [
+  { before: 'Dejá de construir ', highlight: 'en silencio', after: '.' },
+  { before: 'No sos ', highlight: 'invisible', after: '. Todavía no te encontraron.' },
+  { before: 'No es lo que hacés. Es que ', highlight: 'nadie te ve', after: '.' },
+  { before: 'Ya construiste lo suficiente. Es hora de ', highlight: 'que te vean', after: '.' },
+]
 
-const gradientTextReverse = {
-  background: 'linear-gradient(135deg, #00A889, #00C4CC)',
-  WebkitBackgroundClip: 'text',
-  backgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  color: 'transparent',
-  textShadow: 'none',
-  filter: 'drop-shadow(0 0 12px rgba(0,168,137,0.4))',
-}
+const cyanText = { color: '#00C4CC' }
 
 const statNumStyle = {
   color: '#00C4CC',
@@ -44,6 +33,19 @@ const stats = [
 export default function Hero() {
   const [email, setEmail] = useState('')
   const [estado, setEstado] = useState('idle') // idle | loading | success | error
+  const [phraseIndex, setPhraseIndex] = useState(0)
+  const [visible, setVisible] = useState(true)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisible(false)
+      setTimeout(() => {
+        setPhraseIndex(i => (i + 1) % PHRASES.length)
+        setVisible(true)
+      }, 350)
+    }, 3800)
+    return () => clearInterval(interval)
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -93,11 +95,13 @@ export default function Hero() {
           </div>
 
           {/* Headline */}
-          <h1 className="text-5xl md:text-7xl font-extrabold leading-none tracking-tight mb-6">
-            <span style={gradientText}>Between</span>
-            <span className="text-white"> te convierte</span>
-            <br />
-            <span style={gradientTextReverse}>en el protagonista.</span>
+          <h1
+            className="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight mb-6"
+            style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.35s ease' }}
+          >
+            <span className="text-white">{PHRASES[phraseIndex].before}</span>
+            <span style={{ color: '#00C4CC' }}>{PHRASES[phraseIndex].highlight}</span>
+            <span className="text-white">{PHRASES[phraseIndex].after}</span>
           </h1>
 
           {/* Subtitle */}
