@@ -482,24 +482,23 @@ const inputBase = {
 const focusStyle = { borderColor: '#00C4CC', boxShadow: '0 0 0 3px rgba(0,196,204,0.1)' }
 const blurStyle = { borderColor: '#122030', boxShadow: 'none' }
 
+const inputStyle = {
+  background: '#060D18',
+  border: '1px solid rgba(0,196,204,0.25)',
+  color: '#fff',
+  outline: 'none',
+  transition: 'border-color 0.2s, box-shadow 0.2s',
+  fontFamily: 'monospace',
+}
+
 export default function Simulador() {
   const [nombre, setNombre] = useState('')
   const [nicho, setNicho] = useState('')
   const [descripcion, setDescripcion] = useState('')
-  const [foto, setFoto] = useState(null)
-  const [fase, setFase] = useState('form')
+  const [fase, setFase] = useState('landing')
   const [cuentas, setCuentas] = useState([])
-  const fileRef = useRef(null)
 
   const puedeGenerar = nombre.trim() && nicho
-
-  const handleFoto = (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = (ev) => setFoto(ev.target.result)
-    reader.readAsDataURL(file)
-  }
 
   const handleGenerar = () => {
     const resultado = generateEcosystem({ nombre, nicho, descripcion })
@@ -508,162 +507,169 @@ export default function Simulador() {
   }
 
   const reset = () => {
-    setFase('form')
+    setFase('landing')
     setNombre('')
     setNicho('')
     setDescripcion('')
-    setFoto(null)
     setCuentas([])
   }
-
 
   return (
     <section className="py-24 dot-grid" style={{ background: '#060D18' }}>
       <style>{`
-        @keyframes progress { from{width:0%} to{width:100%} }
         @keyframes fadeInUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
         .fade-in-up { animation: fadeInUp 0.4s ease forwards; }
+        @keyframes scanline { 0%{transform:translateY(-100%)} 100%{transform:translateY(100vh)} }
+        .sim-select option { background: #060D18; color: #fff; }
       `}</style>
 
       <div className="max-w-6xl mx-auto px-6 md:px-16">
-        {/* Header */}
-        <div className="text-center mb-14">
-          <p className="text-sm font-semibold uppercase tracking-widest mb-3" style={{ color: '#00C4CC' }}>
-            Simulador
-          </p>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
-            Visualizá tu ecosistema{' '}
-            <span style={gradStyle}>de canales</span>
-          </h2>
-          <p className="max-w-xl mx-auto text-lg leading-relaxed" style={{ color: '#7A9AB0' }}>
-            Subí una foto, contanos tu nicho y generá una vista previa de tu sistema de distribución Between.
-          </p>
-        </div>
+
+        {/* ── LANDING ── */}
+        {fase === 'landing' && (
+          <div className="flex flex-col items-center text-center fade-in-up">
+            {/* Cockpit top bar */}
+            <div className="flex items-center gap-3 mb-10">
+              <div style={{ height: 1, width: 60, background: 'linear-gradient(90deg, transparent, #00C4CC)' }} />
+              <span
+                className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full"
+                style={{ border: '1px solid rgba(0,196,204,0.4)', color: '#00C4CC', background: 'rgba(0,196,204,0.06)' }}
+              >
+                Simulador
+              </span>
+              <div style={{ height: 1, width: 60, background: 'linear-gradient(90deg, #00C4CC, transparent)' }} />
+            </div>
+
+            {/* Panel decorativo */}
+            <div className="relative mb-10 w-full max-w-lg">
+              <div
+                className="rounded-2xl p-6 flex items-center justify-center gap-8"
+                style={{ background: 'rgba(0,196,204,0.03)', border: '1px solid rgba(0,196,204,0.12)' }}
+              >
+                {['SYS', 'NET', 'DST', 'CNT', 'AUT'].map((label, i) => (
+                  <div key={label} className="flex flex-col items-center gap-1.5">
+                    <div
+                      className="w-2 h-2 rounded-full"
+                      style={{
+                        background: '#00C4CC',
+                        boxShadow: '0 0 8px rgba(0,196,204,0.8)',
+                        animation: `pulse ${1.2 + i * 0.3}s ease-in-out infinite`,
+                      }}
+                    />
+                    <span style={{ color: 'rgba(0,196,204,0.5)', fontSize: 9, fontFamily: 'monospace', letterSpacing: '0.1em' }}>{label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
+              Visualizá tu ecosistema
+            </h2>
+            <p className="max-w-md mx-auto text-base leading-relaxed mb-10" style={{ color: '#7A9AB0' }}>
+              Ingresá tus datos y generá una vista previa de tu sistema de distribución
+            </p>
+
+            <button
+              onClick={() => setFase('form')}
+              className="px-10 py-4 rounded-full text-base font-bold text-white transition-all duration-300"
+              style={{
+                background: 'linear-gradient(135deg, #00C4CC, #00A889)',
+                boxShadow: '0 0 28px rgba(0,196,204,0.35)',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 48px rgba(0,196,204,0.6)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 0 28px rgba(0,196,204,0.35)'; e.currentTarget.style.transform = 'translateY(0)' }}
+            >
+              Generá tu ecosistema →
+            </button>
+          </div>
+        )}
 
         {/* ── FORMULARIO ── */}
         {fase === 'form' && (
-          <div className="max-w-2xl mx-auto fade-in-up relative">
-            {/* Subtle glow behind card */}
-            <div className="absolute inset-0 rounded-3xl pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(0,196,204,0.07) 0%, transparent 65%)' }} />
+          <div className="max-w-xl mx-auto fade-in-up relative">
+            <div className="absolute inset-0 rounded-3xl pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(0,196,204,0.06) 0%, transparent 65%)' }} />
 
-            <div className="relative rounded-3xl overflow-hidden" style={{ background: '#0A1628', border: '1px solid #122030' }}>
-              {/* Top accent line */}
-              <div style={{ height: 2, background: 'linear-gradient(90deg, transparent, #00C4CC, #00A889, transparent)' }} />
+            <div className="relative rounded-2xl overflow-hidden" style={{ background: '#0A1628', border: '1px solid rgba(0,196,204,0.2)' }}>
+              {/* Accent line top */}
+              <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, #00C4CC, transparent)' }} />
 
-              <div className="p-8 md:p-10 flex flex-col gap-5">
-
-                {/* Photo upload card */}
-                <div className="rounded-2xl p-6 flex flex-col items-center gap-4" style={{ background: '#060D18', border: '1px solid #122030' }}>
-                  <button
-                    type="button"
-                    onClick={() => fileRef.current.click()}
-                    className="relative rounded-full overflow-hidden transition-all duration-300 flex items-center justify-center"
-                    style={{
-                      width: 120, height: 120,
-                      background: foto ? 'transparent' : 'radial-gradient(circle, rgba(0,196,204,0.07) 0%, transparent 70%)',
-                      border: foto ? '3px solid #00C4CC' : '2px dashed rgba(0,196,204,0.3)',
-                      boxShadow: foto ? '0 0 30px rgba(0,196,204,0.35)' : '0 0 0 rgba(0,0,0,0)',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {foto ? (
-                      <img src={foto} alt="Preview" className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="flex flex-col items-center gap-2">
-                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                          <path d="M16 8v12M10 13l6-6 6 6" stroke="#00C4CC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                          <path d="M5 24v2a2 2 0 002 2h18a2 2 0 002-2v-2" stroke="#7A9AB0" strokeWidth="2" strokeLinecap="round" />
-                        </svg>
-                        <span style={{ color: '#7A9AB0', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em' }}>SUBIR FOTO</span>
-                      </div>
-                    )}
-                  </button>
-                  <div className="text-center">
-                    <p className="text-white font-semibold text-sm">{foto ? 'Foto cargada' : 'Tu foto de perfil'}</p>
-                    <p style={{ color: '#7A9AB0', fontSize: 12 }}>{foto ? 'Click para cambiar' : 'Aparecerá en tus canales (opcional)'}</p>
-                  </div>
-                  <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFoto} />
+              {/* Header de consola */}
+              <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid rgba(0,196,204,0.1)' }}>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full" style={{ background: '#00C4CC', boxShadow: '0 0 6px rgba(0,196,204,0.8)' }} />
+                  <span style={{ color: '#00C4CC', fontSize: 11, fontFamily: 'monospace', letterSpacing: '0.15em' }}>
+                    BETWEEN_SIM // INIT
+                  </span>
                 </div>
+                <button
+                  onClick={reset}
+                  className="flex items-center justify-center transition-all duration-200"
+                  style={{ color: 'rgba(255,255,255,0.3)', width: 28, height: 28, borderRadius: 6, border: '1px solid rgba(255,255,255,0.08)' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)' }}
+                  onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.3)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                  aria-label="Cerrar"
+                >
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M2 2L12 12M12 2L2 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                  </svg>
+                </button>
+              </div>
 
-                {/* Nombre card */}
-                <div className="rounded-2xl p-6 flex flex-col gap-3" style={{ background: '#060D18', border: '1px solid #122030' }}>
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(0,196,204,0.1)', border: '1px solid rgba(0,196,204,0.2)' }}>
-                      <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-                        <circle cx="8" cy="5" r="3" stroke="#00C4CC" strokeWidth="1.5" />
-                        <path d="M2 14c0-3.31 2.686-6 6-6s6 2.69 6 6" stroke="#00C4CC" strokeWidth="1.5" strokeLinecap="round" />
-                      </svg>
-                    </div>
-                    <label className="text-xs font-bold uppercase tracking-widest" style={{ color: '#00C4CC' }}>Tu nombre o marca</label>
-                  </div>
+              <div className="p-6 flex flex-col gap-5">
+
+                {/* Nombre */}
+                <div className="flex flex-col gap-1.5">
+                  <label style={{ color: '#00C4CC', fontSize: 10, fontFamily: 'monospace', fontWeight: 700, letterSpacing: '0.15em' }}>
+                    // NOMBRE O MARCA
+                  </label>
                   <input
                     type="text"
                     value={nombre}
                     onChange={e => setNombre(e.target.value)}
                     placeholder="Ej: Rafael Díaz"
-                    className="rounded-xl px-4 py-3.5 text-sm"
-                    style={{ background: '#0A1628', border: '1px solid #1a2a3a', color: '#fff', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s' }}
-                    onFocus={e => { e.target.style.borderColor = '#00C4CC'; e.target.style.boxShadow = '0 0 0 3px rgba(0,196,204,0.1)' }}
-                    onBlur={e => { e.target.style.borderColor = '#1a2a3a'; e.target.style.boxShadow = 'none' }}
+                    className="rounded-xl px-4 py-3 text-sm"
+                    style={inputStyle}
+                    onFocus={e => { e.target.style.borderColor = '#00C4CC'; e.target.style.boxShadow = '0 0 0 2px rgba(0,196,204,0.12)' }}
+                    onBlur={e => { e.target.style.borderColor = 'rgba(0,196,204,0.25)'; e.target.style.boxShadow = 'none' }}
                   />
                 </div>
 
-                {/* Nicho card */}
-                <div className="rounded-2xl p-6 flex flex-col gap-4" style={{ background: '#060D18', border: '1px solid #122030' }}>
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(0,196,204,0.1)', border: '1px solid rgba(0,196,204,0.2)' }}>
-                      <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-                        <path d="M8 1.5L9.8 5.5H14L10.8 8L12 12L8 9.8L4 12L5.2 8L2 5.5H6.2L8 1.5Z" stroke="#00C4CC" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </div>
-                    <label className="text-xs font-bold uppercase tracking-widest" style={{ color: '#00C4CC' }}>Tu nicho</label>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {[
-                      { key: 'Startups', icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 2C10 2 4 7 4 12a6 6 0 0012 0c0-5-6-10-6-10z" stroke="#00C4CC" strokeWidth="1.5" fill="none"/><circle cx="10" cy="12" r="2" fill="#00C4CC"/></svg> },
-                      { key: 'Inmobiliarias', icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M2 19V9l8-7 8 7v10H2z" stroke="#00C4CC" strokeWidth="1.5" strokeLinejoin="round"/><rect x="7" y="13" width="6" height="6" stroke="#00C4CC" strokeWidth="1.5"/></svg> },
-                      { key: 'Gastronomía', icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="#00C4CC" strokeWidth="1.5"/><path d="M7 7v6M10 6v8M13 7v6" stroke="#00C4CC" strokeWidth="1.5" strokeLinecap="round"/></svg> },
-                      { key: 'Fitness', icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M3 10h2m10 0h2M5 10l1-3h8l1 3M5 10l1 3h8l1-3" stroke="#00C4CC" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg> },
-                      { key: 'Marca Personal', icon: <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="4" stroke="#00C4CC" strokeWidth="1.5"/><path d="M3 18c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="#00C4CC" strokeWidth="1.5" strokeLinecap="round"/></svg> },
-                    ].map(({ key, icon }) => (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() => setNicho(key)}
-                        className="rounded-xl px-3 py-3 text-sm font-semibold text-left transition-all duration-200 flex flex-col items-start gap-2"
-                        style={{
-                          background: nicho === key ? 'rgba(0,196,204,0.1)' : '#0A1628',
-                          border: `1px solid ${nicho === key ? '#00C4CC' : '#1a2a3a'}`,
-                          color: nicho === key ? '#00C4CC' : '#7A9AB0',
-                          boxShadow: nicho === key ? '0 0 16px rgba(0,196,204,0.15)' : 'none',
-                        }}
-                      >
-                        {icon}
-                        <span style={{ fontSize: 13 }}>{key}</span>
-                      </button>
-                    ))}
-                  </div>
+                {/* Nicho */}
+                <div className="flex flex-col gap-1.5">
+                  <label style={{ color: '#00C4CC', fontSize: 10, fontFamily: 'monospace', fontWeight: 700, letterSpacing: '0.15em' }}>
+                    // NICHO
+                  </label>
+                  <select
+                    value={nicho}
+                    onChange={e => setNicho(e.target.value)}
+                    className="sim-select rounded-xl px-4 py-3 text-sm"
+                    style={{ ...inputStyle, cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none' }}
+                    onFocus={e => { e.target.style.borderColor = '#00C4CC'; e.target.style.boxShadow = '0 0 0 2px rgba(0,196,204,0.12)' }}
+                    onBlur={e => { e.target.style.borderColor = 'rgba(0,196,204,0.25)'; e.target.style.boxShadow = 'none' }}
+                  >
+                    <option value="">— Seleccioná tu nicho —</option>
+                    <option value="Inmobiliarias">Inmobiliarias</option>
+                    <option value="Gastronomía">Gastronomía</option>
+                    <option value="Marca Personal">Marca Personal</option>
+                    <option value="Startups">Startups</option>
+                    <option value="Fitness">Fitness</option>
+                  </select>
                 </div>
 
-                {/* Descripción card */}
-                <div className="rounded-2xl p-6 flex flex-col gap-3" style={{ background: '#060D18', border: '1px solid #122030' }}>
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(0,196,204,0.1)', border: '1px solid rgba(0,196,204,0.2)' }}>
-                      <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-                        <path d="M2 4h12M2 7.5h8M2 11h10" stroke="#00C4CC" strokeWidth="1.5" strokeLinecap="round" />
-                      </svg>
-                    </div>
-                    <label className="text-xs font-bold uppercase tracking-widest" style={{ color: '#00C4CC' }}>Descripción breve <span style={{ color: '#4A6A7A', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(opcional)</span></label>
-                  </div>
+                {/* Descripción */}
+                <div className="flex flex-col gap-1.5">
+                  <label style={{ color: '#00C4CC', fontSize: 10, fontFamily: 'monospace', fontWeight: 700, letterSpacing: '0.15em' }}>
+                    // DESCRIPCIÓN <span style={{ color: 'rgba(0,196,204,0.4)', fontWeight: 400 }}>(opcional)</span>
+                  </label>
                   <textarea
                     value={descripcion}
                     onChange={e => setDescripcion(e.target.value)}
                     placeholder="Ej: Vendo propiedades en Tucumán desde hace 10 años..."
                     rows={3}
-                    className="rounded-xl px-4 py-3.5 text-sm resize-none"
-                    style={{ background: '#0A1628', border: '1px solid #1a2a3a', color: '#fff', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s' }}
-                    onFocus={e => { e.target.style.borderColor = '#00C4CC'; e.target.style.boxShadow = '0 0 0 3px rgba(0,196,204,0.1)' }}
-                    onBlur={e => { e.target.style.borderColor = '#1a2a3a'; e.target.style.boxShadow = 'none' }}
+                    className="rounded-xl px-4 py-3 text-sm resize-none"
+                    style={inputStyle}
+                    onFocus={e => { e.target.style.borderColor = '#00C4CC'; e.target.style.boxShadow = '0 0 0 2px rgba(0,196,204,0.12)' }}
+                    onBlur={e => { e.target.style.borderColor = 'rgba(0,196,204,0.25)'; e.target.style.boxShadow = 'none' }}
                   />
                 </div>
 
@@ -671,38 +677,29 @@ export default function Simulador() {
                 <button
                   onClick={handleGenerar}
                   disabled={!puedeGenerar}
-                  className="w-full py-5 rounded-2xl text-lg font-bold transition-all duration-300 relative overflow-hidden"
+                  className="w-full py-4 rounded-xl text-base font-bold transition-all duration-300"
                   style={{
-                    background: puedeGenerar ? 'linear-gradient(135deg,#00C4CC,#00A889)' : '#0d1e2e',
-                    color: puedeGenerar ? '#fff' : '#4A6A7A',
-                    boxShadow: puedeGenerar ? '0 0 36px rgba(0,196,204,0.4), 0 8px 24px rgba(0,0,0,0.3)' : 'none',
+                    background: puedeGenerar ? 'linear-gradient(135deg,#00C4CC,#00A889)' : 'rgba(0,196,204,0.05)',
+                    color: puedeGenerar ? '#fff' : 'rgba(0,196,204,0.3)',
+                    boxShadow: puedeGenerar ? '0 0 28px rgba(0,196,204,0.35)' : 'none',
                     cursor: puedeGenerar ? 'pointer' : 'not-allowed',
-                    border: puedeGenerar ? 'none' : '1px solid #122030',
+                    border: puedeGenerar ? 'none' : '1px solid rgba(0,196,204,0.15)',
+                    fontFamily: 'monospace',
+                    letterSpacing: '0.05em',
                   }}
-                  onMouseEnter={e => { if (puedeGenerar) { e.currentTarget.style.boxShadow = '0 0 52px rgba(0,196,204,0.6), 0 8px 32px rgba(0,0,0,0.4)'; e.currentTarget.style.transform = 'translateY(-2px)' } }}
-                  onMouseLeave={e => { if (puedeGenerar) { e.currentTarget.style.boxShadow = '0 0 36px rgba(0,196,204,0.4), 0 8px 24px rgba(0,0,0,0.3)'; e.currentTarget.style.transform = 'translateY(0)' } }}
+                  onMouseEnter={e => { if (puedeGenerar) { e.currentTarget.style.boxShadow = '0 0 48px rgba(0,196,204,0.55)'; e.currentTarget.style.transform = 'translateY(-1px)' } }}
+                  onMouseLeave={e => { if (puedeGenerar) { e.currentTarget.style.boxShadow = '0 0 28px rgba(0,196,204,0.35)'; e.currentTarget.style.transform = 'translateY(0)' } }}
                 >
-                  {puedeGenerar ? (
-                    <span className="flex items-center justify-center gap-3">
-                      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                        <path d="M11 2.5L13.8 8H19L14.8 11.5L16.5 17L11 13.8L5.5 17L7.2 11.5L3 8H8.2L11 2.5Z" fill="white"/>
-                      </svg>
-                      Generar mi ecosistema
-                    </span>
-                  ) : (
-                    'Completá nombre y nicho para continuar'
-                  )}
+                  {puedeGenerar ? 'Activar sistema →' : '— Completá nombre y nicho —'}
                 </button>
               </div>
             </div>
           </div>
         )}
 
-
         {/* ── RESULTADO ── */}
         {fase === 'resultado' && (
           <div className="flex flex-col items-center gap-12 fade-in-up">
-            {/* Title */}
             <div className="text-center">
               <h3 className="text-2xl md:text-3xl font-extrabold text-white">
                 🎬 Tu ecosistema Between está listo,{' '}
@@ -713,13 +710,12 @@ export default function Simulador() {
               </p>
             </div>
 
-            {/* TikTok cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
               {cuentas.map((cuenta, i) => (
                 <TikTokCard
                   key={i}
                   cuenta={cuenta}
-                  foto={foto}
+                  foto={null}
                   nombreUsuario={nombre}
                   cardIndex={i}
                   nicho={nicho}
@@ -727,18 +723,13 @@ export default function Simulador() {
               ))}
             </div>
 
-            {/* Growth projection */}
             <ProyeccionCrecimiento nicho={nicho} />
 
-            {/* CTAs */}
             <div className="flex flex-wrap justify-center gap-4">
               <a
                 href="#contacto"
                 className="px-10 py-4 rounded-full text-base font-bold text-white transition-all duration-300"
-                style={{
-                  background: 'linear-gradient(135deg,#00C4CC,#00A889)',
-                  boxShadow: '0 0 28px rgba(0,196,204,0.4)',
-                }}
+                style={{ background: 'linear-gradient(135deg,#00C4CC,#00A889)', boxShadow: '0 0 28px rgba(0,196,204,0.4)' }}
                 onMouseEnter={e => e.currentTarget.style.boxShadow = '0 0 44px rgba(0,196,204,0.65)'}
                 onMouseLeave={e => e.currentTarget.style.boxShadow = '0 0 28px rgba(0,196,204,0.4)'}
               >
@@ -758,7 +749,7 @@ export default function Simulador() {
             <button
               onClick={reset}
               className="text-sm underline underline-offset-4 transition-colors"
-              style={{ color: '#7A9AB0' }}
+              style={{ color: '#7A9AB0', fontFamily: 'monospace' }}
               onMouseEnter={e => e.target.style.color = '#fff'}
               onMouseLeave={e => e.target.style.color = '#7A9AB0'}
             >
