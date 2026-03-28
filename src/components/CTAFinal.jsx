@@ -38,11 +38,11 @@ export default function CTAFinal() {
       <div className="relative z-10 max-w-3xl mx-auto px-6 text-center">
         <p className="text-cyan text-sm font-semibold uppercase tracking-widest mb-5">Es tu momento</p>
         <h2 className="text-5xl md:text-7xl font-extrabold text-white leading-tight tracking-tight mb-6">
-          ¿Listo para ser el{' '}
-          <span className="gradient-text">protagonista?</span>
+          ¿Listo para{' '}
+          <span className="gradient-text">ser visto?</span>
         </h2>
         <p className="text-gray text-lg md:text-xl mb-10 max-w-xl mx-auto leading-relaxed">
-          Sumate a los que ya convirtieron su historia en un ecosistema de contenido que trabaja para ellos.
+          Sumate a los que ya decidieron que su historia merece circular.
         </p>
 
         {/* Email form */}

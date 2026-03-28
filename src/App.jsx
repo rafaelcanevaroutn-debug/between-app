@@ -4,9 +4,11 @@ import Hero from './components/Hero'
 import Nichos from './components/Nichos'
 import Hollywood from './components/Hollywood'
 import ElSet from './components/ElSet'
+import ExperimentoEnVivo from './components/ExperimentoEnVivo'
 import Simulador from './components/Simulador'
 import BetweenGrowth from './components/BetweenGrowth'
 import Planes from './components/Planes'
+import Comunidad from './components/Comunidad'
 import QuienesSomos from './components/QuienesSomos'
 import CTAFinal from './components/CTAFinal'
 import CalendlySection from './components/CalendlySection'
@@ -21,8 +23,10 @@ function Landing() {
       <Simulador />
       <Hollywood />
       <ElSet />
+      <ExperimentoEnVivo />
       <BetweenGrowth />
       <Planes />
+      <Comunidad />
       <CalendlySection />
       <CTAFinal />
       <Footer />
