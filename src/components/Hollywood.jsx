@@ -42,8 +42,8 @@ const cards = [
         <path d="M19 6L23 10M23 6L19 10" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" />
       </svg>
     ),
-    title: 'Los community managers murieron.',
-    desc: 'Pagar para que alguien postee tres veces por semana no es una estrategia. Es ruido.',
+    title: 'Los community managers murieron',
+    desc: 'Una cuenta, un CM, una esperanza. No alcanza más.',
   },
 ]
 
