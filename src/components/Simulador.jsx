@@ -581,6 +581,9 @@ export default function Simulador() {
             >
               Generá tu ecosistema →
             </button>
+            <p style={{ color: '#7A9AB0', fontSize: '0.75rem', marginTop: '12px' }}>
+              Es una simulación orientativa. Tu ecosistema real se define en la primera charla.
+            </p>
           </div>
         )}
 
