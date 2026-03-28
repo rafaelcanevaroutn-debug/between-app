@@ -39,11 +39,11 @@ function NichoCard({ num, label, desc }) {
         background: '#0A1628',
         border: `1px solid ${hovered ? '#00C4CC' : 'rgba(255,255,255,0.07)'}`,
         boxShadow: hovered ? '0 0 24px rgba(0,196,204,0.25)' : 'none',
-        borderRadius: '16px',
-        padding: '28px',
+        borderRadius: '12px',
+        padding: '18px 20px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '12px',
+        gap: '8px',
         transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
         cursor: 'default',
       }}
@@ -74,8 +74,8 @@ export default function Nichos() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-            gap: '16px',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+            gap: '10px',
           }}
         >
           {nichos.map((nicho) => (
