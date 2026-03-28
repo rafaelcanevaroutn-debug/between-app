@@ -84,66 +84,19 @@ export default function ElSet() {
           </h2>
         </div>
 
-        {/* Two columns */}
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_1px_1fr] gap-0 md:gap-12">
-          {/* Left — proceso */}
-          <div>
-            <p className="text-xs text-gray font-semibold uppercase tracking-widest mb-8 border-b border-border pb-3">
-              Cómo funciona
-            </p>
-            <div className="flex flex-col gap-8">
-              {pasos.map(({ num, label, desc }) => (
-                <div key={num} className="flex gap-5">
-                  <span
-                    className="text-sm font-mono font-bold shrink-0 mt-1"
-                    style={{ color: '#00C4CC' }}
-                  >
-                    {num}
-                  </span>
-                  <div>
-                    <h3 className="text-white font-bold text-lg mb-1">{label}</h3>
-                    <p className="text-gray text-sm leading-relaxed">{desc}</p>
-                  </div>
-                </div>
-              ))}
+        {/* Pasos */}
+        <div className="max-w-2xl flex flex-col gap-10">
+          {pasos.map(({ num, label, desc }) => (
+            <div key={num} className="flex gap-5">
+              <span className="text-sm font-mono font-bold shrink-0 mt-1" style={{ color: '#00C4CC' }}>
+                {num}
+              </span>
+              <div>
+                <h3 className="text-white font-bold text-lg mb-1">{label}</h3>
+                <p className="text-gray text-sm leading-relaxed">{desc}</p>
+              </div>
             </div>
-          </div>
-
-          {/* Vertical divider */}
-          <div
-            className="hidden md:block w-px self-stretch"
-            style={{ background: 'linear-gradient(to bottom, transparent, #00C4CC, #00A889, transparent)' }}
-          />
-
-          {/* Right — onboarding */}
-          <div>
-            <p className="text-xs text-gray font-semibold uppercase tracking-widest mb-8 border-b border-border pb-3 mt-12 md:mt-0">
-              Tu onboarding
-            </p>
-            <div className="flex flex-col gap-8">
-              {onboarding.map(({ label, desc, badge }) => (
-                <div key={label} className="flex gap-5">
-                  <span
-                    className="w-1.5 h-1.5 rounded-full shrink-0 mt-2.5"
-                    style={{ background: 'linear-gradient(135deg, #00C4CC, #00A889)' }}
-                  />
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-white font-bold text-lg">{label}</h3>
-                      {badge && (
-                        <span className="flex items-center gap-1 rounded-full px-2 py-0.5"
-                          style={{ background: 'rgba(29,185,84,0.12)', border: '1px solid rgba(29,185,84,0.35)' }}>
-                          <SpotifyIcon />
-                          <span style={{ color: '#1DB954', fontSize: 10, fontWeight: 700 }}>{badge}</span>
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-gray text-sm leading-relaxed">{desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* CTA */}

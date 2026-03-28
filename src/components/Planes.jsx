@@ -33,7 +33,7 @@ const PLANS = [
       '10 cuentas activas',
       '3-5 videos/día/cuenta',
       'Todo Growth incluido',
-      'Grabaciones presenciales',
+      '4 entrevistas/mes por Meet',
       'Equipo dedicado',
       'Dashboard de métricas en tiempo real',
     ],

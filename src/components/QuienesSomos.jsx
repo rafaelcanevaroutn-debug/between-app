@@ -120,32 +120,35 @@ export default function QuienesSomos() {
               </span>
             </h2>
 
-            <div className="flex flex-col gap-5 text-base leading-relaxed" style={{ color: '#7A9AB0', maxWidth: 580 }}>
-              <p>
-                Construí mi primera startup de cero — una plataforma de comunidades deportivas que llegó a{' '}
-                <span className="text-white font-semibold">5.000 usuarios en 3 meses</span>{' '}
-                distribuyendo contenido orgánico sin un peso de pauta.
-              </p>
-              <p>
-                Después operé distribución multicuenta en Nini, gestionando hasta{' '}
-                <span className="text-white font-semibold">9 clientes en simultáneo</span>{' '}
-                en TikTok e Instagram.
-              </p>
-              <p>
-                Entre los dos aprendí algo claro: el contenido no se distribuye solo, y los bots no construyen comunidades reales.
-              </p>
-              <p className="text-white font-semibold">
-                Between nació de eso.
-              </p>
-            </div>
+            <p className="text-base leading-relaxed mb-8" style={{ color: '#7A9AB0', maxWidth: 580 }}>
+              Construí mi primera startup de cero — una plataforma de comunidades deportivas que salía a la montaña cada fin de semana con gente real. Sin pauta, sin inversión. Solo contenido orgánico y comunidad genuina. Después estuve del otro lado: operando distribución de contenido para múltiples marcas y negocios en simultáneo. Aprendí exactamente qué funciona, qué no, y por qué la mayoría de los servicios fallan. Between nació de eso. No es una agencia. Es lo que yo hubiera querido tener cuando estaba construyendo.
+            </p>
 
-            {/* Firma */}
-            <p
-              className="mt-8 text-base font-medium italic"
-              style={{ color: '#00C4CC' }}
-            >
+            <p className="mb-10 text-base font-medium italic" style={{ color: '#00C4CC' }}>
               — Rafa, Founder
             </p>
+
+            {/* Thinking subsección */}
+            <div
+              className="rounded-2xl p-6 flex flex-col gap-3"
+              style={{ background: '#0A1628', border: '1px solid #122030', maxWidth: 580 }}
+            >
+              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#00C4CC' }}>Thinking</p>
+              <p className="text-sm leading-relaxed" style={{ color: '#7A9AB0' }}>
+                Lo que pasa por mi cabeza mientras construyo.
+              </p>
+              <a
+                href="https://substack.com/@rafaelcanevaroutn"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-semibold transition-colors duration-200 self-start"
+                style={{ color: '#00C4CC' }}
+                onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+                onMouseLeave={e => e.currentTarget.style.color = '#00C4CC'}
+              >
+                Leer en Substack →
+              </a>
+            </div>
           </div>
 
         </div>
