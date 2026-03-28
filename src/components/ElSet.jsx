@@ -27,24 +27,18 @@ function SpotifyIcon() {
 const pasos = [
   {
     num: '01',
-    label: 'Set de producción',
-    desc: 'Vamos a donde estás o armamos el set virtualmente vía Meet. Grabamos juntos, sin que tengas que moverte.',
+    label: 'Contás tu historia',
+    desc: 'Te pasamos preguntas y ángulos para que sepas qué grabar. Nos juntamos por Meet o presencialmente si hay alguien en tu ciudad. Podés mandarnos crudos o editados, nosotros clippeamos todo.',
   },
   {
     num: '02',
-    label: 'Producción',
-    desc: 'Nuestro equipo edita, adapta y produce todo el contenido listo para distribuir.',
+    label: 'Lo convertimos en contenido',
+    desc: 'Nuestro equipo edita, adapta y produce todo listo para distribuir.',
   },
   {
     num: '03',
-    label: 'Distribución',
-    desc: 'Publicamos en todos tus canales con estrategia, timing y consistencia diaria.',
-    platformIcons: true,
-  },
-  {
-    num: '04',
-    label: 'Crecimiento',
-    desc: 'Medimos, ajustamos y escalamos tu ecosistema de canales mes a mes.',
+    label: 'Tu contenido se mueve todos los días',
+    desc: 'Un sistema de canales distribuye tu historia constantemente. Sin que vos tengas que hacer nada más.',
   },
 ]
 
@@ -98,7 +92,7 @@ export default function ElSet() {
               Cómo funciona
             </p>
             <div className="flex flex-col gap-8">
-              {pasos.map(({ num, label, desc, platformIcons }) => (
+              {pasos.map(({ num, label, desc }) => (
                 <div key={num} className="flex gap-5">
                   <span
                     className="text-sm font-mono font-bold shrink-0 mt-1"
@@ -109,18 +103,6 @@ export default function ElSet() {
                   <div>
                     <h3 className="text-white font-bold text-lg mb-1">{label}</h3>
                     <p className="text-gray text-sm leading-relaxed">{desc}</p>
-                    {platformIcons && (
-                      <div className="flex items-center gap-2 mt-2">
-                        <span className="flex items-center gap-1 px-2 py-1 rounded-full" style={{ background: '#000', border: '1px solid #333' }}>
-                          <TikTokIcon />
-                          <span style={{ color: '#fff', fontSize: 10, fontWeight: 700 }}>TikTok</span>
-                        </span>
-                        <span className="flex items-center gap-1 px-2 py-1 rounded-full" style={{ background: 'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)', border: '1px solid rgba(255,255,255,0.15)' }}>
-                          <ReelsIcon />
-                          <span style={{ color: '#fff', fontSize: 10, fontWeight: 700 }}>Reels</span>
-                        </span>
-                      </div>
-                    )}
                   </div>
                 </div>
               ))}
@@ -176,6 +158,13 @@ export default function ElSet() {
           >
             Quiero entrar al set
           </a>
+          <p
+            className="mt-8 text-lg md:text-xl font-semibold"
+            style={{ color: 'rgba(255,255,255,0.55)' }}
+          >
+            Vos construís.{' '}
+            <span className="text-white">Nosotros hacemos que el mundo lo vea.</span>
+          </p>
         </div>
       </div>
     </section>

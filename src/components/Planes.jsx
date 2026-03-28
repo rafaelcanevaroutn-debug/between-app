@@ -1,50 +1,47 @@
 const PLANS = [
   {
-    name: 'Starter',
-    price: 'USD 300',
+    name: 'Base',
     badge: null,
     highlight: false,
     items: [
-      '5 canales activos en TikTok',
-      '300 videos distribuidos por mes',
-      'Clipeo con IA incluido',
+      '3 cuentas activas',
+      '2 videos/día/cuenta',
+      'Clippeo incluido',
+      'Preguntas y ángulos para grabarte solo',
       'Estrategia por canal',
-      'Guiones semanales para grabarte solo',
-      'Materiales y estructura para grabar tus crudos',
-      'Reporte semanal',
-      'Canales = activos de Between',
+      'Reporte mensual',
+      '1 entrevista/mes por Meet',
     ],
-    cta: 'Empezar con Starter',
   },
   {
     name: 'Growth',
-    price: 'USD 700',
     badge: 'RECOMENDADO',
     highlight: true,
     items: [
-      'Todo lo del plan Starter',
-      '2 sesiones de grabación por Meet/mes',
-      '2 sesiones presenciales/mes',
-      'Edición y producción incluida',
+      '5 cuentas activas',
+      '3 videos/día/cuenta',
+      'Todo Base incluido',
+      '2 entrevistas/mes por Meet',
       'Estrategia avanzada por canal',
     ],
-    cta: 'Empezar con Growth',
   },
   {
-    name: 'Scale',
-    price: 'USD 1.000',
+    name: 'Studio',
     badge: null,
     highlight: false,
     items: [
-      'Todo lo del plan Growth',
-      'Set de producción completo',
+      '10 cuentas activas',
+      '3-5 videos/día/cuenta',
+      'Todo Growth incluido',
+      'Grabaciones presenciales',
       'Equipo dedicado',
       'Dashboard de métricas en tiempo real',
-      'Between Growth — acceso anticipado',
     ],
-    cta: 'Empezar con Scale',
   },
 ]
+
+const CALENDLY = 'https://calendly.com/rafaelcanevaroutn'
+const WHATSAPP = 'https://wa.me/5493815971971'
 
 function Check({ highlight }) {
   return (
@@ -60,7 +57,7 @@ export default function Planes() {
     <section id="planes" className="py-24 dot-grid">
       <div className="max-w-6xl mx-auto px-6 md:px-16">
         <div className="text-center mb-14">
-          <p className="text-cyan text-sm font-semibold uppercase tracking-widest mb-3">Precios</p>
+          <p className="text-cyan text-sm font-semibold uppercase tracking-widest mb-3">Planes</p>
           <h2 className="text-4xl md:text-5xl font-extrabold text-white">Elegí tu plan</h2>
           <p className="text-gray mt-4 text-lg">Sin contratos largos. Sin sorpresas.</p>
         </div>
@@ -69,9 +66,9 @@ export default function Planes() {
           {PLANS.map((plan) => (
             <div
               key={plan.name}
-              className="relative rounded-3xl p-8 flex flex-col transition-all duration-300"
+              className="relative rounded-3xl p-8 flex flex-col"
               style={{
-                background: plan.highlight ? '#0A1628' : '#0A1628',
+                background: '#0A1628',
                 border: plan.highlight ? '2px solid #00C4CC' : '1px solid #122030',
                 boxShadow: plan.highlight ? '0 0 40px rgba(0,196,204,0.2)' : 'none',
               }}
@@ -91,15 +88,11 @@ export default function Planes() {
               {/* Header */}
               <div className="mb-6">
                 <p
-                  className="text-sm font-semibold uppercase tracking-widest mb-2"
+                  className="text-sm font-semibold uppercase tracking-widest"
                   style={{ color: plan.highlight ? '#00C4CC' : '#7A9AB0' }}
                 >
                   {plan.name}
                 </p>
-                <div className="flex items-end gap-1">
-                  <span className="text-4xl font-extrabold text-white">{plan.price}</span>
-                  <span className="text-gray mb-1">/mes</span>
-                </div>
               </div>
 
               {/* Items */}
@@ -112,39 +105,41 @@ export default function Planes() {
                 ))}
               </ul>
 
-              {/* CTA */}
-              <a
-                href="#contacto"
-                className="mt-8 px-6 py-3 rounded-full text-sm font-semibold text-center block transition-all duration-300"
-                style={
-                  plan.highlight
-                    ? { background: 'linear-gradient(135deg,#00C4CC,#00A889)', color: '#fff', boxShadow: '0 0 20px rgba(0,196,204,0.3)' }
-                    : { border: '1px solid #00C4CC', color: '#00C4CC' }
-                }
-                onMouseEnter={e => {
-                  if (!plan.highlight) e.currentTarget.style.background = 'rgba(0,196,204,0.08)'
-                  else e.currentTarget.style.boxShadow = '0 0 32px rgba(0,196,204,0.5)'
-                }}
-                onMouseLeave={e => {
-                  if (!plan.highlight) e.currentTarget.style.background = 'transparent'
-                  else e.currentTarget.style.boxShadow = '0 0 20px rgba(0,196,204,0.3)'
-                }}
-              >
-                {plan.cta}
-              </a>
-
-              {/* Calendly secondary */}
-              <a
-                href="https://calendly.com/rafaelcanevaroutn"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 text-xs font-medium text-center block transition-colors duration-200"
-                style={{ color: '#7A9AB0' }}
-                onMouseEnter={e => e.currentTarget.style.color = '#00C4CC'}
-                onMouseLeave={e => e.currentTarget.style.color = '#7A9AB0'}
-              >
-                Agendá una llamada gratuita →
-              </a>
+              {/* CTAs */}
+              <div className="mt-8 flex flex-col gap-3">
+                <a
+                  href={CALENDLY}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-3 rounded-full text-sm font-semibold text-center block transition-all duration-300"
+                  style={
+                    plan.highlight
+                      ? { background: 'linear-gradient(135deg,#00C4CC,#00A889)', color: '#fff', boxShadow: '0 0 20px rgba(0,196,204,0.3)' }
+                      : { border: '1px solid #00C4CC', color: '#00C4CC' }
+                  }
+                  onMouseEnter={e => {
+                    if (!plan.highlight) e.currentTarget.style.background = 'rgba(0,196,204,0.08)'
+                    else e.currentTarget.style.boxShadow = '0 0 32px rgba(0,196,204,0.5)'
+                  }}
+                  onMouseLeave={e => {
+                    if (!plan.highlight) e.currentTarget.style.background = 'transparent'
+                    else e.currentTarget.style.boxShadow = '0 0 20px rgba(0,196,204,0.3)'
+                  }}
+                >
+                  Agendá una charla →
+                </a>
+                <a
+                  href={WHATSAPP}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-3 rounded-full text-sm font-semibold text-center block transition-colors duration-200"
+                  style={{ border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.45)' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)' }}
+                  onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.45)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                >
+                  Escribinos →
+                </a>
+              </div>
             </div>
           ))}
         </div>

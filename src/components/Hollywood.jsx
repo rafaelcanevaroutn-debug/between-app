@@ -4,7 +4,6 @@ const cards = [
   {
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        {/* Flecha hacia arriba chocando con un techo — "tiene un techo" */}
         <path d="M4 6H24" stroke="#00C4CC" strokeWidth="2" strokeLinecap="round" />
         <path d="M14 23V10" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" />
         <path d="M9 15L14 10L19 15" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -16,7 +15,6 @@ const cards = [
   {
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        {/* Ojo con slash — "nadie lo ve" */}
         <path d="M4 14C4 14 8 8 14 8C20 8 24 14 24 14C24 14 20 20 14 20C8 20 4 14 4 14Z" stroke="#00C4CC" strokeWidth="1.8" />
         <circle cx="14" cy="14" r="3" stroke="#00C4CC" strokeWidth="1.8" />
         <path d="M5 5L23 23" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" />
@@ -28,7 +26,6 @@ const cards = [
   {
     icon: (
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        {/* Tres flechas apuntando en direcciones distintas — caos, sin sistema */}
         <path d="M14 6V11M14 6L11 9M14 6L17 9" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M22 14H17M22 14L19 11M22 14L19 17" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M6 14H11M6 14L9 11M6 14L9 17" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -36,6 +33,17 @@ const cards = [
     ),
     title: 'Sin sistema, sin consistencia, sin resultados',
     desc: 'Publicar cuando hay tiempo no es una estrategia. Es esperar que algo funcione solo.',
+  },
+  {
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="10" r="4" stroke="#00C4CC" strokeWidth="1.8" />
+        <path d="M7 22c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" />
+        <path d="M19 6L23 10M23 6L19 10" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" />
+      </svg>
+    ),
+    title: 'Los community managers murieron.',
+    desc: 'Pagar para que alguien postee tres veces por semana no es una estrategia. Es ruido.',
   },
 ]
 
@@ -62,7 +70,7 @@ export default function Hollywood() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {cards.map(({ icon, title, desc }) => (
             <div
               key={title}
