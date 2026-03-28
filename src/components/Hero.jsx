@@ -1,57 +1,74 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import astronauta from '../assets/astronauta.jpg'
 import Particles from './Particles'
-import Typewriter from './Typewriter'
-import { sendLeadEmail } from '../services/emailjs'
 
-const gradientText = {
-  background: 'linear-gradient(135deg, #00C4CC, #00A889)',
-  WebkitBackgroundClip: 'text',
-  backgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  color: 'transparent',
-  textShadow: 'none',
-  filter: 'drop-shadow(0 0 12px rgba(0,196,204,0.4))',
-}
+// Cada frase es un array de segmentos { text, color }
+// color null = blanco, '#00C4CC' = cyan, '#8B5CF6' = violeta
+const FRASES = [
+  [
+    { text: 'Dejá de construir ', color: null },
+    { text: 'en silencio.', color: '#00C4CC' },
+  ],
+  [
+    { text: 'No sos ', color: null },
+    { text: 'invisible.', color: '#00C4CC' },
+    { text: ' Todavía no\nte encontraron.', color: null },
+  ],
+  [
+    { text: 'No es lo que hacés.\nEs que ', color: null },
+    { text: 'nadie te ve.', color: '#00C4CC' },
+  ],
+  [
+    { text: 'Ya construiste lo suficiente.\nEs hora de ', color: null },
+    { text: 'que te vean.', color: '#00C4CC' },
+  ],
+]
 
-const gradientTextReverse = {
-  background: 'linear-gradient(135deg, #00A889, #00C4CC)',
-  WebkitBackgroundClip: 'text',
-  backgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  color: 'transparent',
-  textShadow: 'none',
-  filter: 'drop-shadow(0 0 12px rgba(0,168,137,0.4))',
-}
-
-const statNumStyle = {
-  color: '#00C4CC',
-  textShadow: '0 0 10px rgba(0,196,204,0.6)',
-}
+const STAGGER    = 38   // ms entre letras
+const ENTER_DUR  = 420  // ms duración de entrada por letra
+const EXIT_DUR   = 320  // ms duración de salida por letra
+const DISPLAY_MS = 4200 // ms que la frase queda visible
 
 const dotGridStyle = {
   backgroundImage: 'radial-gradient(circle, rgba(0,196,204,0.15) 1px, transparent 1px)',
   backgroundSize: '20px 20px',
 }
 
-const stats = [
-  { value: '5', label: 'Canales' },
-  { value: '260+', label: 'Videos' },
-  { value: '2', label: 'Entrevistas' },
-  { value: 'USD 300', label: 'desde' },
-]
+// Construye la lista de tokens con índice de stagger (sin contar los \n)
+function buildChars(phraseIdx) {
+  const chars = []
+  let staggerIdx = 0
+  for (const seg of FRASES[phraseIdx]) {
+    for (const ch of seg.text) {
+      if (ch === '\n') {
+        chars.push({ ch, color: seg.color, staggerIdx: null, isBreak: true })
+      } else {
+        chars.push({ ch, color: seg.color, staggerIdx: staggerIdx++, isBreak: false })
+      }
+    }
+  }
+  return chars
+}
 
 export default function Hero() {
-  const [email, setEmail] = useState('')
-  const [estado, setEstado] = useState('idle') // idle | loading | success | error
+  const [phraseIdx, setPhraseIdx] = useState(0)
+  const [charState, setCharState] = useState('entering') // 'entering' | 'visible' | 'exiting'
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!email.trim()) return
-    setEstado('loading')
-    const ok = await sendLeadEmail(email, 'Hero Landing')
-    setEstado(ok ? 'success' : 'error')
-  }
+  const chars = buildChars(phraseIdx)
+  const visibleCount = chars.filter(c => !c.isBreak).length
+  const enterDone = visibleCount * STAGGER + ENTER_DUR
+  const exitDone  = visibleCount * STAGGER + EXIT_DUR
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setCharState('visible'), enterDone)
+    const t2 = setTimeout(() => setCharState('exiting'), enterDone + DISPLAY_MS)
+    const t3 = setTimeout(() => {
+      setPhraseIdx(i => (i + 1) % FRASES.length)
+      setCharState('entering')
+    }, enterDone + DISPLAY_MS + exitDone)
+
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+  }, [phraseIdx]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <section
@@ -59,10 +76,20 @@ export default function Hero() {
       className="relative min-h-screen flex items-center pt-28 overflow-hidden"
       style={dotGridStyle}
     >
-      {/* Partículas flotantes */}
+      <style>{`
+        @keyframes charIn {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0);    }
+        }
+        @keyframes charOut {
+          from { opacity: 1; transform: translateY(0);    }
+          to   { opacity: 0; transform: translateY(-10px); }
+        }
+      `}</style>
+
       <Particles count={35} />
 
-      {/* Astronauta — imagen absoluta lado derecho, opacidad 40% */}
+      {/* Astronauta */}
       <img
         src={astronauta}
         alt=""
@@ -71,115 +98,124 @@ export default function Hero() {
         style={{ opacity: 0.4 }}
       />
 
-      {/* Fade izquierda para legibilidad */}
+      {/* Fade izquierda */}
       <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/85 to-transparent pointer-events-none" />
 
-      {/* Glow verde sutil inferior derecha */}
-      <div
-        className="absolute bottom-0 right-0 pointer-events-none"
-        style={{
-          width: '600px',
-          height: '400px',
-          background: 'radial-gradient(ellipse at bottom right, rgba(0,168,137,0.12) 0%, transparent 70%)',
-        }}
+      {/* Glow verde inferior derecha */}
+      <div className="absolute bottom-0 right-0 pointer-events-none"
+        style={{ width: 600, height: 400, background: 'radial-gradient(ellipse at bottom right, rgba(0,168,137,0.12) 0%, transparent 70%)' }}
       />
 
       <div className="relative w-full px-6 pl-8 md:pl-16 lg:pl-24 pt-6 pb-24" style={{ zIndex: 10 }}>
         <div className="max-w-2xl text-left">
+
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-card border border-border rounded-full px-4 py-1.5 mb-8">
             <span className="w-2 h-2 rounded-full bg-cyan animate-pulse" />
-            <span className="text-xs text-gray font-medium tracking-wider uppercase">Estudio de marca personal</span>
+            <span className="text-xs text-gray font-medium tracking-wider uppercase">Plataforma de visibilidad</span>
           </div>
 
-          {/* Headline */}
-          <h1 className="text-5xl md:text-7xl font-extrabold leading-none tracking-tight mb-6">
-            <span style={gradientText}>Between</span>
-            <span className="text-white"> te convierte</span>
-            <br />
-            <span style={gradientTextReverse}>en el protagonista.</span>
-          </h1>
+          {/* Headline rotativo — letra por letra */}
+          <div className="mb-3" style={{ minHeight: 180 }}>
+            <h1 className="text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
+              {chars.map(({ ch, color, staggerIdx, isBreak }, i) => {
+                if (isBreak) return <br key={`br-${phraseIdx}-${i}`} />
 
-          {/* Subtitle */}
-          <p className="text-gray text-lg md:text-xl leading-relaxed max-w-lg">
-            Tomamos quien sos y lo convertimos en un ecosistema de canales.{' '}
-            <span className="text-white font-medium">Nosotros dirigimos. Vos protagonizás.</span>
+                const delay = `${staggerIdx * STAGGER}ms`
+                const charColor = color || '#fff'
+                const glow = color === '#00C4CC'
+                  ? '0 0 16px rgba(0,196,204,0.6)'
+                  : 'none'
+
+                let spanStyle
+                if (charState === 'entering') {
+                  spanStyle = {
+                    display: 'inline-block',
+                    opacity: 0,
+                    color: charColor,
+                    textShadow: glow,
+                    animation: `charIn ${ENTER_DUR}ms ease forwards`,
+                    animationDelay: delay,
+                  }
+                } else if (charState === 'visible') {
+                  spanStyle = {
+                    display: 'inline-block',
+                    opacity: 1,
+                    color: charColor,
+                    textShadow: glow,
+                  }
+                } else {
+                  spanStyle = {
+                    display: 'inline-block',
+                    opacity: 1,
+                    color: charColor,
+                    textShadow: glow,
+                    animation: `charOut ${EXIT_DUR}ms ease forwards`,
+                    animationDelay: delay,
+                  }
+                }
+
+                return (
+                  <span key={`${phraseIdx}-${i}`} style={spanStyle}>
+                    {ch === ' ' ? '\u00A0' : ch}
+                  </span>
+                )
+              })}
+            </h1>
+          </div>
+
+          {/* Subheadline fijo */}
+          <p className="text-gray text-lg md:text-xl leading-relaxed max-w-lg mb-10">
+            Contá tu historia. Nosotros nos encargamos de que el mundo la escuche.
           </p>
 
-          {/* Typewriter */}
-          <Typewriter />
+          {/* CTA único */}
+          <a
+            href="#contacto"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-base font-bold text-white transition-all duration-300"
+            style={{
+              background: 'linear-gradient(135deg, #00C4CC, #00A889)',
+              boxShadow: '0 0 28px rgba(0,196,204,0.4)',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.boxShadow = '0 0 44px rgba(0,196,204,0.65)'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.boxShadow = '0 0 28px rgba(0,196,204,0.4)'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            Quiero ser protagonista
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </a>
 
-          {/* Whitelist form */}
-          <div className="mt-8 mb-16">
-            {estado === 'success' ? (
-              <p className="text-base font-bold" style={{ color: '#00A889' }}>
-                ¡Listo! Te contactamos pronto 🎬
-              </p>
-            ) : (
-              <>
-                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    placeholder="tu@email.com"
-                    required
-                    className="flex-1 rounded-full px-5 py-3.5 text-sm text-white"
-                    style={{
-                      background: 'rgba(10,22,40,0.85)',
-                      border: '1px solid #1a2a3a',
-                      outline: 'none',
-                      transition: 'border-color 0.2s, box-shadow 0.2s',
-                    }}
-                    onFocus={e => { e.target.style.borderColor = '#00C4CC'; e.target.style.boxShadow = '0 0 0 3px rgba(0,196,204,0.1)' }}
-                    onBlur={e => { e.target.style.borderColor = '#1a2a3a'; e.target.style.boxShadow = 'none' }}
-                  />
-                  <button
-                    type="submit"
-                    disabled={estado === 'loading'}
-                    className="shrink-0 px-7 py-3.5 rounded-full text-base font-semibold text-white transition-all duration-300"
-                    style={{
-                      background: 'linear-gradient(135deg, #00C4CC, #00A889)',
-                      boxShadow: '0 0 20px rgba(0,196,204,0.4)',
-                      opacity: estado === 'loading' ? 0.7 : 1,
-                      cursor: estado === 'loading' ? 'wait' : 'pointer',
-                    }}
-                  >
-                    {estado === 'loading' ? 'Enviando...' : 'Quiero empezar'}
-                  </button>
-                </form>
-                {estado === 'error' && (
-                  <p className="mt-2 text-sm" style={{ color: '#FF6B6B' }}>
-                    Hubo un error.{' '}
-                    <a href="https://wa.me/5493815971971" target="_blank" rel="noopener noreferrer" className="underline">
-                      Escribinos por WhatsApp.
-                    </a>
-                  </p>
-                )}
-                <a
-                  href="#como-funciona"
-                  className="inline-block mt-3 text-sm transition-colors duration-200"
-                  style={{ color: '#7A9AB0' }}
-                  onMouseEnter={e => e.currentTarget.style.color = '#fff'}
-                  onMouseLeave={e => e.currentTarget.style.color = '#7A9AB0'}
-                >
-                  Ver cómo funciona →
-                </a>
-              </>
-            )}
-          </div>
-
-          {/* Stats */}
-          <div className="flex flex-wrap gap-8">
-            {stats.map(({ value, label }) => (
-              <div key={label} className="text-left">
-                <div className="text-3xl font-extrabold" style={statNumStyle}>{value}</div>
-                <div className="text-xs text-gray uppercase tracking-widest mt-0.5">{label}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
+
+      {/* Frase flotante cerca del astronauta */}
+      <div
+        className="absolute hidden lg:block"
+        style={{
+          right: '3%', bottom: '10%', maxWidth: 260,
+          background: 'rgba(6,13,24,0.85)',
+          border: '1px solid rgba(0,196,204,0.18)',
+          borderRadius: 12, padding: '22px 26px',
+          backdropFilter: 'blur(10px)',
+          zIndex: 20,
+          boxShadow: '0 0 24px rgba(0,196,204,0.07)',
+        }}
+      >
+        <p className="leading-relaxed" style={{ color: '#7A9AB0', fontSize: 14 }}>
+          "El astronauta flotando solo en el espacio no está perdido.
+          Está en el lugar más visible del universo.
+          Solo necesitaba el traje correcto para llegar ahí.{' '}
+          <span style={{ color: '#00C4CC', fontWeight: 700 }}>Between es el traje.</span>"
+        </p>
+      </div>
+
     </section>
   )
 }
