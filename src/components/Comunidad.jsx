@@ -1,40 +1,40 @@
-function uiAvatar(name, bg) {
-  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${bg.replace('#','')}&color=fff&size=128&bold=true&font-size=0.4`
+function dicebear(seed) {
+  return `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(seed)}&backgroundColor=0a1628&radius=50`
 }
 
 const liveCards = [
   {
     initials: 'MA', name: 'Martín A.', nicho: 'Inmobiliarias',
-    avatar: uiAvatar('MA', '#006B6F'),
+    avatar: dicebear('Martin'),
     seguidores: '1.2K', videos: '48', dias: '32',
   },
   {
     initials: 'SC', name: 'Sofía C.', nicho: 'Marca Personal',
-    avatar: uiAvatar('SC', '#004D6B'),
+    avatar: dicebear('Sofia'),
     seguidores: '890', videos: '61', dias: '41',
   },
   {
     initials: 'LR', name: 'Lucas R.', nicho: 'Startups',
-    avatar: uiAvatar('LR', '#005C4A'),
+    avatar: dicebear('Lucas'),
     seguidores: '2.1K', videos: '93', dias: '58',
   },
 ]
 
 const avatares = [
-  { initials: 'VG', name: 'Valentina G.', nicho: 'Gastronomía',   avatar: uiAvatar('VG', '006B6F') },
-  { initials: 'EM', name: 'Esteban M.',   nicho: 'Fitness',        avatar: uiAvatar('EM', '004A6B') },
-  { initials: 'DP', name: 'Diego P.',     nicho: 'Inmobiliarias',  avatar: uiAvatar('DP', '00585C') },
-  { initials: 'CR', name: 'Camila R.',    nicho: 'Marca Personal', avatar: uiAvatar('CR', '003D5C') },
-  { initials: 'JT', name: 'Julián T.',    nicho: 'Startups',       avatar: uiAvatar('JT', '004038') },
-  { initials: 'AL', name: 'Ana L.',       nicho: 'Gastronomía',    avatar: uiAvatar('AL', '005C58') },
-  { initials: 'MV', name: 'Matías V.',    nicho: 'Fitness',        avatar: uiAvatar('MV', '003850') },
-  { initials: 'FR', name: 'Franco R.',    nicho: 'Startups',       avatar: uiAvatar('FR', '005040') },
-  { initials: 'NG', name: 'Nadia G.',     nicho: 'Marca Personal', avatar: uiAvatar('NG', '004060') },
-  { initials: 'PL', name: 'Pablo L.',     nicho: 'Inmobiliarias',  avatar: uiAvatar('PL', '006068') },
-  { initials: 'RV', name: 'Romina V.',    nicho: 'Gastronomía',    avatar: uiAvatar('RV', '004848') },
-  { initials: 'SE', name: 'Santiago E.',  nicho: 'Fitness',        avatar: uiAvatar('SE', '003060') },
-  { initials: 'LB', name: 'Laura B.',     nicho: 'Marca Personal', avatar: uiAvatar('LB', '003850') },
-  { initials: 'GM', name: 'Gonzalo M.',   nicho: 'Startups',       avatar: uiAvatar('GM', '004838') },
+  { initials: 'VG', name: 'Valentina G.', nicho: 'Gastronomía',   avatar: dicebear('Valentina') },
+  { initials: 'EM', name: 'Esteban M.',   nicho: 'Fitness',        avatar: dicebear('Esteban')   },
+  { initials: 'DP', name: 'Diego P.',     nicho: 'Inmobiliarias',  avatar: dicebear('Diego')     },
+  { initials: 'CR', name: 'Camila R.',    nicho: 'Marca Personal', avatar: dicebear('Camila')    },
+  { initials: 'JT', name: 'Julián T.',    nicho: 'Startups',       avatar: dicebear('Julian')    },
+  { initials: 'AL', name: 'Ana L.',       nicho: 'Gastronomía',    avatar: dicebear('Ana')       },
+  { initials: 'MV', name: 'Matías V.',    nicho: 'Fitness',        avatar: dicebear('Matias')    },
+  { initials: 'FR', name: 'Franco R.',    nicho: 'Startups',       avatar: dicebear('Franco')    },
+  { initials: 'NG', name: 'Nadia G.',     nicho: 'Marca Personal', avatar: dicebear('Nadia')     },
+  { initials: 'PL', name: 'Pablo L.',     nicho: 'Inmobiliarias',  avatar: dicebear('Pablo')     },
+  { initials: 'RV', name: 'Romina V.',    nicho: 'Gastronomía',    avatar: dicebear('Romina')    },
+  { initials: 'SE', name: 'Santiago E.',  nicho: 'Fitness',        avatar: dicebear('Santiago')  },
+  { initials: 'LB', name: 'Laura B.',     nicho: 'Marca Personal', avatar: dicebear('Laura')     },
+  { initials: 'GM', name: 'Gonzalo M.',   nicho: 'Startups',       avatar: dicebear('Gonzalo')   },
 ]
 
 const NICHO_COLORS = {
