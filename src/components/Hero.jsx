@@ -70,7 +70,7 @@ export default function Hero() {
         height: '100vh',
         backgroundImage: `url(${astronauta})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'right center',
+        backgroundPosition: 'right 30%',
         backgroundRepeat: 'no-repeat',
       }}
     >

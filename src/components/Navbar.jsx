@@ -17,13 +17,13 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-bg/90 backdrop-blur-md gradient-border-top">
-      <div className="w-full px-8 md:px-16 flex items-center justify-between h-28">
+      <div className="w-full px-8 md:px-16 flex items-center justify-between h-20">
         {/* Logo */}
         <Link to="/" className="flex items-center">
           <img
             src={logo}
             alt="Between"
-            className="h-28 w-auto"
+            className="h-20 w-auto"
             style={{ filter: 'drop-shadow(0 0 3px rgba(0,196,204,0.35))' }}
           />
         </Link>
