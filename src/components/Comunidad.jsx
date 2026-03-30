@@ -1,40 +1,44 @@
-function dicebear(seed) {
-  return `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(seed)}&backgroundColor=0a1628&radius=50`
-}
+const GRADIENTS = [
+  'linear-gradient(135deg, #060D18, #00C4CC)',
+  'linear-gradient(135deg, #0A2040, #0088CC)',
+  'linear-gradient(135deg, #060D18, #00A889)',
+  'linear-gradient(135deg, #0A1628, #00B4A0)',
+  'linear-gradient(135deg, #0A2040, #00CC88)',
+  'linear-gradient(135deg, #060D18, #006B8F)',
+  'linear-gradient(135deg, #0A1628, #00C4CC)',
+  'linear-gradient(135deg, #071220, #00A889)',
+  'linear-gradient(135deg, #0A2040, #00B4A0)',
+  'linear-gradient(135deg, #060D18, #0088CC)',
+  'linear-gradient(135deg, #0A1628, #00CC88)',
+  'linear-gradient(135deg, #071220, #00C4CC)',
+  'linear-gradient(135deg, #0A2040, #00A889)',
+  'linear-gradient(135deg, #060D18, #00B4A0)',
+  'linear-gradient(135deg, #0A1628, #0088CC)',
+  'linear-gradient(135deg, #071220, #00CC88)',
+  'linear-gradient(135deg, #060D18, #006B8F)',
+]
 
 const liveCards = [
-  {
-    initials: 'MA', name: 'Martín A.', nicho: 'Inmobiliarias',
-    avatar: dicebear('Martin'),
-    seguidores: '1.2K', videos: '48', dias: '32',
-  },
-  {
-    initials: 'SC', name: 'Sofía C.', nicho: 'Marca Personal',
-    avatar: dicebear('Sofia'),
-    seguidores: '890', videos: '61', dias: '41',
-  },
-  {
-    initials: 'LR', name: 'Lucas R.', nicho: 'Startups',
-    avatar: dicebear('Lucas'),
-    seguidores: '2.1K', videos: '93', dias: '58',
-  },
+  { name: 'Martín A.', nicho: 'Inmobiliarias',  grad: GRADIENTS[0],  seguidores: '1.2K', videos: '48', dias: '32' },
+  { name: 'Sofía C.',  nicho: 'Marca Personal', grad: GRADIENTS[1],  seguidores: '890',  videos: '61', dias: '41' },
+  { name: 'Lucas R.',  nicho: 'Startups',        grad: GRADIENTS[2],  seguidores: '2.1K', videos: '93', dias: '58' },
 ]
 
 const avatares = [
-  { initials: 'VG', name: 'Valentina G.', nicho: 'Gastronomía',   avatar: dicebear('Valentina') },
-  { initials: 'EM', name: 'Esteban M.',   nicho: 'Fitness',        avatar: dicebear('Esteban')   },
-  { initials: 'DP', name: 'Diego P.',     nicho: 'Inmobiliarias',  avatar: dicebear('Diego')     },
-  { initials: 'CR', name: 'Camila R.',    nicho: 'Marca Personal', avatar: dicebear('Camila')    },
-  { initials: 'JT', name: 'Julián T.',    nicho: 'Startups',       avatar: dicebear('Julian')    },
-  { initials: 'AL', name: 'Ana L.',       nicho: 'Gastronomía',    avatar: dicebear('Ana')       },
-  { initials: 'MV', name: 'Matías V.',    nicho: 'Fitness',        avatar: dicebear('Matias')    },
-  { initials: 'FR', name: 'Franco R.',    nicho: 'Startups',       avatar: dicebear('Franco')    },
-  { initials: 'NG', name: 'Nadia G.',     nicho: 'Marca Personal', avatar: dicebear('Nadia')     },
-  { initials: 'PL', name: 'Pablo L.',     nicho: 'Inmobiliarias',  avatar: dicebear('Pablo')     },
-  { initials: 'RV', name: 'Romina V.',    nicho: 'Gastronomía',    avatar: dicebear('Romina')    },
-  { initials: 'SE', name: 'Santiago E.',  nicho: 'Fitness',        avatar: dicebear('Santiago')  },
-  { initials: 'LB', name: 'Laura B.',     nicho: 'Marca Personal', avatar: dicebear('Laura')     },
-  { initials: 'GM', name: 'Gonzalo M.',   nicho: 'Startups',       avatar: dicebear('Gonzalo')   },
+  { name: 'Valentina G.', nicho: 'Gastronomía',   grad: GRADIENTS[3]  },
+  { name: 'Esteban M.',   nicho: 'Fitness',        grad: GRADIENTS[4]  },
+  { name: 'Diego P.',     nicho: 'Inmobiliarias',  grad: GRADIENTS[5]  },
+  { name: 'Camila R.',    nicho: 'Marca Personal', grad: GRADIENTS[6]  },
+  { name: 'Julián T.',    nicho: 'Startups',       grad: GRADIENTS[7]  },
+  { name: 'Ana L.',       nicho: 'Gastronomía',    grad: GRADIENTS[8]  },
+  { name: 'Matías V.',    nicho: 'Fitness',        grad: GRADIENTS[9]  },
+  { name: 'Franco R.',    nicho: 'Startups',       grad: GRADIENTS[10] },
+  { name: 'Nadia G.',     nicho: 'Marca Personal', grad: GRADIENTS[11] },
+  { name: 'Pablo L.',     nicho: 'Inmobiliarias',  grad: GRADIENTS[12] },
+  { name: 'Romina V.',    nicho: 'Gastronomía',    grad: GRADIENTS[13] },
+  { name: 'Santiago E.',  nicho: 'Fitness',        grad: GRADIENTS[14] },
+  { name: 'Laura B.',     nicho: 'Marca Personal', grad: GRADIENTS[15] },
+  { name: 'Gonzalo M.',   nicho: 'Startups',       grad: GRADIENTS[16] },
 ]
 
 const NICHO_COLORS = {
@@ -45,7 +49,31 @@ const NICHO_COLORS = {
   'Fitness':        '#00CC88',
 }
 
-function LiveCard({ name, nicho, avatar, seguidores, videos, dias }) {
+const HelmetIcon = ({ size = 22, color = '#00C4CC' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="7"/>
+    <path d="M5 12a7 7 0 0 1 14 0"/>
+    <rect x="9" y="14" width="6" height="3" rx="1"/>
+    <circle cx="12" cy="11" r="2.5" fill={color} opacity="0.3"/>
+  </svg>
+)
+
+function AstroCircle({ grad, size = 72 }) {
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: '50%',
+      background: grad,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      border: '2px solid rgba(0,196,204,0.3)',
+      boxShadow: '0 0 14px rgba(0,196,204,0.15)',
+      flexShrink: 0,
+    }}>
+      <HelmetIcon size={Math.round(size * 0.44)} />
+    </div>
+  )
+}
+
+function LiveCard({ name, nicho, grad, seguidores, videos, dias }) {
   return (
     <div style={{
       background: '#0A1628',
@@ -71,12 +99,7 @@ function LiveCard({ name, nicho, avatar, seguidores, videos, dias }) {
 
       {/* Avatar + nombre */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
-        <img src={avatar} alt={name} style={{
-          width: 52, height: 52, borderRadius: '50%',
-          flexShrink: 0, boxShadow: '0 0 12px rgba(0,196,204,0.25)',
-          border: '2px solid rgba(255,255,255,0.1)',
-          objectFit: 'cover',
-        }} />
+        <AstroCircle grad={grad} size={52} />
         <div>
           <p style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff', margin: 0 }}>{name}</p>
           <p style={{ fontSize: '0.75rem', color: NICHO_COLORS[nicho], margin: '2px 0 0', fontWeight: 600 }}>{nicho}</p>
@@ -103,16 +126,11 @@ function LiveCard({ name, nicho, avatar, seguidores, videos, dias }) {
   )
 }
 
-function Avatar({ name, nicho, avatar }) {
+function Avatar({ name, nicho, grad }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
       <div style={{ position: 'relative' }}>
-        <img src={avatar} alt={name} style={{
-          width: 72, height: 72, borderRadius: '50%',
-          boxShadow: '0 0 14px rgba(0,196,204,0.18)',
-          border: '2px solid rgba(0,196,204,0.25)',
-          objectFit: 'cover',
-        }} />
+        <AstroCircle grad={grad} size={72} />
         <span style={{
           position: 'absolute', top: 2, right: 2,
           width: 12, height: 12, borderRadius: '50%',
