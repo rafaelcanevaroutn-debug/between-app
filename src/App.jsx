@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Nichos from './components/Nichos'
+import TickerPlanes from './components/TickerPlanes'
 import Hollywood from './components/Hollywood'
 import ElSet from './components/ElSet'
 import ExperimentoEnVivo from './components/ExperimentoEnVivo'
@@ -19,6 +20,7 @@ function Landing() {
   return (
     <>
       <Hero />
+      <TickerPlanes />
       <Nichos />
       <Simulador />
       <Hollywood />
