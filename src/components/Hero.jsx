@@ -94,8 +94,8 @@ export default function Hero() {
         src={astronauta}
         alt=""
         aria-hidden="true"
-        className="absolute right-0 top-0 h-full w-auto max-w-[72%] object-cover object-left pointer-events-none select-none"
-        style={{ opacity: 0.65 }}
+        className="absolute right-0 bottom-0 h-full w-auto max-w-[65%] object-contain object-bottom pointer-events-none select-none"
+        style={{ opacity: 0.75 }}
       />
 
       {/* Fade izquierda */}
