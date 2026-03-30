@@ -1,106 +1,136 @@
-function TikTokIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff" aria-label="TikTok">
-      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.79 1.53V6.78a4.85 4.85 0 01-1.02-.09z"/>
-    </svg>
-  )
-}
-
-function ReelsIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-label="Instagram Reels">
-      <rect x="2" y="2" width="20" height="20" rx="5" stroke="#fff" strokeWidth="1.8" fill="none"/>
-      <circle cx="12" cy="12" r="4" stroke="#fff" strokeWidth="1.8" fill="none"/>
-      <circle cx="17.5" cy="6.5" r="1.2" fill="#fff"/>
-    </svg>
-  )
-}
-
-function SpotifyIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="#1DB954" aria-label="Spotify">
-      <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.5 14.424c-.176.27-.545.354-.815.176-2.23-1.363-5.044-1.67-8.355-.914-.317.072-.634-.128-.706-.445-.072-.317.128-.634.445-.706 3.623-.827 6.734-.47 9.255 1.058.27.177.354.546.176.831zm1.2-2.67c-.22.337-.677.443-1.013.223-2.553-1.569-6.444-2.024-9.464-1.107-.392.12-.805-.1-.925-.49-.12-.392.1-.806.49-.924 3.45-1.047 7.741-.539 10.682 1.258.337.22.443.678.222 1.04h.008zm.103-2.78c-3.06-1.817-8.107-1.983-11.024-1.097-.467.142-.96-.12-1.101-.588-.142-.468.12-.961.588-1.101 3.353-1.017 8.928-.821 12.454 1.268.424.25.562.797.312 1.22-.25.423-.797.561-1.22.311l-.009-.013z"/>
-    </svg>
-  )
-}
-
 const pasos = [
   {
     num: '01',
     label: 'Contás tu historia',
-    desc: 'Te pasamos preguntas y ángulos para que sepas qué grabar. Nos juntamos por Meet o presencialmente si hay alguien en tu ciudad. Podés mandarnos crudos o editados, nosotros clippeamos todo.',
+    desc: 'Te pasamos preguntas y ángulos para que sepas qué grabar. Nos juntamos por Meet o presencialmente. Podés mandarnos crudos o editados, nosotros clippeamos todo.',
+    side: 'left',
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 6h20v14H2zM7 6V4M17 6V4" />
+        <path d="M2 10h20" />
+        <path d="M7 2h10" strokeWidth="2.5" />
+        <path d="M7 6l2-4M12 6l2-4M17 6l2-4" />
+      </svg>
+    ),
   },
   {
     num: '02',
     label: 'Lo convertimos en contenido',
-    desc: 'Nuestro equipo edita, adapta y produce todo listo para distribuir.',
+    desc: 'Nuestro equipo edita, adapta y produce todo listo para distribuir en múltiples canales y formatos.',
+    side: 'right',
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="4" width="20" height="16" rx="2" />
+        <circle cx="8" cy="12" r="2" />
+        <circle cx="16" cy="12" r="2" />
+        <path d="M2 8h20M2 16h20M8 4v16M16 4v16" />
+      </svg>
+    ),
   },
   {
     num: '03',
     label: 'Tu contenido se mueve todos los días',
     desc: 'Un sistema de canales distribuye tu historia constantemente. Sin que vos tengas que hacer nada más.',
-  },
-]
-
-const onboarding = [
-  {
-    label: 'Tu historia',
-    desc: 'Traés quien sos. Nosotros lo convertimos en contenido auténtico.',
-  },
-  {
-    label: 'Tu nicho',
-    desc: 'Definimos tu posicionamiento y construimos tu autoridad.',
-  },
-  {
-    label: 'Tu banda sonora',
-    desc: 'Integramos Spotify y tu música para crear una identidad sonora única.',
-    badge: 'Spotify',
-  },
-  {
-    label: 'Acción',
-    desc: 'Grabamos, editamos y publicamos. Vos solo tenés que aparecer.',
+    side: 'left',
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 8a9 9 0 0 1 0 8" strokeDasharray="2 2" />
+      </svg>
+    ),
   },
 ]
 
 export default function ElSet() {
   return (
-    <section id="como-funciona" className="py-24 dot-grid">
-      <div className="max-w-6xl mx-auto px-6 md:px-16">
-        {/* Title */}
-        <div className="mb-16">
-          <p className="text-cyan text-sm font-semibold uppercase tracking-widest mb-3">El proceso</p>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight">
-            Bienvenido al set.{' '}
-            <span
-              style={{
-                background: 'linear-gradient(135deg, #00C4CC, #00A889)',
-                WebkitBackgroundClip: 'text',
-                backgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              Nosotros dirigimos.
+    <section id="como-funciona" className="py-24 dot-grid overflow-hidden">
+      <div className="max-w-5xl mx-auto px-6 md:px-16">
+
+        {/* Título */}
+        <div className="text-center mb-20">
+          <p className="text-cyan text-sm font-semibold uppercase tracking-widest mb-4">El proceso</p>
+          <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(2.8rem, 6vw, 5rem)', fontWeight: 400, lineHeight: 1, letterSpacing: '0.04em', color: '#fff', margin: 0 }}>
+            BIENVENIDO AL SET.<br />
+            <span style={{ background: 'linear-gradient(135deg, #00C4CC, #00A889)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              NOSOTROS DIRIGIMOS.
             </span>
           </h2>
         </div>
 
-        {/* Pasos */}
-        <div className="max-w-2xl flex flex-col gap-10">
-          {pasos.map(({ num, label, desc }) => (
-            <div key={num} className="flex gap-5">
-              <span className="text-sm font-mono font-bold shrink-0 mt-1" style={{ color: '#00C4CC' }}>
-                {num}
-              </span>
-              <div>
-                <h3 className="text-white font-bold text-lg mb-1">{label}</h3>
-                <p className="text-gray text-sm leading-relaxed">{desc}</p>
-              </div>
-            </div>
-          ))}
+        {/* Timeline */}
+        <div className="relative">
+          {/* Línea central vertical */}
+          <div
+            className="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 bottom-0"
+            style={{ width: 2, background: 'linear-gradient(to bottom, transparent, #00C4CC 10%, #00C4CC 90%, transparent)' }}
+          />
+
+          <div className="flex flex-col gap-16">
+            {pasos.map(({ num, label, desc, side, icon }) => {
+              const isLeft = side === 'left'
+              return (
+                <div key={num} className="relative flex items-center">
+
+                  {/* Dot en la línea */}
+                  <div
+                    className="hidden md:block absolute left-1/2 -translate-x-1/2 z-10"
+                    style={{
+                      width: 14, height: 14,
+                      borderRadius: '50%',
+                      background: '#00C4CC',
+                      boxShadow: '0 0 16px rgba(0,196,204,0.7)',
+                    }}
+                  />
+
+                  {/* Contenido — alterna izq/der en desktop */}
+                  <div className={`w-full md:w-1/2 ${isLeft ? 'md:pr-16' : 'md:pl-16 md:ml-auto'}`}>
+                    <div
+                      style={{
+                        background: 'rgba(10,22,40,0.8)',
+                        border: '1px solid rgba(0,196,204,0.2)',
+                        borderRadius: '16px',
+                        padding: '24px',
+                        backdropFilter: 'blur(8px)',
+                      }}
+                    >
+                      {/* Número + icono */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+                        <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '2.2rem', fontWeight: 400, color: '#00C4CC', lineHeight: 1 }}>
+                          {num}
+                        </span>
+                        <div style={{
+                          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                          width: 48, height: 48,
+                          background: 'rgba(0,196,204,0.12)',
+                          borderRadius: '10px',
+                          boxShadow: '0 0 14px rgba(0,196,204,0.2)',
+                          flexShrink: 0,
+                        }}>
+                          {icon}
+                        </div>
+                      </div>
+
+                      <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.4rem', fontWeight: 400, color: '#fff', letterSpacing: '0.04em', margin: '0 0 8px' }}>
+                        {label}
+                      </h3>
+                      <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.65, margin: 0 }}>
+                        {desc}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
 
-        {/* CTA */}
-        <div className="mt-16 text-center">
+        {/* Frase final + CTA */}
+        <div className="mt-20 text-center">
+          <p style={{ fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', color: 'rgba(255,255,255,0.55)', marginBottom: 28 }}>
+            Vos construís.{' '}
+            <span style={{ color: '#fff', fontWeight: 600 }}>Nosotros hacemos que el mundo lo vea.</span>
+          </p>
           <a
             href="#contacto"
             className="inline-block px-10 py-4 rounded-full text-base font-semibold text-white"
@@ -111,14 +141,8 @@ export default function ElSet() {
           >
             Quiero entrar al set
           </a>
-          <p
-            className="mt-8 text-lg md:text-xl font-semibold"
-            style={{ color: 'rgba(255,255,255,0.55)' }}
-          >
-            Vos construís.{' '}
-            <span className="text-white">Nosotros hacemos que el mundo lo vea.</span>
-          </p>
         </div>
+
       </div>
     </section>
   )
