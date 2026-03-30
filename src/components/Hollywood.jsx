@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import hollywood from '../assets/Gemini_Generated_Image_j16834j16834j168.png'
 
 const cards = [
@@ -53,6 +54,47 @@ const cards = [
   },
 ]
 
+function HollywoodCard({ icon, title, desc }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: 'linear-gradient(135deg, #0A1628, #060D18)',
+        border: '1px solid rgba(255,255,255,0.07)',
+        borderLeft: `3px solid ${hovered ? '#00E5EE' : '#00C4CC'}`,
+        borderRadius: '16px',
+        padding: '24px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '14px',
+        transition: 'box-shadow 0.25s ease, transform 0.25s ease, border-left-color 0.25s ease',
+        boxShadow: hovered ? '0 0 30px rgba(0,196,204,0.2)' : '0 4px 16px rgba(0,0,0,0.3)',
+        transform: hovered ? 'translateY(-6px)' : 'translateY(0)',
+        cursor: 'default',
+      }}
+    >
+      <div style={{
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+        width: 60, height: 60,
+        background: 'rgba(0,196,204,0.12)',
+        borderRadius: '8px',
+        boxShadow: '0 0 12px rgba(0,196,204,0.15)',
+      }}>
+        <div style={{ transform: 'scale(1.25)', lineHeight: 0 }}>{icon}</div>
+      </div>
+      <div style={{ height: '1px', background: 'rgba(0,196,204,0.3)' }} />
+      <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.3rem', fontWeight: 400, color: '#FFFFFF', letterSpacing: '0.05em', margin: 0, lineHeight: 1.2 }}>
+        {title}
+      </h3>
+      <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.6, margin: 0 }}>
+        {desc}
+      </p>
+    </div>
+  )
+}
+
 export default function Hollywood() {
   return (
     <section className="relative py-28 overflow-hidden">
@@ -78,18 +120,7 @@ export default function Hollywood() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {cards.map(({ icon, title, desc }) => (
-            <div
-              key={title}
-              className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 card-hover"
-              style={{
-                border: '1px solid rgba(255,255,255,0.07)',
-                borderLeft: '3px solid #00C4CC',
-              }}
-            >
-              <div className="mb-4">{icon}</div>
-              <h3 className="text-white mb-2" style={{ fontSize: '1.05rem', fontWeight: 700 }}>{title}</h3>
-              <p className="leading-relaxed" style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.8)' }}>{desc}</p>
-            </div>
+            <HollywoodCard key={title} icon={icon} title={title} desc={desc} />
           ))}
         </div>
       </div>
