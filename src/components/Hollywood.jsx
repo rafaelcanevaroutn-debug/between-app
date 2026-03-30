@@ -60,7 +60,7 @@ export default function Hollywood() {
 
       <div className="relative z-10 max-w-6xl mx-auto px-6">
         <div className="max-w-2xl mb-16">
-          <h2 className="text-5xl md:text-7xl text-white leading-none mb-6" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, letterSpacing: '-0.02em' }}>
+          <h2 className="text-5xl md:text-7xl text-white leading-none mb-6" style={{ letterSpacing: '-0.02em' }}>
             Hollywood no<br />
             <span className="gradient-text">existe más.</span>
           </h2>
