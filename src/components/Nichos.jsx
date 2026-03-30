@@ -4,6 +4,7 @@ const nichos = [
   {
     num: '01',
     label: 'Inmobiliarias',
+    desc: 'Convertí cada propiedad en contenido que genera confianza antes de la primera reunión.',
     accent: '#00C4CC',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -14,6 +15,7 @@ const nichos = [
   {
     num: '02',
     label: 'Gastronomía',
+    desc: 'Tu plato merece más que una foto. Convertilo en contenido que llena mesas.',
     accent: '#00A889',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -24,6 +26,7 @@ const nichos = [
   {
     num: '03',
     label: 'Marca Personal',
+    desc: 'Tu historia es tu diferencial. Hacemos que el mundo la conozca.',
     accent: '#00B4A0',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -35,6 +38,7 @@ const nichos = [
   {
     num: '04',
     label: 'Startups',
+    desc: 'Construís algo grande. Que la gente lo sepa mientras sucede.',
     accent: '#0088CC',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -46,6 +50,7 @@ const nichos = [
   {
     num: '05',
     label: 'Fitness',
+    desc: 'Tu método tiene resultados. Mostráselos a quienes todavía no te encontraron.',
     accent: '#00CC88',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -55,7 +60,7 @@ const nichos = [
   },
 ]
 
-function NichoCard({ num, label, accent, icon }) {
+function NichoCard({ num, label, desc, accent, icon }) {
   const [hovered, setHovered] = useState(false)
 
   return (
@@ -72,20 +77,47 @@ function NichoCard({ num, label, accent, icon }) {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
+        overflow: 'hidden',
+        position: 'relative',
         transition: 'box-shadow 0.25s ease, transform 0.25s ease',
         cursor: 'default',
         boxShadow: hovered ? `0 0 24px ${accent}44` : 'none',
         transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
       }}
     >
-      <div style={{ color: accent, lineHeight: 0 }}>{icon}</div>
-      <div>
+      {/* Contenido por defecto: icono + nombre */}
+      <div style={{ color: accent, lineHeight: 0, transition: 'opacity 0.25s ease, transform 0.25s ease', opacity: hovered ? 0 : 1, transform: hovered ? 'translateY(-8px)' : 'translateY(0)' }}>
+        {icon}
+      </div>
+      <div style={{ transition: 'opacity 0.25s ease, transform 0.25s ease', opacity: hovered ? 0 : 1, transform: hovered ? 'translateY(-8px)' : 'translateY(0)' }}>
         <span style={{ fontFamily: 'monospace', fontSize: '10px', fontWeight: 700, letterSpacing: '0.12em', color: accent, display: 'block', marginBottom: 4 }}>
           {num}
         </span>
         <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.2, margin: 0 }}>
           {label}
         </h3>
+      </div>
+
+      {/* Overlay en hover: icono pequeño + nombre + texto */}
+      <div style={{
+        position: 'absolute', inset: 0, padding: '20px',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '10px',
+        background: `linear-gradient(135deg, ${accent}14, rgba(10,22,40,0.97))`,
+        opacity: hovered ? 1 : 0,
+        transform: hovered ? 'translateY(0)' : 'translateY(16px)',
+        transition: 'opacity 0.3s ease, transform 0.3s ease',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ color: accent, lineHeight: 0 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              {icon.props.children}
+            </svg>
+          </span>
+          <h3 style={{ fontSize: '1rem', fontWeight: 800, color: '#FFFFFF', margin: 0 }}>{label}</h3>
+        </div>
+        <p style={{ fontSize: '0.82rem', lineHeight: 1.55, color: 'rgba(255,255,255,0.7)', margin: 0 }}>
+          {desc}
+        </p>
       </div>
     </div>
   )
@@ -100,12 +132,11 @@ export default function Nichos() {
           <h2 className="text-4xl md:text-5xl font-extrabold text-white">¿Cuál es tu historia?</h2>
         </div>
 
-        {/* Desktop: 5 columnas, una hilera */}
-        <div className="hidden md:grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}
+             className="hidden md:grid">
           {nichos.map((n) => <NichoCard key={n.num} {...n} />)}
         </div>
 
-        {/* Mobile: 2 columnas */}
         <div className="md:hidden" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
           {nichos.map((n) => <NichoCard key={n.num} {...n} />)}
         </div>
