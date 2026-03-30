@@ -1,36 +1,40 @@
+function uiAvatar(name, bg) {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${bg.replace('#','')}&color=fff&size=128&bold=true&font-size=0.4`
+}
+
 const liveCards = [
   {
     initials: 'MA', name: 'Martín A.', nicho: 'Inmobiliarias',
-    gradient: 'linear-gradient(135deg, #006B6F, #00C4CC)',
+    avatar: uiAvatar('MA', '#006B6F'),
     seguidores: '1.2K', videos: '48', dias: '32',
   },
   {
     initials: 'SC', name: 'Sofía C.', nicho: 'Marca Personal',
-    gradient: 'linear-gradient(135deg, #004D6B, #0088CC)',
+    avatar: uiAvatar('SC', '#004D6B'),
     seguidores: '890', videos: '61', dias: '41',
   },
   {
     initials: 'LR', name: 'Lucas R.', nicho: 'Startups',
-    gradient: 'linear-gradient(135deg, #005C4A, #00A889)',
+    avatar: uiAvatar('LR', '#005C4A'),
     seguidores: '2.1K', videos: '93', dias: '58',
   },
 ]
 
 const avatares = [
-  { initials: 'VG', name: 'Valentina G.', nicho: 'Gastronomía',    gradient: 'linear-gradient(135deg, #006B6F, #00B4A0)' },
-  { initials: 'EM', name: 'Esteban M.',   nicho: 'Fitness',         gradient: 'linear-gradient(135deg, #004A6B, #00CC88)' },
-  { initials: 'DP', name: 'Diego P.',     nicho: 'Inmobiliarias',   gradient: 'linear-gradient(135deg, #00585C, #00C4CC)' },
-  { initials: 'CR', name: 'Camila R.',    nicho: 'Marca Personal',  gradient: 'linear-gradient(135deg, #003D5C, #0088CC)' },
-  { initials: 'JT', name: 'Julián T.',    nicho: 'Startups',        gradient: 'linear-gradient(135deg, #004038, #00A889)' },
-  { initials: 'AL', name: 'Ana L.',       nicho: 'Gastronomía',     gradient: 'linear-gradient(135deg, #005C58, #00B4A0)' },
-  { initials: 'MV', name: 'Matías V.',    nicho: 'Fitness',         gradient: 'linear-gradient(135deg, #003850, #00CC88)' },
-  { initials: 'FR', name: 'Franco R.',    nicho: 'Startups',        gradient: 'linear-gradient(135deg, #005040, #00A889)' },
-  { initials: 'NG', name: 'Nadia G.',     nicho: 'Marca Personal',  gradient: 'linear-gradient(135deg, #004060, #0088CC)' },
-  { initials: 'PL', name: 'Pablo L.',     nicho: 'Inmobiliarias',   gradient: 'linear-gradient(135deg, #006068, #00C4CC)' },
-  { initials: 'RV', name: 'Romina V.',    nicho: 'Gastronomía',     gradient: 'linear-gradient(135deg, #004848, #00B4A0)' },
-  { initials: 'SE', name: 'Santiago E.',  nicho: 'Fitness',         gradient: 'linear-gradient(135deg, #003060, #00CC88)' },
-  { initials: 'LB', name: 'Laura B.',     nicho: 'Marca Personal',  gradient: 'linear-gradient(135deg, #003850, #0088CC)' },
-  { initials: 'GM', name: 'Gonzalo M.',   nicho: 'Startups',        gradient: 'linear-gradient(135deg, #004838, #00A889)' },
+  { initials: 'VG', name: 'Valentina G.', nicho: 'Gastronomía',   avatar: uiAvatar('VG', '006B6F') },
+  { initials: 'EM', name: 'Esteban M.',   nicho: 'Fitness',        avatar: uiAvatar('EM', '004A6B') },
+  { initials: 'DP', name: 'Diego P.',     nicho: 'Inmobiliarias',  avatar: uiAvatar('DP', '00585C') },
+  { initials: 'CR', name: 'Camila R.',    nicho: 'Marca Personal', avatar: uiAvatar('CR', '003D5C') },
+  { initials: 'JT', name: 'Julián T.',    nicho: 'Startups',       avatar: uiAvatar('JT', '004038') },
+  { initials: 'AL', name: 'Ana L.',       nicho: 'Gastronomía',    avatar: uiAvatar('AL', '005C58') },
+  { initials: 'MV', name: 'Matías V.',    nicho: 'Fitness',        avatar: uiAvatar('MV', '003850') },
+  { initials: 'FR', name: 'Franco R.',    nicho: 'Startups',       avatar: uiAvatar('FR', '005040') },
+  { initials: 'NG', name: 'Nadia G.',     nicho: 'Marca Personal', avatar: uiAvatar('NG', '004060') },
+  { initials: 'PL', name: 'Pablo L.',     nicho: 'Inmobiliarias',  avatar: uiAvatar('PL', '006068') },
+  { initials: 'RV', name: 'Romina V.',    nicho: 'Gastronomía',    avatar: uiAvatar('RV', '004848') },
+  { initials: 'SE', name: 'Santiago E.',  nicho: 'Fitness',        avatar: uiAvatar('SE', '003060') },
+  { initials: 'LB', name: 'Laura B.',     nicho: 'Marca Personal', avatar: uiAvatar('LB', '003850') },
+  { initials: 'GM', name: 'Gonzalo M.',   nicho: 'Startups',       avatar: uiAvatar('GM', '004838') },
 ]
 
 const NICHO_COLORS = {
@@ -41,7 +45,7 @@ const NICHO_COLORS = {
   'Fitness':        '#00CC88',
 }
 
-function LiveCard({ initials, name, nicho, gradient, seguidores, videos, dias }) {
+function LiveCard({ name, nicho, avatar, seguidores, videos, dias }) {
   return (
     <div style={{
       background: '#0A1628',
@@ -67,15 +71,12 @@ function LiveCard({ initials, name, nicho, gradient, seguidores, videos, dias })
 
       {/* Avatar + nombre */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
-        <div style={{
-          width: 52, height: 52, borderRadius: '50%', background: gradient,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '1rem', fontWeight: 800, color: '#fff',
+        <img src={avatar} alt={name} style={{
+          width: 52, height: 52, borderRadius: '50%',
           flexShrink: 0, boxShadow: '0 0 12px rgba(0,196,204,0.25)',
           border: '2px solid rgba(255,255,255,0.1)',
-        }}>
-          {initials}
-        </div>
+          objectFit: 'cover',
+        }} />
         <div>
           <p style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff', margin: 0 }}>{name}</p>
           <p style={{ fontSize: '0.75rem', color: NICHO_COLORS[nicho], margin: '2px 0 0', fontWeight: 600 }}>{nicho}</p>
@@ -102,19 +103,16 @@ function LiveCard({ initials, name, nicho, gradient, seguidores, videos, dias })
   )
 }
 
-function Avatar({ initials, name, nicho, gradient }) {
+function Avatar({ name, nicho, avatar }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
       <div style={{ position: 'relative' }}>
-        <div style={{
-          width: 72, height: 72, borderRadius: '50%', background: gradient,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '1.05rem', fontWeight: 800, color: '#fff',
+        <img src={avatar} alt={name} style={{
+          width: 72, height: 72, borderRadius: '50%',
           boxShadow: '0 0 14px rgba(0,196,204,0.18)',
-          border: '2px solid rgba(255,255,255,0.08)',
-        }}>
-          {initials}
-        </div>
+          border: '2px solid rgba(0,196,204,0.25)',
+          objectFit: 'cover',
+        }} />
         <span style={{
           position: 'absolute', top: 2, right: 2,
           width: 12, height: 12, borderRadius: '50%',
