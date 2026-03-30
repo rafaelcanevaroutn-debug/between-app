@@ -1,4 +1,4 @@
-import hollywood from '../assets/hollywoodnoexistemas.jpg'
+import hollywood from '../assets/Gemini_Generated_Image_j16834j16834j168.png'
 
 const cards = [
   {
