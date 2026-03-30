@@ -61,14 +61,15 @@ function HollywoodCard({ icon, title, desc }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: 'linear-gradient(135deg, #0A1628, #060D18)',
+        background: 'rgba(6,13,24,0.65)',
+        backdropFilter: 'blur(8px)',
         border: '1px solid rgba(255,255,255,0.07)',
         borderLeft: `3px solid ${hovered ? '#00E5EE' : '#00C4CC'}`,
-        borderRadius: '16px',
-        padding: '24px',
+        borderRadius: '12px',
+        padding: '16px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '14px',
+        gap: '10px',
         transition: 'box-shadow 0.25s ease, transform 0.25s ease, border-left-color 0.25s ease',
         boxShadow: hovered ? '0 0 30px rgba(0,196,204,0.2)' : '0 4px 16px rgba(0,0,0,0.3)',
         transform: hovered ? 'translateY(-6px)' : 'translateY(0)',
@@ -77,18 +78,19 @@ function HollywoodCard({ icon, title, desc }) {
     >
       <div style={{
         display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-        width: 60, height: 60,
+        width: 36, height: 36,
         background: 'rgba(0,196,204,0.12)',
         borderRadius: '8px',
-        boxShadow: '0 0 12px rgba(0,196,204,0.15)',
+        boxShadow: '0 0 10px rgba(0,196,204,0.15)',
+        flexShrink: 0,
       }}>
-        <div style={{ transform: 'scale(1.25)', lineHeight: 0 }}>{icon}</div>
+        <div style={{ transform: 'scale(0.625)', lineHeight: 0 }}>{icon}</div>
       </div>
       <div style={{ height: '1px', background: 'rgba(0,196,204,0.3)' }} />
-      <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.3rem', fontWeight: 400, color: '#FFFFFF', letterSpacing: '0.05em', margin: 0, lineHeight: 1.2 }}>
+      <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1rem', fontWeight: 400, color: '#FFFFFF', letterSpacing: '0.05em', margin: 0, lineHeight: 1.2 }}>
         {title}
       </h3>
-      <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.6, margin: 0 }}>
+      <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.55, margin: 0 }}>
         {desc}
       </p>
     </div>
