@@ -130,34 +130,48 @@ export default function Hero() {
         {/* Headline rotativo */}
         <div className="mb-4" style={{ minHeight: 150 }}>
           <h1 style={{ fontSize: 'clamp(3.5rem, 5.5vw, 5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '0.01em', width: '100%', overflow: 'visible', fontFamily: "'Bebas Neue', sans-serif", wordBreak: 'keep-all', hyphens: 'none', overflowWrap: 'normal' }}>
-            {chars.map(({ ch, color, staggerIdx, isBreak }, i) => {
-              if (isBreak) return <br key={`br-${phraseIdx}-${i}`} />
-
-              const delay = `${staggerIdx * STAGGER}ms`
-              const charColor = color || '#fff'
-              const glow = color === '#00C4CC' ? '0 0 16px rgba(0,196,204,0.6)' : 'none'
-
-              let spanStyle
-              if (charState === 'entering') {
-                spanStyle = {
-                  display: 'inline-block', opacity: 0, color: charColor, textShadow: glow,
-                  animation: `charIn ${ENTER_DUR}ms ease forwards`, animationDelay: delay,
+            {(() => {
+              // Agrupar chars en tokens: word | space | break
+              // Así cada palabra es un inline-block atómico y no se corta
+              const tokens = []
+              let currentWord = []
+              chars.forEach((charObj, i) => {
+                if (charObj.isBreak) {
+                  if (currentWord.length) { tokens.push({ type: 'word', chars: currentWord }); currentWord = [] }
+                  tokens.push({ type: 'break', key: `br-${phraseIdx}-${i}` })
+                } else if (charObj.ch === ' ') {
+                  if (currentWord.length) { tokens.push({ type: 'word', chars: currentWord }); currentWord = [] }
+                  tokens.push({ type: 'space', charObj, key: `sp-${phraseIdx}-${i}` })
+                } else {
+                  currentWord.push({ ...charObj, idx: i })
                 }
-              } else if (charState === 'visible') {
-                spanStyle = { display: 'inline-block', opacity: 1, color: charColor, textShadow: glow }
-              } else {
-                spanStyle = {
-                  display: 'inline-block', opacity: 1, color: charColor, textShadow: glow,
-                  animation: `charOut ${EXIT_DUR}ms ease forwards`, animationDelay: delay,
-                }
+              })
+              if (currentWord.length) tokens.push({ type: 'word', chars: currentWord })
+
+              const getCharStyle = (staggerIdx, color) => {
+                const delay = `${staggerIdx * STAGGER}ms`
+                const charColor = color || '#fff'
+                const glow = color === '#00C4CC' ? '0 0 16px rgba(0,196,204,0.6)' : 'none'
+                if (charState === 'entering') return { display: 'inline-block', opacity: 0, color: charColor, textShadow: glow, animation: `charIn ${ENTER_DUR}ms ease forwards`, animationDelay: delay }
+                if (charState === 'visible')  return { display: 'inline-block', opacity: 1, color: charColor, textShadow: glow }
+                return { display: 'inline-block', opacity: 1, color: charColor, textShadow: glow, animation: `charOut ${EXIT_DUR}ms ease forwards`, animationDelay: delay }
               }
 
-              return (
-                <span key={`${phraseIdx}-${i}`} style={spanStyle}>
-                  {ch === ' ' ? '\u00A0' : ch}
-                </span>
-              )
-            })}
+              return tokens.map((token, ti) => {
+                if (token.type === 'break') return <br key={token.key} />
+                if (token.type === 'space') {
+                  const s = getCharStyle(token.charObj.staggerIdx, null)
+                  return <span key={token.key} style={{ ...s, color: undefined, textShadow: undefined }}>{'\u00A0'}</span>
+                }
+                return (
+                  <span key={`word-${phraseIdx}-${ti}`} style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+                    {token.chars.map(({ ch, color, staggerIdx, idx }) => (
+                      <span key={`${phraseIdx}-${idx}`} style={getCharStyle(staggerIdx, color)}>{ch}</span>
+                    ))}
+                  </span>
+                )
+              })
+            })()}
           </h1>
         </div>
 
