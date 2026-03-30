@@ -129,7 +129,7 @@ export default function Hero() {
 
         {/* Headline rotativo */}
         <div className="mb-4" style={{ minHeight: 150 }}>
-          <h1 style={{ fontSize: 'clamp(3.5rem, 5.5vw, 5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '0.01em', width: '100%', overflow: 'visible', fontFamily: "'Bebas Neue', sans-serif", wordBreak: 'keep-all', hyphens: 'none', overflowWrap: 'normal' }}>
+          <h1 style={{ fontSize: 'clamp(2.4rem, 4vw, 3.5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '0.01em', width: '100%', overflow: 'visible', fontFamily: "'Bebas Neue', sans-serif", wordBreak: 'keep-all', hyphens: 'none', overflowWrap: 'normal' }}>
             {(() => {
               // Agrupar chars en tokens: word | space | break
               // Así cada palabra es un inline-block atómico y no se corta
