@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import astronauta from '../assets/astronauta2.png.png'
 import Particles from './Particles'
 
+// Cada frase es un array de segmentos { text, color }
+// color null = blanco, '#00C4CC' = cyan, '#8B5CF6' = violeta
 const FRASES = [
   [
     { text: 'Dejá de construir ', color: null },
@@ -22,16 +24,17 @@ const FRASES = [
   ],
 ]
 
-const STAGGER    = 38
-const ENTER_DUR  = 420
-const EXIT_DUR   = 320
-const DISPLAY_MS = 4200
+const STAGGER    = 38   // ms entre letras
+const ENTER_DUR  = 420  // ms duración de entrada por letra
+const EXIT_DUR   = 320  // ms duración de salida por letra
+const DISPLAY_MS = 4200 // ms que la frase queda visible
 
 const dotGridStyle = {
   backgroundImage: 'radial-gradient(circle, rgba(0,196,204,0.15) 1px, transparent 1px)',
   backgroundSize: '20px 20px',
 }
 
+// Construye la lista de tokens con índice de stagger (sin contar los \n)
 function buildChars(phraseIdx) {
   const chars = []
   let staggerIdx = 0
@@ -49,7 +52,7 @@ function buildChars(phraseIdx) {
 
 export default function Hero() {
   const [phraseIdx, setPhraseIdx] = useState(0)
-  const [charState, setCharState] = useState('entering')
+  const [charState, setCharState] = useState('entering') // 'entering' | 'visible' | 'exiting'
 
   const chars = buildChars(phraseIdx)
   const visibleCount = chars.filter(c => !c.isBreak).length
@@ -70,8 +73,8 @@ export default function Hero() {
   return (
     <section
       id="servicios"
-      className="relative overflow-hidden"
-      style={{ ...dotGridStyle, height: '100vh' }}
+      className="relative min-h-screen flex items-center pt-28 overflow-hidden"
+      style={dotGridStyle}
     >
       <style>{`
         @keyframes charIn {
@@ -86,29 +89,60 @@ export default function Hero() {
 
       <Particles count={35} />
 
-      {/* Glow verde inferior derecha */}
+      {/* Astronauta */}
       <div
-        className="absolute bottom-0 right-0 pointer-events-none"
-        style={{ width: 600, height: 400, background: 'radial-gradient(ellipse at bottom right, rgba(0,168,137,0.12) 0%, transparent 70%)', zIndex: 1 }}
+        className="pointer-events-none"
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          width: '50%',
+          height: '100vh',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Gradiente blend izquierdo */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to right, #060D18 0%, transparent 40%)',
+            zIndex: 2,
+          }}
+        />
+        <img
+          src={astronauta}
+          alt=""
+          aria-hidden="true"
+          className="select-none"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+            mixBlendMode: 'screen',
+            opacity: 0.95,
+          }}
+        />
+      </div>
+
+      {/* Glow verde inferior derecha */}
+      <div className="absolute bottom-0 right-0 pointer-events-none"
+        style={{ width: 600, height: 400, background: 'radial-gradient(ellipse at bottom right, rgba(0,168,137,0.12) 0%, transparent 70%)' }}
       />
 
-      {/* Layout 2 columnas */}
-      <div className="relative flex h-full" style={{ zIndex: 10 }}>
+      <div className="relative w-full px-6 pl-8 md:pl-16 lg:pl-24 pt-6 pb-24" style={{ zIndex: 10 }}>
+        <div className="max-w-2xl text-left">
 
-        {/* ── Columna izquierda: TEXTO (55%) ── */}
-        <div
-          className="flex flex-col justify-center"
-          style={{ width: '55%', paddingLeft: 'clamp(2rem, 6vw, 7rem)', paddingRight: '2rem', paddingTop: '5rem' }}
-        >
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-card border border-border rounded-full px-4 py-1.5 mb-8 self-start">
+          <div className="inline-flex items-center gap-2 bg-card border border-border rounded-full px-4 py-1.5 mb-8">
             <span className="w-2 h-2 rounded-full bg-cyan animate-pulse" />
             <span className="text-xs text-gray font-medium tracking-wider uppercase">Plataforma de visibilidad</span>
           </div>
 
-          {/* Headline rotativo */}
-          <div className="mb-4" style={{ minHeight: 170 }}>
-            <h1 style={{ fontSize: '3.5rem', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+          {/* Headline rotativo — letra por letra */}
+          <div className="mb-3" style={{ minHeight: 160 }}>
+            <h1 style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
               {chars.map(({ ch, color, staggerIdx, isBreak }, i) => {
                 if (isBreak) return <br key={`br-${phraseIdx}-${i}`} />
 
@@ -155,15 +189,15 @@ export default function Hero() {
             </h1>
           </div>
 
-          {/* Subheadline */}
-          <p className="text-gray text-lg leading-relaxed mb-10" style={{ maxWidth: 440 }}>
+          {/* Subheadline fijo */}
+          <p className="text-gray text-lg md:text-xl leading-relaxed max-w-lg mb-10">
             Contá tu historia. Nosotros nos encargamos de que el mundo la escuche.
           </p>
 
-          {/* CTA */}
+          {/* CTA único */}
           <a
             href="#contacto"
-            className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-base font-bold text-white transition-all duration-300 self-start"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-base font-bold text-white transition-all duration-300"
             style={{
               background: 'linear-gradient(135deg, #00C4CC, #00A889)',
               boxShadow: '0 0 28px rgba(0,196,204,0.4)',
@@ -182,38 +216,15 @@ export default function Hero() {
               <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </a>
+
         </div>
-
-        {/* ── Columna derecha: ASTRONAUTA (45%) ── */}
-        <div className="relative" style={{ width: '45%' }}>
-          {/* Blend izquierdo para integrar con el fondo */}
-          <div
-            className="absolute inset-y-0 left-0 pointer-events-none"
-            style={{ width: '45%', background: 'linear-gradient(to right, #060D18, transparent)', zIndex: 2 }}
-          />
-
-          <img
-            src={astronauta}
-            alt=""
-            aria-hidden="true"
-            className="pointer-events-none select-none"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              objectPosition: 'center',
-              opacity: 0.92,
-            }}
-          />
-        </div>
-
       </div>
 
       {/* Card flotante SISTEMA ACTIVO — arriba derecha */}
       <div
         className="absolute hidden lg:flex flex-col gap-1"
         style={{
-          top: '18%', right: '2%',
+          top: '18%', right: '4%',
           background: 'rgba(6,13,24,0.88)',
           border: '1px solid rgba(0,196,204,0.25)',
           borderRadius: 10, padding: '12px 18px',
@@ -237,20 +248,20 @@ export default function Hero() {
         <div style={{ width: 1, height: 48, background: 'linear-gradient(to bottom, rgba(0,196,204,0.5), transparent)' }} />
       </div>
 
-      {/* Card quote del astronauta — abajo derecha */}
+      {/* Frase flotante cerca del astronauta */}
       <div
         className="absolute hidden lg:block"
         style={{
-          right: '2%', bottom: '8%', maxWidth: 260,
+          right: '3%', bottom: '10%', maxWidth: 260,
           background: 'rgba(6,13,24,0.85)',
           border: '1px solid rgba(0,196,204,0.18)',
-          borderRadius: 12, padding: '20px 24px',
+          borderRadius: 12, padding: '22px 26px',
           backdropFilter: 'blur(10px)',
           zIndex: 20,
           boxShadow: '0 0 24px rgba(0,196,204,0.07)',
         }}
       >
-        <p className="leading-relaxed" style={{ color: '#7A9AB0', fontSize: 13 }}>
+        <p className="leading-relaxed" style={{ color: '#7A9AB0', fontSize: 14 }}>
           "El astronauta flotando solo en el espacio no está perdido.
           Está en el lugar más visible del universo.
           Solo necesitaba el traje correcto para llegar ahí.{' '}
