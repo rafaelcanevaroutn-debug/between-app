@@ -129,7 +129,7 @@ export default function Hero() {
 
         {/* Headline rotativo */}
         <div className="mb-4" style={{ minHeight: 150 }}>
-          <h1 style={{ fontSize: 'clamp(3.5rem, 6vw, 5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '0.01em', width: '100%', overflow: 'visible', fontFamily: "'Bebas Neue', sans-serif" }}>
+          <h1 style={{ fontSize: 'clamp(3.5rem, 6vw, 5rem)', fontWeight: 800, lineHeight: 1.05, letterSpacing: '0.01em', width: '100%', overflow: 'visible', fontFamily: "'Syne', sans-serif" }}>
             {chars.map(({ ch, color, staggerIdx, isBreak }, i) => {
               if (isBreak) return <br key={`br-${phraseIdx}-${i}`} />
 
@@ -195,26 +195,7 @@ export default function Hero() {
         </a>
       </div>
 
-      {/* Card SISTEMA ACTIVO — arriba derecha */}
-      <div
-        className="absolute hidden lg:flex flex-col gap-1"
-        style={{
-          top: '18%', right: '4%',
-          background: 'rgba(6,13,24,0.88)',
-          border: '1px solid rgba(0,196,204,0.25)',
-          borderRadius: 10, padding: '12px 18px',
-          backdropFilter: 'blur(12px)',
-          zIndex: 25,
-          boxShadow: '0 0 20px rgba(0,196,204,0.1)',
-        }}
-      >
-        <span className="text-xs font-bold tracking-widest uppercase flex items-center gap-1.5" style={{ color: '#00C4CC' }}>
-          <span style={{ fontSize: 8 }}>●</span> SISTEMA ACTIVO
-        </span>
-        <span className="text-xs mt-0.5" style={{ color: '#7A9AB0' }}>1 cliente · 5 canales activos</span>
-      </div>
-
-      {/* Indicador SCROLL — centro inferior */}
+{/* Indicador SCROLL — centro inferior */}
       <div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
         style={{ zIndex: 20 }}
