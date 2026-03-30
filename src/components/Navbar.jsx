@@ -23,7 +23,7 @@ export default function Navbar() {
           <img
             src={logo}
             alt="Between"
-            className="h-20 w-auto"
+            className="h-28 w-auto"
             style={{ filter: 'drop-shadow(0 0 3px rgba(0,196,204,0.35))' }}
           />
         </Link>
