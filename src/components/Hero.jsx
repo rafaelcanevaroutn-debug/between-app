@@ -97,12 +97,27 @@ export default function Hero() {
         className="pointer-events-none select-none"
         style={{
           position: 'absolute',
-          right: -50,
-          top: 0,
-          height: '100%',
-          width: 'auto',
-          objectFit: 'cover',
+          right: 0,
+          bottom: 0,
+          width: '55%',
+          height: 'auto',
+          objectFit: 'contain',
+          objectPosition: 'bottom right',
           opacity: 0.9,
+        }}
+      />
+
+      {/* Blend astronauta con fondo — gradiente izquierda */}
+      <div
+        className="pointer-events-none"
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          bottom: 0,
+          width: '55%',
+          background: 'linear-gradient(to right, #060D18 0%, transparent 42%)',
+          zIndex: 2,
         }}
       />
 
@@ -124,8 +139,8 @@ export default function Hero() {
           </div>
 
           {/* Headline rotativo — letra por letra */}
-          <div className="mb-3" style={{ minHeight: 160 }}>
-            <h1 style={{ fontSize: 'clamp(3rem, 6vw, 5rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em', whiteSpace: 'normal', wordBreak: 'normal', overflowWrap: 'break-word' }}>
+          <div className="mb-3" style={{ minHeight: 200 }}>
+            <h1 style={{ fontSize: 'clamp(4.5rem, 7vw, 6.5rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em', whiteSpace: 'normal', wordBreak: 'normal', overflowWrap: 'break-word' }}>
               {chars.map(({ ch, color, staggerIdx, isBreak }, i) => {
                 if (isBreak) return <br key={`br-${phraseIdx}-${i}`} />
 
