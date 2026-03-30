@@ -117,13 +117,11 @@ export default function Nichos() {
           <h2 className="text-4xl md:text-5xl font-extrabold text-white">¿Cuál es tu historia?</h2>
         </div>
 
-        {/* 4 columnas */}
+        {/* Desktop: 4 columnas + Fitness centrado */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}
              className="hidden md:grid">
           {first4.map((n) => <NichoCard key={n.num} {...n} />)}
         </div>
-
-        {/* Fitness centrado */}
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}
              className="hidden md:flex">
           <div style={{ width: 'calc(25% - 9px)' }}>
@@ -131,9 +129,12 @@ export default function Nichos() {
           </div>
         </div>
 
-        {/* Mobile: columna simple */}
-        <div className="md:hidden" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {nichos.map((n) => <NichoCard key={n.num} {...n} />)}
+        {/* Mobile: 2 columnas, Fitness centrado */}
+        <div className="md:hidden" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+          {first4.map((n) => <NichoCard key={n.num} {...n} />)}
+          <div style={{ gridColumn: 'span 2', maxWidth: '50%', margin: '0 auto', width: '100%' }}>
+            <NichoCard {...last1[0]} />
+          </div>
         </div>
       </div>
     </section>
