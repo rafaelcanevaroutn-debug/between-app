@@ -90,13 +90,18 @@ export default function Hero() {
       <Particles count={35} />
 
       {/* Astronauta */}
-      <img
-        src={astronauta}
-        alt=""
-        aria-hidden="true"
-        className="absolute right-0 bottom-0 h-full w-auto max-w-[65%] object-contain object-bottom pointer-events-none select-none"
-        style={{ opacity: 0.75 }}
-      />
+      <div
+        className="absolute top-0 right-0 h-full pointer-events-none select-none"
+        style={{ width: '45%' }}
+      >
+        <img
+          src={astronauta}
+          alt=""
+          aria-hidden="true"
+          className="w-full h-full"
+          style={{ objectFit: 'contain', objectPosition: 'center bottom', opacity: 0.85 }}
+        />
+      </div>
 
       {/* Fade izquierda */}
       <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/85 to-transparent pointer-events-none" />
@@ -116,8 +121,8 @@ export default function Hero() {
           </div>
 
           {/* Headline rotativo — letra por letra */}
-          <div className="mb-3" style={{ minHeight: 220 }}>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.95] tracking-tighter">
+          <div className="mb-3" style={{ minHeight: 160 }}>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight">
               {chars.map(({ ch, color, staggerIdx, isBreak }, i) => {
                 if (isBreak) return <br key={`br-${phraseIdx}-${i}`} />
 
