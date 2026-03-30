@@ -1,34 +1,28 @@
 const ITEMS = [
-  { label: 'BASE', parts: [
-    { text: 'BASE', cyan: true },
-    { text: ' · ' },
+  { label: 'plan1', parts: [
     { text: '3 CANALES', cyan: true },
     { text: ' · ' },
-    { text: '+156 VIDEOS/MES', cyan: true },
+    { text: '156 VIDEOS/MES', cyan: true },
     { text: ' · ' },
-    { text: '1 ENTREVISTA/MES', cyan: true },
+    { text: '1 ENTREVISTA', cyan: true },
   ]},
-  { label: 'sep1', parts: [{ text: ' ⬡ ', cyan: false }] },
-  { label: 'GROWTH', parts: [
-    { text: 'GROWTH', cyan: true },
-    { text: ' · ' },
+  { label: 'sep1', parts: [{ text: '  ⬡  ', cyan: false }] },
+  { label: 'plan2', parts: [
     { text: '5 CANALES', cyan: true },
     { text: ' · ' },
-    { text: '+390 VIDEOS/MES', cyan: true },
+    { text: '390 VIDEOS/MES', cyan: true },
     { text: ' · ' },
-    { text: '2 ENTREVISTAS/MES', cyan: true },
+    { text: '2 ENTREVISTAS', cyan: true },
   ]},
-  { label: 'sep2', parts: [{ text: ' ⬡ ', cyan: false }] },
-  { label: 'STUDIO', parts: [
-    { text: 'STUDIO', cyan: true },
-    { text: ' · ' },
+  { label: 'sep2', parts: [{ text: '  ⬡  ', cyan: false }] },
+  { label: 'plan3', parts: [
     { text: '10 CANALES', cyan: true },
     { text: ' · ' },
-    { text: '+780 VIDEOS/MES', cyan: true },
+    { text: '780 VIDEOS/MES', cyan: true },
     { text: ' · ' },
-    { text: '4 ENTREVISTAS/MES', cyan: true },
+    { text: '4 ENTREVISTAS', cyan: true },
   ]},
-  { label: 'sep3', parts: [{ text: ' ⬡ ', cyan: false }] },
+  { label: 'sep3', parts: [{ text: '  ⬡  ', cyan: false }] },
 ]
 
 function TickerContent({ suffix }) {
