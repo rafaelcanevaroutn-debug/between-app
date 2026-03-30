@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import astronauta from '../assets/astronauta2.png.png'
+import astronauta from '../assets/astronauta2.png'
 import Particles from './Particles'
 
 const FRASES = [
