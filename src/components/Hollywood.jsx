@@ -3,10 +3,12 @@ import hollywood from '../assets/Gemini_Generated_Image_j16834j16834j168.png'
 const cards = [
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M4 6H24" stroke="#00C4CC" strokeWidth="2" strokeLinecap="round" />
-        <path d="M14 23V10" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" />
-        <path d="M9 15L14 10L19 15" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#00C4CC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        {/* Barra que frena */}
+        <path d="M6 8H26" strokeWidth="2.5" />
+        {/* Flecha hacia arriba que choca */}
+        <path d="M16 26V12" />
+        <path d="M10 18L16 12L22 18" />
       </svg>
     ),
     title: 'Una sola cuenta tiene un techo',
@@ -14,10 +16,11 @@ const cards = [
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M4 14C4 14 8 8 14 8C20 8 24 14 24 14C24 14 20 20 14 20C8 20 4 14 4 14Z" stroke="#00C4CC" strokeWidth="1.8" />
-        <circle cx="14" cy="14" r="3" stroke="#00C4CC" strokeWidth="1.8" />
-        <path d="M5 5L23 23" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" />
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#00C4CC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        {/* Ojo tachado */}
+        <path d="M4 16s4-8 12-8 12 8 12 8-4 8-12 8S4 16 4 16z" />
+        <circle cx="16" cy="16" r="3" />
+        <path d="M5 5L27 27" strokeWidth="2.2" />
       </svg>
     ),
     title: 'El contenido se crea pero nadie lo ve',
@@ -25,10 +28,11 @@ const cards = [
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M14 6V11M14 6L11 9M14 6L17 9" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M22 14H17M22 14L19 11M22 14L19 17" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M6 14H11M6 14L9 11M6 14L9 17" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#00C4CC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        {/* Engranaje con X */}
+        <path d="M16 10a6 6 0 1 0 0 12 6 6 0 0 0 0-12z" />
+        <path d="M16 4v3M16 25v3M4 16h3M25 16h3M7.2 7.2l2.1 2.1M22.7 22.7l2.1 2.1M7.2 24.8l2.1-2.1M22.7 9.3l2.1-2.1" />
+        <path d="M13 13l6 6M19 13l-6 6" strokeWidth="2.2" />
       </svg>
     ),
     title: 'Sin sistema, sin consistencia, sin resultados',
@@ -36,10 +40,12 @@ const cards = [
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <circle cx="14" cy="10" r="4" stroke="#00C4CC" strokeWidth="1.8" />
-        <path d="M7 22c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" />
-        <path d="M19 6L23 10M23 6L19 10" stroke="#00C4CC" strokeWidth="1.8" strokeLinecap="round" />
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#00C4CC" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        {/* Persona con círculo prohibido */}
+        <circle cx="16" cy="10" r="4" />
+        <path d="M8 26c0-4.418 3.582-8 8-8s8 3.582 8 8" />
+        <circle cx="22" cy="22" r="6" />
+        <path d="M17.8 17.8L26.2 26.2" strokeWidth="2.2" />
       </svg>
     ),
     title: 'Los community managers murieron',
@@ -74,11 +80,15 @@ export default function Hollywood() {
           {cards.map(({ icon, title, desc }) => (
             <div
               key={title}
-              className="bg-card/80 backdrop-blur-sm border border-border rounded-2xl p-6 card-hover"
+              className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 card-hover"
+              style={{
+                border: '1px solid rgba(255,255,255,0.07)',
+                borderLeft: '3px solid #00C4CC',
+              }}
             >
               <div className="mb-4">{icon}</div>
-              <h3 className="text-white font-bold text-lg mb-2">{title}</h3>
-              <p className="text-gray text-sm leading-relaxed">{desc}</p>
+              <h3 className="text-white mb-2" style={{ fontSize: '1.05rem', fontWeight: 700 }}>{title}</h3>
+              <p className="leading-relaxed" style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.8)' }}>{desc}</p>
             </div>
           ))}
         </div>
