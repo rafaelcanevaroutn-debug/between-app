@@ -222,7 +222,7 @@ export default function Hero() {
       <div
         className="absolute hidden lg:block"
         style={{
-          right: '3%', bottom: '10%', maxWidth: 260,
+          right: '1%', bottom: '2%', maxWidth: 260,
           background: 'rgba(6,13,24,0.85)',
           border: '1px solid rgba(0,196,204,0.18)',
           borderRadius: 12, padding: '22px 26px',
@@ -232,10 +232,7 @@ export default function Hero() {
         }}
       >
         <p className="leading-relaxed" style={{ color: '#7A9AB0', fontSize: 14 }}>
-          "El astronauta flotando solo en el espacio no está perdido.
-          Está en el lugar más visible del universo.
-          Solo necesitaba el traje correcto para llegar ahí.{' '}
-          <span style={{ color: '#00C4CC', fontWeight: 700 }}>Between es el traje.</span>"
+          "El astronauta flotando solo en el espacio no está perdido. Está en el lugar más visible del universo."
         </p>
       </div>
 
