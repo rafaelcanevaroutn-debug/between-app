@@ -70,7 +70,7 @@ export default function Hero() {
         height: '100vh',
         backgroundImage: `url(${astronauta})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center right',
+        backgroundPosition: 'right 80%',
         backgroundRepeat: 'no-repeat',
       }}
     >
@@ -119,7 +119,7 @@ export default function Hero() {
       {/* Contenido */}
       <div
         className="relative flex flex-col justify-center h-full"
-        style={{ zIndex: 10, paddingLeft: 'clamp(2rem, 6vw, 7rem)', paddingRight: '2rem', paddingTop: '5rem', maxWidth: 680 }}
+        style={{ zIndex: 10, paddingLeft: 'clamp(2rem, 6vw, 7rem)', paddingRight: '2rem', paddingTop: '5rem', width: '60%' }}
       >
         {/* Badge */}
         <div className="inline-flex items-center gap-2 bg-card border border-border rounded-full px-4 py-1.5 mb-8 self-start">
@@ -129,7 +129,7 @@ export default function Hero() {
 
         {/* Headline rotativo */}
         <div className="mb-4" style={{ minHeight: 150 }}>
-          <h1 style={{ fontSize: 'clamp(2.5rem, 4vw, 3.5rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: 'clamp(2.5rem, 4vw, 3.5rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em', width: '100%', overflow: 'visible' }}>
             {chars.map(({ ch, color, staggerIdx, isBreak }, i) => {
               if (isBreak) return <br key={`br-${phraseIdx}-${i}`} />
 
