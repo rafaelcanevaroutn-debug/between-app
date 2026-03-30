@@ -32,7 +32,7 @@ function TickerContent({ suffix }) {
         parts.map(({ text, cyan }, pi) => (
           <span
             key={`${suffix}-${label}-${pi}`}
-            style={{ color: cyan ? '#00C4CC' : 'rgba(255,255,255,0.75)' }}
+            style={{ color: '#00C4CC' }}
           >
             {text}
           </span>
@@ -63,10 +63,10 @@ export default function TickerPlanes() {
           display: inline-flex;
           white-space: nowrap;
           animation: tickerScroll 25s linear infinite;
-          font-family: 'Barlow Condensed', sans-serif;
-          font-weight: 700;
+          font-family: 'Share Tech Mono', monospace;
           font-size: 0.85rem;
-          letter-spacing: 0.06em;
+          letter-spacing: 0.15em;
+          color: #00C4CC;
           text-transform: uppercase;
         }
         .ticker-track:hover {
