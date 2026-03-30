@@ -109,26 +109,18 @@ export default function Comunidad() {
         </div>
 
         {/* Frase final */}
-        <div className="text-center">
-          <div style={{
-            display: 'inline-block',
-            borderRadius: 16,
-            padding: '24px 40px',
-            background: 'rgba(0,196,204,0.05)',
-            border: '1px solid rgba(0,196,204,0.2)',
+        <div className="text-center" style={{ marginTop: 72 }}>
+          <p style={{
+            fontFamily: "'Bebas Neue', sans-serif",
+            fontSize: 'clamp(1.8rem, 3.5vw, 2.8rem)',
+            fontWeight: 400,
+            letterSpacing: '0.04em',
+            lineHeight: 1.2,
+            margin: 0,
           }}>
-            <p style={{
-              fontFamily: "'Bebas Neue', sans-serif",
-              fontSize: 'clamp(1.4rem, 3vw, 2.2rem)',
-              fontWeight: 400,
-              letterSpacing: '0.04em',
-              color: '#fff',
-              margin: 0,
-              lineHeight: 1.2,
-            }}>
-              ESTAR EN BETWEEN ES UN DIFERENCIAL EN SÍ MISMO.
-            </p>
-          </div>
+            <span style={{ color: '#fff' }}>ESTAR EN BETWEEN ES UN DIFERENCIAL </span>
+            <span style={{ color: '#00C4CC' }}>EN SÍ MISMO.</span>
+          </p>
         </div>
 
       </div>
