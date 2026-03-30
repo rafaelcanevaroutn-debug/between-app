@@ -55,12 +55,12 @@ export default function Hollywood() {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${hollywood})` }}
       />
-      <div className="absolute inset-0" style={{ background: 'rgba(6,13,24,0.75)' }} />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(6,13,24,0.85) 0%, rgba(6,13,24,0.4) 60%, rgba(6,13,24,0.3) 100%)' }} />
       <div className="absolute inset-0 dot-grid opacity-30" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6">
         <div className="max-w-2xl mb-16">
-          <h2 className="text-5xl md:text-7xl font-extrabold text-white leading-none tracking-tight mb-6">
+          <h2 className="text-5xl md:text-7xl text-white leading-none mb-6" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, letterSpacing: '-0.02em' }}>
             Hollywood no<br />
             <span className="gradient-text">existe más.</span>
           </h2>
