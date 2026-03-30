@@ -50,7 +50,7 @@ export default function TickerPlanes() {
         borderTop: '1px solid rgba(0,196,204,0.3)',
         borderBottom: '1px solid rgba(0,196,204,0.3)',
         overflow: 'hidden',
-        padding: '14px 0',
+        padding: '16px 0',
         position: 'relative',
       }}
     >
@@ -64,7 +64,7 @@ export default function TickerPlanes() {
           white-space: nowrap;
           animation: tickerScroll 25s linear infinite;
           font-family: 'Share Tech Mono', monospace;
-          font-size: 0.95rem;
+          font-size: 1.1rem;
           letter-spacing: 0.15em;
           color: #00C4CC;
           text-transform: uppercase;
