@@ -129,7 +129,7 @@ export default function Hero() {
 
         {/* Headline rotativo */}
         <div className="mb-4" style={{ minHeight: 150 }}>
-          <h1 style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em', width: '100%', overflow: 'visible', fontFamily: "'Space Grotesk', sans-serif" }}>
+          <h1 style={{ fontSize: 'clamp(3.5rem, 6vw, 5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '0.01em', width: '100%', overflow: 'visible', fontFamily: "'Bebas Neue', sans-serif" }}>
             {chars.map(({ ch, color, staggerIdx, isBreak }, i) => {
               if (isBreak) return <br key={`br-${phraseIdx}-${i}`} />
 
@@ -162,15 +162,20 @@ export default function Hero() {
         </div>
 
         {/* Subheadline */}
-        <p className="text-gray text-lg leading-relaxed mb-10" style={{ maxWidth: 440 }}>
+        <p className="leading-relaxed mb-10" style={{ maxWidth: 440, fontSize: '1.1rem', color: 'rgba(255,255,255,0.75)' }}>
           Contá tu historia. Nosotros nos encargamos de que el mundo la escuche.
         </p>
 
         {/* CTA */}
         <a
           href="#contacto"
-          className="inline-flex items-center gap-3 px-8 py-4 rounded-full text-base font-bold text-white transition-all duration-300 self-start"
+          className="inline-flex items-center gap-3 rounded-full text-white transition-all duration-300 self-start"
           style={{
+            padding: '18px 40px',
+            fontSize: '1.1rem',
+            fontWeight: 800,
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
             background: 'linear-gradient(135deg, #00C4CC, #00A889)',
             boxShadow: '0 0 28px rgba(0,196,204,0.4)',
           }}
