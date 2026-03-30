@@ -89,7 +89,7 @@ export default function Hero() {
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'linear-gradient(to right, rgba(6,13,24,0.95) 0%, rgba(6,13,24,0.7) 50%, rgba(6,13,24,0.2) 100%)',
+          background: 'linear-gradient(to right, rgba(6,13,24,0.92) 0%, rgba(6,13,24,0.55) 45%, rgba(6,13,24,0.05) 100%)',
           zIndex: 1,
         }}
       />
@@ -129,7 +129,7 @@ export default function Hero() {
 
         {/* Headline rotativo */}
         <div className="mb-4" style={{ minHeight: 150 }}>
-          <h1 style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em', width: '100%', overflow: 'visible' }}>
+          <h1 style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em', width: '100%', overflow: 'visible', fontFamily: "'Space Grotesk', sans-serif" }}>
             {chars.map(({ ch, color, staggerIdx, isBreak }, i) => {
               if (isBreak) return <br key={`br-${phraseIdx}-${i}`} />
 
