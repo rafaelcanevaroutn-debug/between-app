@@ -97,12 +97,11 @@ export default function Hero() {
         className="pointer-events-none select-none"
         style={{
           position: 'absolute',
-          right: 0,
+          right: -50,
           top: 0,
           height: '100%',
-          width: '50%',
-          objectFit: 'contain',
-          objectPosition: 'right center',
+          width: 'auto',
+          objectFit: 'cover',
           opacity: 0.9,
         }}
       />
@@ -126,7 +125,7 @@ export default function Hero() {
 
           {/* Headline rotativo — letra por letra */}
           <div className="mb-3" style={{ minHeight: 160 }}>
-            <h1 style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+            <h1 style={{ fontSize: 'clamp(3rem, 6vw, 5rem)', fontWeight: 900, lineHeight: 1.1, letterSpacing: '-0.02em', whiteSpace: 'normal', wordBreak: 'normal', overflowWrap: 'break-word' }}>
               {chars.map(({ ch, color, staggerIdx, isBreak }, i) => {
                 if (isBreak) return <br key={`br-${phraseIdx}-${i}`} />
 
