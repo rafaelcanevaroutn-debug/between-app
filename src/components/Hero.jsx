@@ -129,7 +129,7 @@ export default function Hero() {
 
         {/* Headline rotativo */}
         <div className="mb-4" style={{ minHeight: 150 }}>
-          <h1 style={{ fontSize: 'clamp(3.5rem, 6vw, 5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '0.01em', width: '100%', overflow: 'visible', fontFamily: "'Bebas Neue', sans-serif" }}>
+          <h1 style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '0.01em', width: '100%', overflow: 'visible', fontFamily: "'Bebas Neue', sans-serif", wordBreak: 'keep-all', hyphens: 'none', overflowWrap: 'normal' }}>
             {chars.map(({ ch, color, staggerIdx, isBreak }, i) => {
               if (isBreak) return <br key={`br-${phraseIdx}-${i}`} />
 
