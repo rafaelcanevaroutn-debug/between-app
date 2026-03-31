@@ -5,13 +5,11 @@ import Nichos from './components/Nichos'
 import TickerPlanes from './components/TickerPlanes'
 import Hollywood from './components/Hollywood'
 import ElSet from './components/ElSet'
-import Simulador from './components/Simulador'
 import BetweenGrowth from './components/BetweenGrowth'
 import Planes from './components/Planes'
 import Comunidad from './components/Comunidad'
 import QuienesSomos from './components/QuienesSomos'
 import CTAFinal from './components/CTAFinal'
-import CalendlySection from './components/CalendlySection'
 import Operadores from './components/Operadores'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
@@ -27,8 +25,6 @@ function Landing() {
       <BetweenGrowth />
       <Planes />
       <Comunidad />
-      <CalendlySection />
-      <Simulador />
       <CTAFinal />
       <Operadores />
       <Footer />
