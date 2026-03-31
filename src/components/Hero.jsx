@@ -176,8 +176,13 @@ export default function Hero() {
         </div>
 
         {/* Subheadline */}
-        <p className="leading-relaxed mb-10" style={{ maxWidth: 440, fontSize: '1.1rem', color: 'rgba(255,255,255,0.75)' }}>
-          Contá tu historia. Nosotros nos encargamos de que el mundo la escuche.
+        <p className="leading-relaxed mb-3" style={{ maxWidth: 520, fontSize: '1rem', color: 'rgba(255,255,255,0.85)' }}>
+          Dejá de depender de una sola cuenta. Distribuimos tu contenido en un sistema de canales estratégicos para que tengas visibilidad constante y más clientes potenciales.
+        </p>
+
+        {/* Línea destacada */}
+        <p className="mb-10" style={{ maxWidth: 520, fontSize: '0.9rem', color: '#00C4CC', fontWeight: 600 }}>
+          Más contenido en circulación = más alcance = más oportunidades de venta.
         </p>
 
         {/* CTA */}

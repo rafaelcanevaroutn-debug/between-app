@@ -32,7 +32,7 @@ export default function CTAFinal() {
           <span className="gradient-text">ser visto?</span>
         </h2>
         <p className="text-gray text-lg md:text-xl mb-10 max-w-xl mx-auto leading-relaxed">
-          Sumate a los que ya decidieron que su historia merece circular.
+          Coordinamos un café y te muestro cómo funciona en tu caso.
         </p>
 
         {/* CTAs */}

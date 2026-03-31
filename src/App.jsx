@@ -13,6 +13,7 @@ import Comunidad from './components/Comunidad'
 import QuienesSomos from './components/QuienesSomos'
 import CTAFinal from './components/CTAFinal'
 import CalendlySection from './components/CalendlySection'
+import Operadores from './components/Operadores'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
 
@@ -31,6 +32,7 @@ function Landing() {
       <Comunidad />
       <CalendlySection />
       <CTAFinal />
+      <Operadores />
       <Footer />
     </>
   )
