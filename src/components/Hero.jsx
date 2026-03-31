@@ -181,7 +181,7 @@ export default function Hero() {
         </p>
 
         {/* Línea destacada */}
-        <p className="mb-10" style={{ maxWidth: 520, fontSize: '0.9rem', color: '#00C4CC', fontWeight: 600 }}>
+        <p className="mb-10" style={{ maxWidth: 600, fontSize: '0.9rem', color: '#00C4CC', fontWeight: 600 }}>
           Más contenido en circulación = más alcance = más oportunidades de venta.
         </p>
 
