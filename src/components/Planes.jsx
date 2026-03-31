@@ -60,17 +60,22 @@ export default function Planes() {
           <p className="text-cyan text-sm font-semibold uppercase tracking-widest mb-3">Planes</p>
           <h2 className="text-4xl md:text-5xl font-extrabold text-white">Elegí tu plan</h2>
           <p className="text-gray mt-4 text-lg">Sin contratos largos. Sin sorpresas.</p>
+          <p className="mt-2 text-sm" style={{ color: 'rgba(255,255,255,0.35)' }}>El pricing se define en la primera charla.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {PLANS.map((plan) => (
             <div
               key={plan.name}
-              className="relative rounded-3xl p-8 flex flex-col"
+              className="relative rounded-3xl flex flex-col"
               style={{
                 background: '#0A1628',
                 border: plan.highlight ? '2px solid #00C4CC' : '1px solid #122030',
                 boxShadow: plan.highlight ? '0 0 40px rgba(0,196,204,0.2)' : 'none',
+                padding: plan.highlight ? '40px 36px' : '32px',
+                minHeight: plan.highlight ? 520 : 'auto',
+                transform: plan.highlight ? 'scale(1.05)' : 'scale(1)',
+                zIndex: plan.highlight ? 1 : 0,
               }}
             >
               {/* Badge */}
@@ -87,10 +92,15 @@ export default function Planes() {
 
               {/* Header */}
               <div className="mb-6">
-                <p
-                  className="text-sm font-semibold uppercase tracking-widest"
-                  style={{ color: plan.highlight ? '#00C4CC' : '#7A9AB0' }}
-                >
+                <p style={{
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  fontSize: '2rem',
+                  fontWeight: 400,
+                  letterSpacing: '0.06em',
+                  color: plan.highlight ? '#00C4CC' : '#fff',
+                  margin: 0,
+                  lineHeight: 1,
+                }}>
                   {plan.name}
                 </p>
               </div>
