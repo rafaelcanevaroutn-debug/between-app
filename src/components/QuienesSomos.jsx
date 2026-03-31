@@ -2,8 +2,8 @@ import fotoperfil from '../assets/fotoperfil.jpg'
 
 const STATS = [
   { value: '5.000+', label: 'usuarios orgánicos' },
-  { value: '9', label: 'clientes gestionados' },
-  { value: '2', label: 'startups construidas' },
+  { value: '9',      label: 'clientes gestionados' },
+  { value: '2',      label: 'startups construidas' },
 ]
 
 function LinkedInIcon() {
@@ -26,131 +26,146 @@ export default function QuienesSomos() {
   return (
     <section className="pt-40 pb-28 dot-grid" style={{ background: '#060D18' }}>
       <div className="max-w-6xl mx-auto px-6 md:px-16">
-        <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-16 items-start">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 64, alignItems: 'start' }} className="grid-cols-1 lg:grid-cols-[1fr_1.4fr]">
 
-          {/* LEFT — foto + stats */}
-          <div className="flex flex-col items-center gap-6">
+          {/* ── IZQUIERDA ── */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
 
-            {/* Foto circular con ring */}
-            <div
-              className="p-[3px] rounded-full"
-              style={{
-                background: 'linear-gradient(135deg, #00C4CC, #00A889)',
-                boxShadow: '0 0 40px rgba(0,196,204,0.25)',
-              }}
-            >
-              <div
-                className="rounded-full overflow-hidden"
-                style={{ width: 280, height: 280 }}
-              >
-                <img
-                  src={fotoperfil}
-                  alt="Rafael Canevaro"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            {/* Foto circular */}
+            <div style={{
+              position: 'relative',
+              width: 200, height: 200,
+              borderRadius: '50%',
+              boxShadow: '0 0 0 3px #00C4CC, 0 0 32px rgba(0,196,204,0.45)',
+              flexShrink: 0,
+            }}>
+              <img
+                src={fotoperfil} alt="Rafael Canevaro"
+                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+              />
             </div>
 
             {/* Nombre + título + ubicación */}
-            <div className="text-center">
-              <h3 className="text-2xl font-extrabold text-white mb-1">Rafael Canevaro</h3>
-              <p className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: '#00C4CC' }}>
+            <div style={{ textAlign: 'center' }}>
+              <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '2.2rem', fontWeight: 400, letterSpacing: '0.05em', color: '#fff', margin: '0 0 4px' }}>
+                Rafael Canevaro
+              </h1>
+              <p style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.15em', color: '#00C4CC', textTransform: 'uppercase', margin: '0 0 6px' }}>
                 Founder @ Between
               </p>
-              <p className="text-sm" style={{ color: '#7A9AB0' }}>Tucumán, Argentina · 24 años</p>
+              <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', margin: 0 }}>
+                Tucumán, Argentina · 24 años
+              </p>
             </div>
 
-            {/* Links sociales */}
-            <div className="flex items-center gap-4">
-              <a
-                href="https://www.linkedin.com/in/rafael-canevaro-940905242"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-all duration-200"
-                style={{ color: '#00C4CC' }}
-                onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.filter = 'drop-shadow(0 0 6px rgba(0,196,204,0.6))' }}
-                onMouseLeave={e => { e.currentTarget.style.color = '#00C4CC'; e.currentTarget.style.filter = 'none' }}
-                aria-label="LinkedIn"
+            {/* Social links */}
+            <div style={{ display: 'flex', gap: 12 }}>
+              <a href="https://www.linkedin.com/in/rafaelcanevaroutn" target="_blank" rel="noopener noreferrer"
+                style={{ color: 'rgba(255,255,255,0.45)', transition: 'color 0.2s' }}
+                onMouseEnter={e => e.currentTarget.style.color = '#00C4CC'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.45)'}
               >
                 <LinkedInIcon />
               </a>
-              <a
-                href="https://www.instagram.com/rafacanevaro"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition-all duration-200"
-                style={{ color: '#00C4CC' }}
-                onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.filter = 'drop-shadow(0 0 6px rgba(0,196,204,0.6))' }}
-                onMouseLeave={e => { e.currentTarget.style.color = '#00C4CC'; e.currentTarget.style.filter = 'none' }}
-                aria-label="Instagram"
+              <a href="https://instagram.com/rafaelcanevaroutn" target="_blank" rel="noopener noreferrer"
+                style={{ color: 'rgba(255,255,255,0.45)', transition: 'color 0.2s' }}
+                onMouseEnter={e => e.currentTarget.style.color = '#00C4CC'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.45)'}
               >
                 <InstagramIcon />
               </a>
             </div>
 
-            {/* Stats pills */}
-            <div className="flex flex-col gap-2 w-full max-w-xs">
+            {/* Métricas */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
               {STATS.map(({ value, label }) => (
-                <div
-                  key={label}
-                  className="flex items-center justify-between px-4 py-2.5 rounded-xl"
-                  style={{ background: '#0A1628', border: '1px solid #122030' }}
-                >
-                  <span className="font-extrabold text-sm" style={{ color: '#00C4CC' }}>{value}</span>
-                  <span className="text-xs" style={{ color: '#7A9AB0' }}>{label}</span>
+                <div key={label} style={{
+                  background: 'rgba(0,196,204,0.05)',
+                  border: '1px solid rgba(0,196,204,0.15)',
+                  borderRadius: 10,
+                  padding: '12px 16px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                }}>
+                  <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.5rem', fontWeight: 400, color: '#00C4CC', lineHeight: 1 }}>
+                    {value}
+                  </span>
+                  <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.5)', textAlign: 'right' }}>
+                    {label}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* RIGHT — texto */}
-          <div className="flex flex-col justify-center lg:pt-16">
-            <p className="text-cyan text-sm font-semibold uppercase tracking-widest mb-4">Quién soy</p>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-8">
-              La historia{' '}
-              <span
-                style={{
-                  background: 'linear-gradient(135deg, #00C4CC, #00A889)',
-                  WebkitBackgroundClip: 'text',
-                  backgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                detrás.
+          {/* ── DERECHA ── */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+            {/* Badge */}
+            <div>
+              <span style={{
+                fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.15em',
+                padding: '4px 14px', borderRadius: 999,
+                border: '1px solid rgba(0,196,204,0.4)', color: '#00C4CC',
+                background: 'rgba(0,196,204,0.06)', textTransform: 'uppercase',
+              }}>
+                Quién soy
               </span>
+            </div>
+
+            {/* Título */}
+            <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 400, letterSpacing: '0.04em', color: '#fff', margin: 0, lineHeight: 1.05 }}>
+              LA HISTORIA DETRÁS.
             </h2>
 
-            <p className="text-base leading-relaxed mb-8" style={{ color: '#7A9AB0', maxWidth: 580 }}>
+            {/* Texto */}
+            <p style={{ fontSize: '1rem', lineHeight: 1.8, color: 'rgba(255,255,255,0.65)', margin: 0 }}>
               Construí mi primera startup de cero — una plataforma de comunidades deportivas que salía a la montaña cada fin de semana con gente real. Sin pauta, sin inversión. Solo contenido orgánico y comunidad genuina. Después estuve del otro lado: operando distribución de contenido para múltiples marcas y negocios en simultáneo. Aprendí exactamente qué funciona, qué no, y por qué la mayoría de los servicios fallan. Between nació de eso. No es una agencia. Es lo que yo hubiera querido tener cuando estaba construyendo.
             </p>
 
-            <p className="mb-10 text-base font-medium italic" style={{ color: '#00C4CC' }}>
+            {/* Firma */}
+            <p style={{ fontSize: '1rem', fontStyle: 'italic', color: '#00C4CC', margin: 0 }}>
               — Rafa, Founder
             </p>
 
-            {/* Thinking subsección */}
-            <div
-              className="rounded-2xl p-6 flex flex-col gap-3"
-              style={{ background: '#0A1628', border: '1px solid #122030', maxWidth: 580 }}
-            >
-              <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#00C4CC' }}>Thinking</p>
-              <p className="text-sm leading-relaxed" style={{ color: '#7A9AB0' }}>
-                Lo que pasa por mi cabeza mientras construyo.
-              </p>
+            {/* Card THINKING */}
+            <div style={{
+              background: 'rgba(10,22,40,0.8)',
+              border: '1px solid rgba(0,196,204,0.2)',
+              borderRadius: 14,
+              padding: '20px 24px',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+              backdropFilter: 'blur(8px)',
+            }}>
+              <div>
+                <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.15em', color: '#00C4CC', textTransform: 'uppercase', margin: '0 0 4px' }}>
+                  THINKING
+                </p>
+                <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.7)', margin: 0, lineHeight: 1.5 }}>
+                  Lo que pasa por mi cabeza mientras construyo.
+                </p>
+              </div>
               <a
                 href="https://substack.com/@rafaelcanevaroutn"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-semibold transition-colors duration-200 self-start"
-                style={{ color: '#00C4CC' }}
-                onMouseEnter={e => e.currentTarget.style.color = '#fff'}
-                onMouseLeave={e => e.currentTarget.style.color = '#00C4CC'}
+                style={{
+                  display: 'inline-block',
+                  padding: '10px 20px',
+                  borderRadius: 999,
+                  background: 'linear-gradient(135deg, #00C4CC, #00A889)',
+                  color: '#fff',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  whiteSpace: 'nowrap',
+                  textDecoration: 'none',
+                  flexShrink: 0,
+                }}
               >
                 Leer en Substack →
               </a>
             </div>
-          </div>
 
+          </div>
         </div>
       </div>
     </section>
