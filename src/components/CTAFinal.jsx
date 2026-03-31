@@ -188,25 +188,15 @@ function TikTokCard({ cuenta, foto, nombreUsuario, cardIndex, nicho }) {
       <div className="flex justify-end px-3 pt-3 pb-1">
         <span
           className="text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
-          style={{
-            background: style.glow,
-            border: `1px solid ${style.ring}`,
-            color: style.ring,
-          }}
+          style={{ background: style.glow, border: `1px solid ${style.ring}`, color: style.ring }}
         >
           BETWEEN
         </span>
       </div>
 
       <div className="flex flex-col items-center px-3 pb-3 gap-2">
-        <div
-          className="p-[2px] rounded-full"
-          style={{ background: `linear-gradient(135deg, ${style.ring}, ${style.avatarBg})` }}
-        >
-          <div
-            className="rounded-full overflow-hidden"
-            style={{ width: 48, height: 48, background: style.avatarBg }}
-          >
+        <div className="p-[2px] rounded-full" style={{ background: `linear-gradient(135deg, ${style.ring}, ${style.avatarBg})` }}>
+          <div className="rounded-full overflow-hidden" style={{ width: 48, height: 48, background: style.avatarBg }}>
             <img src={avatarSrc} alt="" className="w-full h-full object-cover block" />
           </div>
         </div>
@@ -214,24 +204,15 @@ function TikTokCard({ cuenta, foto, nombreUsuario, cardIndex, nicho }) {
         <div className="text-center">
           <p className="text-white font-bold leading-tight" style={{ fontSize: 13 }}>{displayName}</p>
           <p style={{ color: '#888', fontSize: 11, marginTop: 2 }}>{handle}</p>
-          {bio && (
-            <p style={{ color: '#aaa', fontSize: 9, marginTop: 4, lineHeight: 1.35 }}>{bio}</p>
-          )}
+          {bio && <p style={{ color: '#aaa', fontSize: 9, marginTop: 4, lineHeight: 1.35 }}>{bio}</p>}
         </div>
 
         <button
           className="font-bold text-white"
           style={{
-            background: '#FE2C55',
-            borderRadius: 4,
-            paddingLeft: 20,
-            paddingRight: 20,
-            paddingTop: 5,
-            paddingBottom: 5,
-            fontSize: 13,
-            border: 'none',
-            cursor: 'default',
-            width: '100%',
+            background: '#FE2C55', borderRadius: 4,
+            paddingLeft: 20, paddingRight: 20, paddingTop: 5, paddingBottom: 5,
+            fontSize: 13, border: 'none', cursor: 'default', width: '100%',
           }}
         >
           Seguir
@@ -242,13 +223,7 @@ function TikTokCard({ cuenta, foto, nombreUsuario, cardIndex, nicho }) {
 
       <div className="grid grid-cols-2" style={{ gap: 1, background: '#1a1a1a' }}>
         {[0, 1, 2, 3, 4, 5].map((i) => (
-          <VideoThumb
-            key={i}
-            nicho={nicho}
-            thumbIdx={cardIndex + i}
-            handle={handle}
-            titulo={videos[i] || ''}
-          />
+          <VideoThumb key={i} nicho={nicho} thumbIdx={cardIndex + i} handle={handle} titulo={videos[i] || ''} />
         ))}
       </div>
 
@@ -271,17 +246,8 @@ function GrowthTooltip({ active, payload }) {
   if (!active || !payload?.length) return null
   const { mes, seguidores, label } = payload[0].payload
   return (
-    <div
-      className="rounded-xl px-4 py-3"
-      style={{
-        background: '#0A1628',
-        border: '1px solid rgba(139,92,246,0.5)',
-        boxShadow: '0 0 20px rgba(139,92,246,0.2)',
-      }}
-    >
-      <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#8B5CF6' }}>
-        {mes} · {label}
-      </p>
+    <div className="rounded-xl px-4 py-3" style={{ background: '#0A1628', border: '1px solid rgba(139,92,246,0.5)', boxShadow: '0 0 20px rgba(139,92,246,0.2)' }}>
+      <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#8B5CF6' }}>{mes} · {label}</p>
       <p className="text-white font-extrabold text-lg">{formatNum(seguidores)}</p>
       <p className="text-xs" style={{ color: '#7A9AB0' }}>seguidores acumulados</p>
     </div>
@@ -303,10 +269,7 @@ function ProyeccionCrecimiento({ nicho }) {
   const ref = useRef(null)
 
   useEffect(() => {
-    const io = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setVisible(true) },
-      { threshold: 0.15 }
-    )
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true) }, { threshold: 0.15 })
     if (ref.current) io.observe(ref.current)
     return () => io.disconnect()
   }, [])
@@ -314,21 +277,14 @@ function ProyeccionCrecimiento({ nicho }) {
   return (
     <div ref={ref} className="w-full max-w-4xl mx-auto">
       <div className="mb-8">
-        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#8B5CF6' }}>
-          Between Growth Model
-        </p>
-        <h3 className="text-2xl md:text-3xl font-extrabold text-white leading-tight">
-          La consistencia es la inversión.
-        </h3>
+        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#8B5CF6' }}>Between Growth Model</p>
+        <h3 className="text-2xl md:text-3xl font-extrabold text-white leading-tight">La consistencia es la inversión.</h3>
         <p className="mt-3 text-base leading-relaxed max-w-xl" style={{ color: '#7A9AB0' }}>
           Los resultados no son de la noche a la mañana. Son el resultado de aparecer todos los días.
         </p>
       </div>
 
-      <div
-        className="rounded-2xl px-4 pt-8 pb-6 md:px-8 md:pt-10"
-        style={{ background: '#0A1628', border: '1px solid #122030' }}
-      >
+      <div className="rounded-2xl px-4 pt-8 pb-6 md:px-8 md:pt-10" style={{ background: '#0A1628', border: '1px solid #122030' }}>
         <div style={{ width: '100%', height: 260, opacity: visible ? 1 : 0, transition: 'opacity 0.7s ease' }}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={GROWTH_DATA} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
@@ -347,35 +303,19 @@ function ProyeccionCrecimiento({ nicho }) {
                   <stop offset="100%" stopColor="#00C4CC" />
                 </linearGradient>
               </defs>
-              <XAxis
-                dataKey="mes"
-                tick={{ fill: '#7A9AB0', fontSize: 12 }}
-                axisLine={{ stroke: '#122030' }}
-                tickLine={false}
-              />
+              <XAxis dataKey="mes" tick={{ fill: '#7A9AB0', fontSize: 12 }} axisLine={{ stroke: '#122030' }} tickLine={false} />
               <YAxis
                 ticks={[1200, 4800, 12000, 28000, 58000, 100000]}
                 tickFormatter={(val) => STAGE_LABELS[val] || ''}
                 tick={{ fill: '#7A9AB0', fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-                width={72}
+                axisLine={false} tickLine={false} width={72}
               />
-              <Tooltip
-                content={<GrowthTooltip />}
-                cursor={{ stroke: 'rgba(139,92,246,0.2)', strokeWidth: 1, strokeDasharray: '4 4' }}
-              />
+              <Tooltip content={<GrowthTooltip />} cursor={{ stroke: 'rgba(139,92,246,0.2)', strokeWidth: 1, strokeDasharray: '4 4' }} />
               <Area
-                type="monotone"
-                dataKey="seguidores"
-                stroke="url(#lineGrad)"
-                strokeWidth={2.5}
-                fill="url(#areaFill)"
-                dot={<GrowthDot />}
-                activeDot={{ r: 7, fill: '#8B5CF6', stroke: '#060D18', strokeWidth: 2 }}
-                isAnimationActive={visible}
-                animationDuration={1400}
-                animationEasing="ease-out"
+                type="monotone" dataKey="seguidores"
+                stroke="url(#lineGrad)" strokeWidth={2.5} fill="url(#areaFill)"
+                dot={<GrowthDot />} activeDot={{ r: 7, fill: '#8B5CF6', stroke: '#060D18', strokeWidth: 2 }}
+                isAnimationActive={visible} animationDuration={1400} animationEasing="ease-out"
               />
             </AreaChart>
           </ResponsiveContainer>
@@ -383,14 +323,8 @@ function ProyeccionCrecimiento({ nicho }) {
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-6 pt-6" style={{ borderTop: '1px solid #122030' }}>
           {STAGE_PILLS.map(({ label, desc }, i) => (
-            <div
-              key={label}
-              className="rounded-xl px-3 py-2.5"
-              style={{ background: '#060D18', border: '1px solid #122030' }}
-            >
-              <p className="text-xs font-bold mb-0.5" style={{ color: i < 2 ? '#8B5CF6' : i < 4 ? '#00C4CC' : '#00A889' }}>
-                {label}
-              </p>
+            <div key={label} className="rounded-xl px-3 py-2.5" style={{ background: '#060D18', border: '1px solid #122030' }}>
+              <p className="text-xs font-bold mb-0.5" style={{ color: i < 2 ? '#8B5CF6' : i < 4 ? '#00C4CC' : '#00A889' }}>{label}</p>
               <p style={{ color: '#7A9AB0', fontSize: 11, lineHeight: 1.4 }}>{desc}</p>
             </div>
           ))}
@@ -405,6 +339,7 @@ function ProyeccionCrecimiento({ nicho }) {
 }
 
 export default function CTAFinal() {
+  const [simAbierto, setSimAbierto] = useState(false)
   const [nombre, setNombre] = useState('')
   const [nicho, setNicho] = useState('')
   const [descripcion, setDescripcion] = useState('')
@@ -440,14 +375,9 @@ export default function CTAFinal() {
         src={logoOutline}
         aria-hidden="true"
         style={{
-          position: 'absolute',
-          right: '5%',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: '400px',
-          opacity: 0.06,
-          pointerEvents: 'none',
-          userSelect: 'none',
+          position: 'absolute', right: '5%', top: '50%',
+          transform: 'translateY(-50%)', width: '400px',
+          opacity: 0.06, pointerEvents: 'none', userSelect: 'none',
         }}
       />
 
@@ -456,184 +386,174 @@ export default function CTAFinal() {
 
       <div className="relative z-10 max-w-6xl mx-auto px-6">
 
-        {/* Header centrado */}
-        <div className="text-center mb-12">
+        {/* Header */}
+        <div className="text-center mb-10">
           <p className="text-cyan text-sm font-semibold uppercase tracking-widest mb-5">Es tu momento</p>
           <h2 className="text-5xl md:text-7xl font-extrabold text-white leading-tight tracking-tight mb-6">
             ¿Listo para{' '}
             <span className="gradient-text">ser visto?</span>
           </h2>
-          <p className="text-gray text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
+          <p className="text-gray text-lg md:text-xl mb-10 max-w-xl mx-auto leading-relaxed">
             Coordinamos un café y te muestro cómo funciona en tu caso.
           </p>
-        </div>
 
-        {/* ── SIMULADOR EMBEBIDO ── */}
-        {fase === 'form' && (
-          <div className="max-w-xl mx-auto fade-in-up relative mb-12">
-            <div className="absolute inset-0 rounded-3xl pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(0,196,204,0.06) 0%, transparent 65%)' }} />
-
-            <div className="relative rounded-2xl overflow-hidden" style={{ background: '#0A1628', border: '1px solid rgba(0,196,204,0.2)' }}>
-              <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, #00C4CC, transparent)' }} />
-
-              <div className="flex items-center px-6 py-4" style={{ borderBottom: '1px solid rgba(0,196,204,0.1)' }}>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full" style={{ background: '#00C4CC', boxShadow: '0 0 6px rgba(0,196,204,0.8)' }} />
-                  <span style={{ color: '#00C4CC', fontSize: 11, fontFamily: 'monospace', letterSpacing: '0.15em' }}>
-                    BETWEEN_SIM // INIT
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-6 flex flex-col gap-5">
-                {/* Nombre */}
-                <div className="flex flex-col gap-1.5">
-                  <label style={{ color: '#00C4CC', fontSize: 10, fontFamily: 'monospace', fontWeight: 700, letterSpacing: '0.15em' }}>
-                    // NOMBRE O MARCA
-                  </label>
-                  <input
-                    type="text"
-                    value={nombre}
-                    onChange={e => setNombre(e.target.value)}
-                    placeholder="Ej: Rafael Díaz"
-                    className="rounded-xl px-4 py-3 text-sm"
-                    style={inputStyle}
-                    onFocus={e => { e.target.style.borderColor = '#00C4CC'; e.target.style.boxShadow = '0 0 0 2px rgba(0,196,204,0.12)' }}
-                    onBlur={e => { e.target.style.borderColor = 'rgba(0,196,204,0.25)'; e.target.style.boxShadow = 'none' }}
-                  />
-                </div>
-
-                {/* Nicho */}
-                <div className="flex flex-col gap-1.5">
-                  <label style={{ color: '#00C4CC', fontSize: 10, fontFamily: 'monospace', fontWeight: 700, letterSpacing: '0.15em' }}>
-                    // NICHO
-                  </label>
-                  <select
-                    value={nicho}
-                    onChange={e => setNicho(e.target.value)}
-                    className="sim-select rounded-xl px-4 py-3 text-sm"
-                    style={{ ...inputStyle, cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none' }}
-                    onFocus={e => { e.target.style.borderColor = '#00C4CC'; e.target.style.boxShadow = '0 0 0 2px rgba(0,196,204,0.12)' }}
-                    onBlur={e => { e.target.style.borderColor = 'rgba(0,196,204,0.25)'; e.target.style.boxShadow = 'none' }}
-                  >
-                    <option value="">— Seleccioná tu nicho —</option>
-                    <option value="Inmobiliarias">Inmobiliarias</option>
-                    <option value="Gastronomía">Gastronomía</option>
-                    <option value="Marca Personal">Marca Personal</option>
-                    <option value="Startups">Startups</option>
-                    <option value="Fitness">Fitness</option>
-                  </select>
-                </div>
-
-                {/* Descripción */}
-                <div className="flex flex-col gap-1.5">
-                  <label style={{ color: '#00C4CC', fontSize: 10, fontFamily: 'monospace', fontWeight: 700, letterSpacing: '0.15em' }}>
-                    // DESCRIPCIÓN <span style={{ color: 'rgba(0,196,204,0.4)', fontWeight: 400 }}>(opcional)</span>
-                  </label>
-                  <textarea
-                    value={descripcion}
-                    onChange={e => setDescripcion(e.target.value)}
-                    placeholder="Ej: Vendo propiedades en Tucumán desde hace 10 años..."
-                    rows={3}
-                    className="rounded-xl px-4 py-3 text-sm resize-none"
-                    style={inputStyle}
-                    onFocus={e => { e.target.style.borderColor = '#00C4CC'; e.target.style.boxShadow = '0 0 0 2px rgba(0,196,204,0.12)' }}
-                    onBlur={e => { e.target.style.borderColor = 'rgba(0,196,204,0.25)'; e.target.style.boxShadow = 'none' }}
-                  />
-                </div>
-
-                {/* CTA */}
-                <button
-                  onClick={handleGenerar}
-                  disabled={!puedeGenerar}
-                  className="w-full py-4 rounded-xl text-base font-bold transition-all duration-300"
-                  style={{
-                    background: puedeGenerar ? 'linear-gradient(135deg,#00C4CC,#00A889)' : 'rgba(0,196,204,0.05)',
-                    color: puedeGenerar ? '#fff' : 'rgba(0,196,204,0.3)',
-                    boxShadow: puedeGenerar ? '0 0 28px rgba(0,196,204,0.35)' : 'none',
-                    cursor: puedeGenerar ? 'pointer' : 'not-allowed',
-                    border: puedeGenerar ? 'none' : '1px solid rgba(0,196,204,0.15)',
-                    fontFamily: 'monospace',
-                    letterSpacing: '0.05em',
-                  }}
-                  onMouseEnter={e => { if (puedeGenerar) { e.currentTarget.style.boxShadow = '0 0 48px rgba(0,196,204,0.55)'; e.currentTarget.style.transform = 'translateY(-1px)' } }}
-                  onMouseLeave={e => { if (puedeGenerar) { e.currentTarget.style.boxShadow = '0 0 28px rgba(0,196,204,0.35)'; e.currentTarget.style.transform = 'translateY(0)' } }}
-                >
-                  {puedeGenerar ? 'Activar sistema →' : '— Completá nombre y nicho —'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {fase === 'resultado' && (
-          <div className="flex flex-col items-center gap-12 fade-in-up mb-12">
-            <div className="text-center">
-              <h3 className="text-2xl md:text-3xl font-extrabold text-white">
-                🎬 Tu ecosistema Between está listo,{' '}
-                <span style={gradStyle}>{nombre}</span>
-              </h3>
-              <p className="mt-2 text-sm" style={{ color: '#7A9AB0' }}>
-                5 canales listos para dominar {nicho}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
-              {cuentas.map((cuenta, i) => (
-                <TikTokCard
-                  key={i}
-                  cuenta={cuenta}
-                  foto={null}
-                  nombreUsuario={nombre}
-                  cardIndex={i}
-                  nicho={nicho}
-                />
-              ))}
-            </div>
-
-            <ProyeccionCrecimiento nicho={nicho} />
-
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
-              onClick={reset}
-              className="text-sm underline underline-offset-4 transition-colors"
-              style={{ color: '#7A9AB0', fontFamily: 'monospace' }}
-              onMouseEnter={e => e.target.style.color = '#fff'}
-              onMouseLeave={e => e.target.style.color = '#7A9AB0'}
+              onClick={() => setSimAbierto(v => !v)}
+              className="btn-gradient px-10 py-4 rounded-full text-base font-bold text-white transition-all duration-200"
+              style={{ boxShadow: '0 0 24px rgba(0,196,204,0.3)' }}
+              onMouseEnter={e => e.currentTarget.style.boxShadow = '0 0 40px rgba(0,196,204,0.5)'}
+              onMouseLeave={e => e.currentTarget.style.boxShadow = '0 0 24px rgba(0,196,204,0.3)'}
             >
-              Generar otro
+              Quiero ser protagonista →
             </button>
-
-            <p className="text-xs text-center max-w-sm" style={{ color: '#7A9AB0' }}>
-              Esta es una simulación visual. Tu ecosistema real se define en el onboarding.
-            </p>
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-8 py-4 rounded-full text-base font-semibold transition-all duration-200"
+              style={{ border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)' }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)' }}
+              onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)' }}
+            >
+              O escribinos por WhatsApp →
+            </a>
           </div>
-        )}
-
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a
-            href={CALENDLY}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-gradient px-10 py-4 rounded-full text-base font-bold text-white transition-all duration-200"
-            style={{ boxShadow: '0 0 24px rgba(0,196,204,0.3)' }}
-            onMouseEnter={e => e.currentTarget.style.boxShadow = '0 0 40px rgba(0,196,204,0.5)'}
-            onMouseLeave={e => e.currentTarget.style.boxShadow = '0 0 24px rgba(0,196,204,0.3)'}
-          >
-            Quiero ser protagonista
-          </a>
-          <a
-            href={WHATSAPP}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-8 py-4 rounded-full text-base font-semibold transition-all duration-200"
-            style={{ border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)' }}
-            onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.4)' }}
-            onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)' }}
-          >
-            O escribinos por WhatsApp →
-          </a>
         </div>
+
+        {/* ── SIMULADOR (toggle) ── */}
+        {simAbierto && (
+          <>
+            {fase === 'form' && (
+              <div className="max-w-xl mx-auto fade-in-up relative mb-4">
+                <div className="absolute inset-0 rounded-3xl pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(0,196,204,0.06) 0%, transparent 65%)' }} />
+                <div className="relative rounded-2xl overflow-hidden" style={{ background: '#0A1628', border: '1px solid rgba(0,196,204,0.2)' }}>
+                  <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, #00C4CC, transparent)' }} />
+
+                  <div className="flex items-center px-6 py-4" style={{ borderBottom: '1px solid rgba(0,196,204,0.1)' }}>
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full" style={{ background: '#00C4CC', boxShadow: '0 0 6px rgba(0,196,204,0.8)' }} />
+                      <span style={{ color: '#00C4CC', fontSize: 11, fontFamily: 'monospace', letterSpacing: '0.15em' }}>
+                        BETWEEN_SIM // INIT
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 flex flex-col gap-5">
+                    <div className="flex flex-col gap-1.5">
+                      <label style={{ color: '#00C4CC', fontSize: 10, fontFamily: 'monospace', fontWeight: 700, letterSpacing: '0.15em' }}>
+                        // NOMBRE O MARCA
+                      </label>
+                      <input
+                        type="text"
+                        value={nombre}
+                        onChange={e => setNombre(e.target.value)}
+                        placeholder="Ej: Rafael Díaz"
+                        className="rounded-xl px-4 py-3 text-sm"
+                        style={inputStyle}
+                        onFocus={e => { e.target.style.borderColor = '#00C4CC'; e.target.style.boxShadow = '0 0 0 2px rgba(0,196,204,0.12)' }}
+                        onBlur={e => { e.target.style.borderColor = 'rgba(0,196,204,0.25)'; e.target.style.boxShadow = 'none' }}
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label style={{ color: '#00C4CC', fontSize: 10, fontFamily: 'monospace', fontWeight: 700, letterSpacing: '0.15em' }}>
+                        // NICHO
+                      </label>
+                      <select
+                        value={nicho}
+                        onChange={e => setNicho(e.target.value)}
+                        className="sim-select rounded-xl px-4 py-3 text-sm"
+                        style={{ ...inputStyle, cursor: 'pointer', appearance: 'none', WebkitAppearance: 'none' }}
+                        onFocus={e => { e.target.style.borderColor = '#00C4CC'; e.target.style.boxShadow = '0 0 0 2px rgba(0,196,204,0.12)' }}
+                        onBlur={e => { e.target.style.borderColor = 'rgba(0,196,204,0.25)'; e.target.style.boxShadow = 'none' }}
+                      >
+                        <option value="">— Seleccioná tu nicho —</option>
+                        <option value="Inmobiliarias">Inmobiliarias</option>
+                        <option value="Gastronomía">Gastronomía</option>
+                        <option value="Marca Personal">Marca Personal</option>
+                        <option value="Startups">Startups</option>
+                        <option value="Fitness">Fitness</option>
+                      </select>
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label style={{ color: '#00C4CC', fontSize: 10, fontFamily: 'monospace', fontWeight: 700, letterSpacing: '0.15em' }}>
+                        // DESCRIPCIÓN <span style={{ color: 'rgba(0,196,204,0.4)', fontWeight: 400 }}>(opcional)</span>
+                      </label>
+                      <textarea
+                        value={descripcion}
+                        onChange={e => setDescripcion(e.target.value)}
+                        placeholder="Ej: Vendo propiedades en Tucumán desde hace 10 años..."
+                        rows={3}
+                        className="rounded-xl px-4 py-3 text-sm resize-none"
+                        style={inputStyle}
+                        onFocus={e => { e.target.style.borderColor = '#00C4CC'; e.target.style.boxShadow = '0 0 0 2px rgba(0,196,204,0.12)' }}
+                        onBlur={e => { e.target.style.borderColor = 'rgba(0,196,204,0.25)'; e.target.style.boxShadow = 'none' }}
+                      />
+                    </div>
+
+                    <button
+                      onClick={handleGenerar}
+                      disabled={!puedeGenerar}
+                      className="w-full py-4 rounded-xl text-base font-bold transition-all duration-300"
+                      style={{
+                        background: puedeGenerar ? 'linear-gradient(135deg,#00C4CC,#00A889)' : 'rgba(0,196,204,0.05)',
+                        color: puedeGenerar ? '#fff' : 'rgba(0,196,204,0.3)',
+                        boxShadow: puedeGenerar ? '0 0 28px rgba(0,196,204,0.35)' : 'none',
+                        cursor: puedeGenerar ? 'pointer' : 'not-allowed',
+                        border: puedeGenerar ? 'none' : '1px solid rgba(0,196,204,0.15)',
+                        fontFamily: 'monospace',
+                        letterSpacing: '0.05em',
+                      }}
+                      onMouseEnter={e => { if (puedeGenerar) { e.currentTarget.style.boxShadow = '0 0 48px rgba(0,196,204,0.55)'; e.currentTarget.style.transform = 'translateY(-1px)' } }}
+                      onMouseLeave={e => { if (puedeGenerar) { e.currentTarget.style.boxShadow = '0 0 28px rgba(0,196,204,0.35)'; e.currentTarget.style.transform = 'translateY(0)' } }}
+                    >
+                      {puedeGenerar ? 'Activar sistema →' : '— Completá nombre y nicho —'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {fase === 'resultado' && (
+              <div className="flex flex-col items-center gap-12 fade-in-up">
+                <div className="text-center">
+                  <h3 className="text-2xl md:text-3xl font-extrabold text-white">
+                    🎬 Tu ecosistema Between está listo,{' '}
+                    <span style={gradStyle}>{nombre}</span>
+                  </h3>
+                  <p className="mt-2 text-sm" style={{ color: '#7A9AB0' }}>
+                    5 canales listos para dominar {nicho}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
+                  {cuentas.map((cuenta, i) => (
+                    <TikTokCard key={i} cuenta={cuenta} foto={null} nombreUsuario={nombre} cardIndex={i} nicho={nicho} />
+                  ))}
+                </div>
+
+                <ProyeccionCrecimiento nicho={nicho} />
+
+                <button
+                  onClick={reset}
+                  className="text-sm underline underline-offset-4 transition-colors"
+                  style={{ color: '#7A9AB0', fontFamily: 'monospace' }}
+                  onMouseEnter={e => e.target.style.color = '#fff'}
+                  onMouseLeave={e => e.target.style.color = '#7A9AB0'}
+                >
+                  Generar otro
+                </button>
+
+                <p className="text-xs text-center max-w-sm" style={{ color: '#7A9AB0' }}>
+                  Esta es una simulación visual. Tu ecosistema real se define en el onboarding.
+                </p>
+              </div>
+            )}
+          </>
+        )}
 
       </div>
     </section>
