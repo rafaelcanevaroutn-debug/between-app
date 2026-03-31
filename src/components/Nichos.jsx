@@ -132,7 +132,7 @@ export default function Nichos() {
           <h2 className="text-4xl md:text-5xl font-extrabold text-white">¿Cuál es tu historia?</h2>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5" style={{ gap: '12px' }}>
           {nichos.map((n) => <NichoCard key={n.num} {...n} />)}
         </div>
       </div>

@@ -23,9 +23,9 @@ function InstagramIcon() {
 
 export default function QuienesSomos() {
   return (
-    <section className="pt-40 pb-28 dot-grid" style={{ background: '#060D18' }}>
+    <section className="pt-28 md:pt-40 pb-16 md:pb-28 dot-grid" style={{ background: '#060D18' }}>
       <div className="max-w-6xl mx-auto px-6 md:px-16">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 64, alignItems: 'start' }} className="grid-cols-1 lg:grid-cols-[1fr_1.4fr]">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-10 lg:gap-16 items-start">
 
           {/* ── IZQUIERDA ── */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>

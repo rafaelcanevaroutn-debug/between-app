@@ -1,6 +1,7 @@
 export default function ExperimentoEnVivo() {
   return (
     <section className="py-24 dot-grid" style={{ background: '#060D18' }}>
+      <style>{`@media (max-width: 640px) { .exp-inner { padding: 28px 24px !important; } }`}</style>
       <div className="max-w-6xl mx-auto px-6 md:px-16">
 
         {/* Header */}
@@ -24,7 +25,7 @@ export default function ExperimentoEnVivo() {
 
         {/* Bloque central */}
         <div style={{ maxWidth: 520, margin: '0 auto', textAlign: 'center' }}>
-          <div style={{
+          <div className="exp-inner" style={{
             background: 'rgba(10,22,40,0.8)',
             border: '1px solid rgba(0,196,204,0.2)',
             borderRadius: '16px',

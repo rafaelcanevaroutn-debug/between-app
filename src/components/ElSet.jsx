@@ -43,6 +43,15 @@ const pasos = [
 export default function ElSet() {
   return (
     <section id="como-funciona" className="py-24 dot-grid overflow-hidden">
+      <style>{`
+        @media (max-width: 767px) {
+          .elset-grid { grid-template-columns: 1fr !important; }
+          .elset-col { border-right: none !important; padding-left: 0 !important; padding-right: 0 !important; padding-bottom: 40px; }
+          .elset-col:last-child { padding-bottom: 0; }
+          .elset-topline { display: none; }
+          .elset-watermark { display: none; }
+        }
+      `}</style>
       <div className="max-w-6xl mx-auto px-6 md:px-16">
 
         {/* Encabezado */}
@@ -60,12 +69,12 @@ export default function ElSet() {
         <div style={{ position: 'relative' }}>
 
           {/* Línea cyan superior que conecta las 3 columnas */}
-          <div style={{
+          <div className="elset-topline" style={{
             position: 'absolute', top: 0, left: 0, right: 0, height: 2,
             background: 'linear-gradient(to right, transparent, #00C4CC 10%, #00C4CC 90%, transparent)',
           }} />
 
-          <div style={{
+          <div className="elset-grid" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
             paddingTop: 40,
@@ -73,16 +82,16 @@ export default function ElSet() {
             {pasos.map(({ num, label, desc, icon }, idx) => (
               <div
                 key={num}
+                className="elset-col"
                 style={{
                   position: 'relative',
-                  padding: '0 32px 0 0',
                   borderRight: idx < 2 ? '1px solid rgba(0,196,204,0.12)' : 'none',
                   paddingRight: idx < 2 ? 40 : 0,
                   paddingLeft: idx > 0 ? 40 : 0,
                 }}
               >
                 {/* Número watermark */}
-                <div style={{
+                <div className="elset-watermark" style={{
                   position: 'absolute',
                   top: -20,
                   right: idx < 2 ? 24 : 0,

@@ -214,8 +214,8 @@ export default function Comunidad() {
           </span>
         </div>
 
-        {/* Grid de 14 avatares — 7 por fila */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '24px 12px', marginBottom: 64 }}>
+        {/* Grid de 14 avatares — 7 por fila en desktop, 4 en mobile */}
+        <div className="grid grid-cols-4 sm:grid-cols-7" style={{ gap: '24px 12px', marginBottom: 64 }}>
           {avatares.map((a) => <Avatar key={a.initials} {...a} />)}
         </div>
 

@@ -55,6 +55,7 @@ function Check({ highlight }) {
 export default function Planes() {
   return (
     <section id="planes" className="py-24 dot-grid">
+      <style>{`@media (max-width: 767px) { .plan-highlight { transform: none !important; } }`}</style>
       <div className="max-w-6xl mx-auto px-6 md:px-16">
         <div className="text-center mb-14">
           <p className="text-cyan text-sm font-semibold uppercase tracking-widest mb-3">Planes</p>
@@ -67,7 +68,7 @@ export default function Planes() {
           {PLANS.map((plan) => (
             <div
               key={plan.name}
-              className="relative rounded-3xl flex flex-col"
+              className={`relative rounded-3xl flex flex-col${plan.highlight ? ' plan-highlight' : ''}`}
               style={{
                 background: '#0A1628',
                 border: plan.highlight ? '2px solid #00C4CC' : '1px solid #122030',
