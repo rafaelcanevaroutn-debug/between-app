@@ -70,7 +70,7 @@ function LiveCard({ name, nicho, img, seguidores, videos, dias }) {
       boxShadow: '0 0 24px rgba(0,196,204,0.08)',
       flex: 1,
     }}>
-      {/* Badge EN VIVO */}
+      {/* Badge EN VIVO + BETWEEN ECOSYSTEM */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <span style={{
           fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em',
@@ -81,15 +81,35 @@ function LiveCard({ name, nicho, img, seguidores, videos, dias }) {
           <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#FF3C3C', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
           EN VIVO
         </span>
-        <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }}>between.app</span>
+        <span style={{
+          fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.08em',
+          padding: '2px 8px', borderRadius: 999,
+          background: 'rgba(0,196,204,0.08)', border: '1px solid rgba(0,196,204,0.2)', color: '#00C4CC',
+        }}>
+          BETWEEN ECOSYSTEM
+        </span>
       </div>
 
-      {/* Avatar + nombre */}
+      {/* Avatar + nombre + plataformas */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
         <NpcImg img={img} size={52} alt={name} />
         <div>
           <p style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff', margin: 0 }}>{name}</p>
-          <p style={{ fontSize: '0.75rem', color: NICHO_COLORS[nicho], margin: '2px 0 0', fontWeight: 600 }}>{nicho}</p>
+          <p style={{ fontSize: '0.75rem', color: NICHO_COLORS[nicho], margin: '2px 0 4px', fontWeight: 600 }}>{nicho}</p>
+          {/* Plataformas activas */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            {/* TikTok */}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+              <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 106.34 6.34V8.69a8.17 8.17 0 004.79 1.53V6.78a4.85 4.85 0 01-1.02-.09z"/>
+            </svg>
+            {/* Instagram */}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <rect x="2" y="2" width="20" height="20" rx="5" stroke="white" strokeWidth="1.8" fill="none"/>
+              <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="1.8" fill="none"/>
+              <circle cx="17.5" cy="6.5" r="1.2" fill="white"/>
+            </svg>
+            <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)' }}>5 cuentas</span>
+          </div>
         </div>
       </div>
 
@@ -97,18 +117,21 @@ function LiveCard({ name, nicho, img, seguidores, videos, dias }) {
       <div style={{ height: 1, background: 'rgba(0,196,204,0.12)', marginBottom: 16 }} />
 
       {/* Métricas */}
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
         {[
-          { label: 'Seguidores', val: seguidores },
-          { label: 'Videos',     val: videos     },
-          { label: 'Días activo', val: dias       },
+          { label: 'Alcance Total',      val: seguidores },
+          { label: 'Videos Publicados',  val: videos     },
+          { label: 'Días en Between',    val: dias       },
         ].map(({ label, val }) => (
           <div key={label} style={{ textAlign: 'center' }}>
             <p style={{ fontSize: '1.1rem', fontWeight: 800, color: '#00C4CC', margin: 0 }}>{val}</p>
-            <p style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', margin: '2px 0 0', letterSpacing: '0.05em' }}>{label.toUpperCase()}</p>
+            <p style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.4)', margin: '2px 0 0', letterSpacing: '0.04em', textTransform: 'uppercase' }}>{label}</p>
           </div>
         ))}
       </div>
+      <p style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)', textAlign: 'center', margin: 0, fontStyle: 'italic' }}>
+        Suma total de todas las cuentas activas
+      </p>
     </div>
   )
 }
