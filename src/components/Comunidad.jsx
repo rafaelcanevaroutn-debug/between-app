@@ -1,44 +1,39 @@
-const GRADIENTS = [
-  'linear-gradient(135deg, #060D18, #00C4CC)',
-  'linear-gradient(135deg, #0A2040, #0088CC)',
-  'linear-gradient(135deg, #060D18, #00A889)',
-  'linear-gradient(135deg, #0A1628, #00B4A0)',
-  'linear-gradient(135deg, #0A2040, #00CC88)',
-  'linear-gradient(135deg, #060D18, #006B8F)',
-  'linear-gradient(135deg, #0A1628, #00C4CC)',
-  'linear-gradient(135deg, #071220, #00A889)',
-  'linear-gradient(135deg, #0A2040, #00B4A0)',
-  'linear-gradient(135deg, #060D18, #0088CC)',
-  'linear-gradient(135deg, #0A1628, #00CC88)',
-  'linear-gradient(135deg, #071220, #00C4CC)',
-  'linear-gradient(135deg, #0A2040, #00A889)',
-  'linear-gradient(135deg, #060D18, #00B4A0)',
-  'linear-gradient(135deg, #0A1628, #0088CC)',
-  'linear-gradient(135deg, #071220, #00CC88)',
-  'linear-gradient(135deg, #060D18, #006B8F)',
-]
+import npc1  from '../assets/NPC1.png'
+import npc2  from '../assets/NPC2.png'
+import npc3  from '../assets/NPC3.png'
+import npc4  from '../assets/NPC4.png'
+import npc5  from '../assets/NPC5.png'
+import npc6  from '../assets/NPC6.png'
+import npc7  from '../assets/NPC7.png'
+import npc8  from '../assets/NPC8.png'
+import npc9  from '../assets/NPC9.png'
+import npc10 from '../assets/NPC10.png'
+import npc11 from '../assets/NPC11.png'
+import npc12 from '../assets/NPC12.png'
+import npc13 from '../assets/NPC13.png'
+import npc14 from '../assets/NPC14.png'
 
 const liveCards = [
-  { name: 'Martín A.', nicho: 'Inmobiliarias',  grad: GRADIENTS[0],  seguidores: '1.2K', videos: '48', dias: '32' },
-  { name: 'Sofía C.',  nicho: 'Marca Personal', grad: GRADIENTS[1],  seguidores: '890',  videos: '61', dias: '41' },
-  { name: 'Lucas R.',  nicho: 'Startups',        grad: GRADIENTS[2],  seguidores: '2.1K', videos: '93', dias: '58' },
+  { name: 'Martín A.', nicho: 'Inmobiliarias',  img: npc1, seguidores: '1.2K', videos: '48', dias: '32' },
+  { name: 'Sofía C.',  nicho: 'Marca Personal', img: npc2, seguidores: '890',  videos: '61', dias: '41' },
+  { name: 'Lucas R.',  nicho: 'Startups',        img: npc3, seguidores: '2.1K', videos: '93', dias: '58' },
 ]
 
 const avatares = [
-  { name: 'Valentina G.', nicho: 'Gastronomía',   grad: GRADIENTS[3]  },
-  { name: 'Esteban M.',   nicho: 'Fitness',        grad: GRADIENTS[4]  },
-  { name: 'Diego P.',     nicho: 'Inmobiliarias',  grad: GRADIENTS[5]  },
-  { name: 'Camila R.',    nicho: 'Marca Personal', grad: GRADIENTS[6]  },
-  { name: 'Julián T.',    nicho: 'Startups',       grad: GRADIENTS[7]  },
-  { name: 'Ana L.',       nicho: 'Gastronomía',    grad: GRADIENTS[8]  },
-  { name: 'Matías V.',    nicho: 'Fitness',        grad: GRADIENTS[9]  },
-  { name: 'Franco R.',    nicho: 'Startups',       grad: GRADIENTS[10] },
-  { name: 'Nadia G.',     nicho: 'Marca Personal', grad: GRADIENTS[11] },
-  { name: 'Pablo L.',     nicho: 'Inmobiliarias',  grad: GRADIENTS[12] },
-  { name: 'Romina V.',    nicho: 'Gastronomía',    grad: GRADIENTS[13] },
-  { name: 'Santiago E.',  nicho: 'Fitness',        grad: GRADIENTS[14] },
-  { name: 'Laura B.',     nicho: 'Marca Personal', grad: GRADIENTS[15] },
-  { name: 'Gonzalo M.',   nicho: 'Startups',       grad: GRADIENTS[16] },
+  { name: 'Valentina G.', nicho: 'Gastronomía',   img: npc4  },
+  { name: 'Esteban M.',   nicho: 'Fitness',        img: npc5  },
+  { name: 'Diego P.',     nicho: 'Inmobiliarias',  img: npc6  },
+  { name: 'Camila R.',    nicho: 'Marca Personal', img: npc7  },
+  { name: 'Julián T.',    nicho: 'Startups',       img: npc8  },
+  { name: 'Ana L.',       nicho: 'Gastronomía',    img: npc9  },
+  { name: 'Matías V.',    nicho: 'Fitness',        img: npc10 },
+  { name: 'Franco R.',    nicho: 'Startups',       img: npc11 },
+  { name: 'Nadia G.',     nicho: 'Marca Personal', img: npc12 },
+  { name: 'Pablo L.',     nicho: 'Inmobiliarias',  img: npc13 },
+  { name: 'Romina V.',    nicho: 'Gastronomía',    img: npc14 },
+  { name: 'Santiago E.',  nicho: 'Fitness',        img: npc1  },
+  { name: 'Laura B.',     nicho: 'Marca Personal', img: npc2  },
+  { name: 'Gonzalo M.',   nicho: 'Startups',       img: npc3  },
 ]
 
 const NICHO_COLORS = {
@@ -49,31 +44,23 @@ const NICHO_COLORS = {
   'Fitness':        '#00CC88',
 }
 
-const HelmetIcon = ({ size = 22, color = '#00C4CC' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="7"/>
-    <path d="M5 12a7 7 0 0 1 14 0"/>
-    <rect x="9" y="14" width="6" height="3" rx="1"/>
-    <circle cx="12" cy="11" r="2.5" fill={color} opacity="0.3"/>
-  </svg>
-)
-
-function AstroCircle({ grad, size = 72 }) {
+function NpcImg({ img, size = 72, alt = '' }) {
   return (
-    <div style={{
-      width: size, height: size, borderRadius: '50%',
-      background: grad,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      border: '2px solid rgba(0,196,204,0.3)',
-      boxShadow: '0 0 14px rgba(0,196,204,0.15)',
-      flexShrink: 0,
-    }}>
-      <HelmetIcon size={Math.round(size * 0.44)} />
-    </div>
+    <img
+      src={img} alt={alt}
+      style={{
+        width: size, height: size,
+        borderRadius: '50%',
+        objectFit: 'cover',
+        border: '2px solid rgba(0,196,204,0.3)',
+        boxShadow: '0 0 14px rgba(0,196,204,0.15)',
+        flexShrink: 0,
+      }}
+    />
   )
 }
 
-function LiveCard({ name, nicho, grad, seguidores, videos, dias }) {
+function LiveCard({ name, nicho, img, seguidores, videos, dias }) {
   return (
     <div style={{
       background: '#0A1628',
@@ -99,7 +86,7 @@ function LiveCard({ name, nicho, grad, seguidores, videos, dias }) {
 
       {/* Avatar + nombre */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
-        <AstroCircle grad={grad} size={52} />
+        <NpcImg img={img} size={52} alt={name} />
         <div>
           <p style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff', margin: 0 }}>{name}</p>
           <p style={{ fontSize: '0.75rem', color: NICHO_COLORS[nicho], margin: '2px 0 0', fontWeight: 600 }}>{nicho}</p>
@@ -126,11 +113,11 @@ function LiveCard({ name, nicho, grad, seguidores, videos, dias }) {
   )
 }
 
-function Avatar({ name, nicho, grad }) {
+function Avatar({ name, nicho, img }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
       <div style={{ position: 'relative' }}>
-        <AstroCircle grad={grad} size={72} />
+        <NpcImg img={img} size={72} alt={name} />
         <span style={{
           position: 'absolute', top: 2, right: 2,
           width: 12, height: 12, borderRadius: '50%',
