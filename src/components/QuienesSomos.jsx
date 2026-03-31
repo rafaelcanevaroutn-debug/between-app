@@ -3,7 +3,6 @@ import fotoperfil from '../assets/fotoperfil.jpg'
 const STATS = [
   { value: '5.000+', label: 'usuarios orgánicos' },
   { value: '9',      label: 'clientes gestionados' },
-  { value: '2',      label: 'startups construidas' },
 ]
 
 function LinkedInIcon() {
@@ -33,15 +32,15 @@ export default function QuienesSomos() {
 
             {/* Foto circular */}
             <div style={{
-              position: 'relative',
               width: 200, height: 200,
               borderRadius: '50%',
+              overflow: 'hidden',
               boxShadow: '0 0 0 3px #00C4CC, 0 0 32px rgba(0,196,204,0.45)',
               flexShrink: 0,
             }}>
               <img
                 src={fotoperfil} alt="Rafael Canevaro"
-                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
             </div>
 

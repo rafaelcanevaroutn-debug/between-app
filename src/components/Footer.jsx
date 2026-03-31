@@ -14,9 +14,9 @@ export default function Footer() {
               src={logo}
               alt="Between"
               style={{
-                height: '48px',
+                height: '80px',
                 width: 'auto',
-                filter: 'drop-shadow(0 0 3px rgba(0,196,204,0.35))',
+                filter: 'drop-shadow(0 0 4px rgba(0,196,204,0.4))',
               }}
             />
           </a>
