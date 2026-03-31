@@ -36,7 +36,7 @@ export default function CTAFinal() {
         </p>
 
         {/* CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
           <a
             href={CALENDLY}
             target="_blank"
@@ -60,6 +60,17 @@ export default function CTAFinal() {
             O escribinos por WhatsApp →
           </a>
         </div>
+
+        {/* Simulador link */}
+        <a
+          href="#simulador"
+          className="inline-flex items-center gap-2 text-sm font-semibold transition-colors duration-200"
+          style={{ color: 'rgba(0,196,204,0.7)' }}
+          onMouseEnter={e => e.currentTarget.style.color = '#00C4CC'}
+          onMouseLeave={e => e.currentTarget.style.color = 'rgba(0,196,204,0.7)'}
+        >
+          ¿Querés ver cómo quedaría tu ecosistema? Generalo acá →
+        </a>
       </div>
     </section>
   )

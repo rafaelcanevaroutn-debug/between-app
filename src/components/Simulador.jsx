@@ -495,7 +495,7 @@ export default function Simulador() {
   const [nombre, setNombre] = useState('')
   const [nicho, setNicho] = useState('')
   const [descripcion, setDescripcion] = useState('')
-  const [fase, setFase] = useState('landing')
+  const [fase, setFase] = useState('form')
   const [cuentas, setCuentas] = useState([])
 
   const puedeGenerar = nombre.trim() && nicho
@@ -507,7 +507,7 @@ export default function Simulador() {
   }
 
   const reset = () => {
-    setFase('landing')
+    setFase('form')
     setNombre('')
     setNicho('')
     setDescripcion('')
@@ -515,7 +515,7 @@ export default function Simulador() {
   }
 
   return (
-    <section className="py-24 dot-grid" style={{ background: '#060D18' }}>
+    <section id="simulador" className="py-24 dot-grid" style={{ background: '#060D18' }}>
       <style>{`
         @keyframes fadeInUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
         .fade-in-up { animation: fadeInUp 0.4s ease forwards; }
@@ -524,68 +524,6 @@ export default function Simulador() {
       `}</style>
 
       <div className="max-w-6xl mx-auto px-6 md:px-16">
-
-        {/* ── LANDING ── */}
-        {fase === 'landing' && (
-          <div className="flex flex-col items-center text-center fade-in-up">
-            {/* Cockpit top bar */}
-            <div className="flex items-center gap-3 mb-10">
-              <div style={{ height: 1, width: 60, background: 'linear-gradient(90deg, transparent, #00C4CC)' }} />
-              <span
-                className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full"
-                style={{ border: '1px solid rgba(0,196,204,0.4)', color: '#00C4CC', background: 'rgba(0,196,204,0.06)' }}
-              >
-                Simulador
-              </span>
-              <div style={{ height: 1, width: 60, background: 'linear-gradient(90deg, #00C4CC, transparent)' }} />
-            </div>
-
-            {/* Panel decorativo */}
-            <div className="relative mb-10 w-full max-w-lg">
-              <div
-                className="rounded-2xl p-6 flex items-center justify-center gap-8"
-                style={{ background: 'rgba(0,196,204,0.03)', border: '1px solid rgba(0,196,204,0.12)' }}
-              >
-                {['SYS', 'NET', 'DST', 'CNT', 'AUT'].map((label, i) => (
-                  <div key={label} className="flex flex-col items-center gap-1.5">
-                    <div
-                      className="w-2 h-2 rounded-full"
-                      style={{
-                        background: '#00C4CC',
-                        boxShadow: '0 0 8px rgba(0,196,204,0.8)',
-                        animation: `pulse ${1.2 + i * 0.3}s ease-in-out infinite`,
-                      }}
-                    />
-                    <span style={{ color: 'rgba(0,196,204,0.5)', fontSize: 9, fontFamily: 'monospace', letterSpacing: '0.1em' }}>{label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
-              Visualizá tu ecosistema
-            </h2>
-            <p className="max-w-md mx-auto text-base leading-relaxed mb-10" style={{ color: '#7A9AB0' }}>
-              Ingresá tus datos y generá una vista previa de tu sistema de distribución
-            </p>
-
-            <button
-              onClick={() => setFase('form')}
-              className="px-10 py-4 rounded-full text-base font-bold text-white transition-all duration-300"
-              style={{
-                background: 'linear-gradient(135deg, #00C4CC, #00A889)',
-                boxShadow: '0 0 28px rgba(0,196,204,0.35)',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 0 48px rgba(0,196,204,0.6)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-              onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 0 28px rgba(0,196,204,0.35)'; e.currentTarget.style.transform = 'translateY(0)' }}
-            >
-              Generá tu ecosistema →
-            </button>
-            <p style={{ color: '#7A9AB0', fontSize: '0.75rem', marginTop: '12px' }}>
-              Es una simulación orientativa. Tu ecosistema real se define en la primera charla.
-            </p>
-          </div>
-        )}
 
         {/* ── FORMULARIO ── */}
         {fase === 'form' && (
