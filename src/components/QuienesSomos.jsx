@@ -126,6 +126,37 @@ export default function QuienesSomos() {
               — Rafa, Founder
             </p>
 
+            {/* Experimento En Vivo */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <span
+                  className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full"
+                  style={{ background: 'rgba(255,60,60,0.12)', border: '1px solid rgba(255,60,60,0.35)', color: '#FF3C3C' }}
+                >
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5 animate-pulse" style={{ verticalAlign: 'middle' }} />
+                  EN VIVO
+                </span>
+              </div>
+              <div style={{
+                background: 'rgba(10,22,40,0.8)',
+                border: '1px solid rgba(0,196,204,0.2)',
+                borderRadius: '14px',
+                padding: '20px 24px',
+                backdropFilter: 'blur(8px)',
+              }}>
+                <p style={{ fontSize: '0.88rem', fontWeight: 700, color: '#fff', marginBottom: 14 }}>
+                  5 canales en proceso de activación
+                </p>
+                <div style={{ background: 'rgba(255,255,255,0.07)', borderRadius: 999, height: 6, overflow: 'hidden', marginBottom: 8 }}>
+                  <div style={{ width: '20%', height: '100%', background: 'linear-gradient(90deg, #00C4CC, #00A889)', borderRadius: 999, boxShadow: '0 0 10px rgba(0,196,204,0.5)' }} />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '0.72rem', color: '#00C4CC', fontWeight: 700 }}>20%</span>
+                  <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }}>Semana 1 de 4</span>
+                </div>
+              </div>
+            </div>
+
             {/* Card THINKING */}
             <div style={{
               background: 'rgba(10,22,40,0.8)',

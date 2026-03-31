@@ -197,23 +197,6 @@ export default function Comunidad() {
           {liveCards.map((c) => <LiveCard key={c.initials} {...c} />)}
         </div>
 
-        {/* Quote central */}
-        <div style={{
-          textAlign: 'center', marginBottom: 48,
-          padding: '24px 32px',
-          background: 'rgba(0,196,204,0.04)',
-          border: '1px solid rgba(0,196,204,0.15)',
-          borderRadius: 12,
-          maxWidth: 600, margin: '0 auto 48px',
-        }}>
-          <p style={{ fontSize: '1.05rem', fontStyle: 'italic', color: 'rgba(255,255,255,0.85)', margin: '0 0 10px', lineHeight: 1.6 }}>
-            "Between cambió la forma en que mi marca llega a la gente."
-          </p>
-          <span style={{ fontSize: '0.8rem', color: '#00C4CC', fontWeight: 600 }}>
-            — Diego A., Inmobiliarias · Cliente activo
-          </span>
-        </div>
-
         {/* Grid de 14 avatares — 7 por fila en desktop, 4 en mobile */}
         <div className="grid grid-cols-4 sm:grid-cols-7" style={{ gap: '24px 12px', marginBottom: 64 }}>
           {avatares.map((a) => <Avatar key={a.initials} {...a} />)}

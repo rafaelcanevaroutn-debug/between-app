@@ -5,7 +5,6 @@ import Nichos from './components/Nichos'
 import TickerPlanes from './components/TickerPlanes'
 import Hollywood from './components/Hollywood'
 import ElSet from './components/ElSet'
-import ExperimentoEnVivo from './components/ExperimentoEnVivo'
 import Simulador from './components/Simulador'
 import BetweenGrowth from './components/BetweenGrowth'
 import Planes from './components/Planes'
@@ -23,14 +22,13 @@ function Landing() {
       <Hero />
       <TickerPlanes />
       <Nichos />
-      <Simulador />
       <Hollywood />
       <ElSet />
-      <ExperimentoEnVivo />
       <BetweenGrowth />
       <Planes />
       <Comunidad />
       <CalendlySection />
+      <Simulador />
       <CTAFinal />
       <Operadores />
       <Footer />
