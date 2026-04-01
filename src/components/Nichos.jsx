@@ -93,7 +93,7 @@ function NichoCard({ num, label, desc, accent, icon }) {
         <span style={{ fontFamily: 'monospace', fontSize: '10px', fontWeight: 700, letterSpacing: '0.12em', color: accent, display: 'block', marginBottom: 4 }}>
           {num}
         </span>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.2, margin: 0 }}>
+        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.2, margin: 0, letterSpacing: '0.05em' }}>
           {label}
         </h3>
       </div>

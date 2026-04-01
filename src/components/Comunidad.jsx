@@ -20,7 +20,7 @@ const liveCards = [
 ]
 
 const avatares = [
-  { name: 'Valentina G.', nicho: 'Gastronomía',   img: npc4  },
+  { name: 'Valentina G.', nicho: 'Gastronomía',   img: npc3  },
   { name: 'Esteban M.',   nicho: 'Fitness',        img: npc5  },
   { name: 'Diego P.',     nicho: 'Inmobiliarias',  img: npc6  },
   { name: 'Camila R.',    nicho: 'Marca Personal', img: npc7  },
@@ -33,7 +33,7 @@ const avatares = [
   { name: 'Romina V.',    nicho: 'Gastronomía',    img: npc14 },
   { name: 'Santiago E.',  nicho: 'Fitness',        img: npc1  },
   { name: 'Laura B.',     nicho: 'Marca Personal', img: npc2  },
-  { name: 'Gonzalo M.',   nicho: 'Startups',       img: npc3  },
+  { name: 'Gonzalo M.',   nicho: 'Startups',       img: npc4  },
 ]
 
 const NICHO_COLORS = {
@@ -49,9 +49,10 @@ function NpcImg({ img, size = 72, alt = '' }) {
     <img
       src={img} alt={alt}
       style={{
-        width: size, height: size,
+        width: 96, height: 96,
         borderRadius: '50%',
         objectFit: 'cover',
+        imageRendering: 'crisp-edges',
         border: '2px solid rgba(0,196,204,0.3)',
         boxShadow: '0 0 14px rgba(0,196,204,0.15)',
         flexShrink: 0,
