@@ -125,7 +125,8 @@ export default function BetweenAI() {
       {/* Message bubble */}
       <div
         style={{
-          width: 260,
+          width: '100%',
+          maxWidth: 320,
           minHeight: 76,
           opacity: visible ? 1 : 0,
           transition: 'opacity 0.45s ease',
@@ -146,7 +147,8 @@ export default function BetweenAI() {
               lineHeight: 1.65,
               margin: 0,
               minHeight: '2.6em',
-              wordBreak: 'break-word',
+              overflowWrap: 'break-word',
+              wordBreak: 'normal'
             }}
           >
             {typed}

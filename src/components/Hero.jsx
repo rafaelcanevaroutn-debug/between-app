@@ -70,7 +70,7 @@ export default function Hero() {
         height: '100vh',
         backgroundImage: `url(${astronauta})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'right 30%',
+        backgroundPosition: 'clamp(60%, 80%, 100%) 30%',
         backgroundRepeat: 'no-repeat',
       }}
     >
@@ -119,7 +119,7 @@ export default function Hero() {
       {/* Contenido */}
       <div
         className="relative flex flex-col justify-center h-full w-full md:w-[55%]"
-        style={{ zIndex: 10, paddingLeft: 'clamp(1.5rem, 6vw, 7rem)', paddingRight: 'clamp(1.5rem, 4vw, 3rem)', paddingTop: '5rem' }}
+        style={{ zIndex: 10, paddingLeft: 'clamp(1.25rem, 7vw, 7rem)', paddingRight: 'clamp(1.25rem, 4vw, 3rem)', paddingTop: '5rem' }}
       >
         {/* Badge */}
         <div className="inline-flex items-center gap-2 bg-card border border-border rounded-full px-4 py-1.5 mb-8 self-start">
@@ -128,8 +128,8 @@ export default function Hero() {
         </div>
 
         {/* Headline rotativo */}
-        <div className="mb-4" style={{ minHeight: 'clamp(120px, 30vw, 160px)' }}>
-          <h1 style={{ fontSize: 'clamp(3rem, 5vw, 4.5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '0.01em', width: '100%', overflow: 'visible', fontFamily: "'Bebas Neue', sans-serif", wordBreak: 'keep-all', hyphens: 'none', overflowWrap: 'normal' }}>
+        <div className="mb-4" style={{ minHeight: 'clamp(100px, 25vw, 160px)' }}>
+          <h1 style={{ fontSize: 'clamp(2.1rem, 9vw, 4.5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '0.01em', width: '100%', overflow: 'visible', fontFamily: "'Bebas Neue', sans-serif", wordBreak: 'keep-all', hyphens: 'none', overflowWrap: 'normal' }}>
             {(() => {
               // Agrupar chars en tokens: word | space | break
               // Así cada palabra es un inline-block atómico y no se corta
