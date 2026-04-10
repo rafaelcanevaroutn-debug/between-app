@@ -93,7 +93,7 @@ function NichoCard({ num, label, desc, accent, icon }) {
         <span style={{ fontFamily: 'monospace', fontSize: '10px', fontWeight: 700, letterSpacing: '0.12em', color: accent, display: 'block', marginBottom: 4 }}>
           {num}
         </span>
-        <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.2, margin: 0, letterSpacing: '0.05em' }}>
+        <h3 style={{ fontSize: 'clamp(1rem, 4vw, 1.2rem)', fontWeight: 800, color: '#FFFFFF', lineHeight: 1.2, margin: 0, letterSpacing: '0.05em' }}>
           {label}
         </h3>
       </div>
@@ -132,7 +132,7 @@ export default function Nichos() {
           <h2 className="text-4xl md:text-5xl font-extrabold text-white">¿Cuál es tu historia?</h2>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5" style={{ gap: '12px' }}>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
           {nichos.map((n) => <NichoCard key={n.num} {...n} />)}
         </div>
       </div>

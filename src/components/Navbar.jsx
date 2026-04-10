@@ -17,7 +17,7 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-bg/90 backdrop-blur-md gradient-border-top">
-      <div className="w-full px-8 md:px-16 flex items-center justify-between h-20">
+      <div className="w-full px-6 md:px-16 flex items-center justify-between h-20">
         {/* Logo */}
         <Link to="/" className="flex items-center">
           <img
