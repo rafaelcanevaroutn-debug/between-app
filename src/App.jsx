@@ -14,6 +14,9 @@ import CalendlySection from './components/CalendlySection'
 import Operadores from './components/Operadores'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
+import Maintenance from './components/Maintenance'
+
+const IS_MAINTENANCE = true;
 
 function Landing() {
   return (
@@ -44,6 +47,14 @@ function QuienSoyPage() {
 }
 
 export default function App() {
+  if (IS_MAINTENANCE) {
+    return (
+      <div className="bg-bg text-white font-sans">
+        <Maintenance />
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter>
       <div className="bg-bg text-white font-sans">
