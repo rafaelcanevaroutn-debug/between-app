@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import npc1  from '../assets/NPC1.png'
 import npc2  from '../assets/NPC2.png'
 import npc3  from '../assets/NPC3.png'
@@ -13,13 +14,40 @@ import npc12 from '../assets/NPC12.png'
 import npc13 from '../assets/NPC13.png'
 import npc14 from '../assets/NPC14.png'
 
-const liveCards = [
-  { name: 'Martín A.', nicho: 'Inmobiliarias',  img: npc1, seguidores: '1.2K', videos: '48', dias: '32' },
-  { name: 'Sofía C.',  nicho: 'Marca Personal', img: npc2, seguidores: '890',  videos: '61', dias: '41' },
-  { name: 'Lucas R.',  nicho: 'Startups',        img: npc3, seguidores: '2.1K', videos: '93', dias: '58' },
+const liveSeries = [
+  { 
+    name: 'Martín A.', 
+    series: 'The Strategy Log', 
+    nicho: 'Inmobiliarias',  
+    img: npc1, 
+    reach: '1.2M', 
+    episodes: '48', 
+    continuity: '92%',
+    tag: 'Season 1'
+  },
+  { 
+    name: 'Sofía C.',  
+    series: 'Narrativa Digital', 
+    nicho: 'Marca Personal', 
+    img: npc2, 
+    reach: '890K',  
+    episodes: '61', 
+    continuity: '96%',
+    tag: 'On Air'
+  },
+  { 
+    name: 'Lucas R.',  
+    series: 'Inside Startups', 
+    nicho: 'Startups',        
+    img: npc3, 
+    reach: '2.4M', 
+    episodes: '93', 
+    continuity: '98%',
+    tag: 'Exclusive'
+  },
 ]
 
-const avatares = [
+const networkPartners = [
   { name: 'Valentina G.', nicho: 'Gastronomía',   img: npc3  },
   { name: 'Esteban M.',   nicho: 'Fitness',        img: npc5  },
   { name: 'Diego P.',     nicho: 'Inmobiliarias',  img: npc6  },
@@ -38,181 +66,180 @@ const avatares = [
 
 const NICHO_COLORS = {
   'Inmobiliarias':  '#00C4CC',
-  'Marca Personal': '#0088CC',
+  'Marca Personal': '#8B5CF6',
   'Startups':       '#00A889',
-  'Gastronomía':    '#00B4A0',
-  'Fitness':        '#00CC88',
+  'Gastronomía':    '#F59E0B',
+  'Fitness':        '#10B981',
 }
 
-function NpcImg({ img, size = 72, alt = '' }) {
+function AuthorityCard({ name, series, nicho, img, reach, episodes, continuity, tag }) {
+  const color = NICHO_COLORS[nicho] || '#00C4CC'
+  
   return (
-    <img
-      src={img} alt={alt}
-      style={{
-        width: 96, height: 96,
-        borderRadius: '50%',
-        objectFit: 'cover',
-        imageRendering: 'crisp-edges',
-        border: '2px solid rgba(0,196,204,0.3)',
-        boxShadow: '0 0 14px rgba(0,196,204,0.15)',
-        flexShrink: 0,
-      }}
-    />
-  )
-}
+    <motion.div 
+      className="relative group h-full"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+    >
+      {/* Background Glow */}
+      <div 
+        className="absolute -inset-1 rounded-[2rem] opacity-0 group-hover:opacity-20 transition-opacity duration-700 blur-xl px-1"
+        style={{ background: color }}
+      />
+      
+      <div className="relative h-full flex flex-col items-center bg-[#0A1628]/40 backdrop-blur-2xl border border-white/5 rounded-[2rem] p-8 overflow-hidden">
+        {/* Subtle texture overlay */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
 
-function LiveCard({ name, nicho, img, seguidores, videos, dias }) {
-  return (
-    <div style={{
-      background: '#0A1628',
-      border: '1px solid rgba(0,196,204,0.25)',
-      borderRadius: 16,
-      padding: '20px 24px',
-      boxShadow: '0 0 24px rgba(0,196,204,0.08)',
-      flex: 1,
-    }}>
-      {/* Badge EN VIVO + BETWEEN ECOSYSTEM */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <span style={{
-          fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em',
-          padding: '3px 10px', borderRadius: 999,
-          background: 'rgba(255,60,60,0.12)', border: '1px solid rgba(255,60,60,0.35)', color: '#FF3C3C',
-          display: 'inline-flex', alignItems: 'center', gap: 5,
-        }}>
-          <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#FF3C3C', display: 'inline-block', animation: 'pulse 1.5s infinite' }} />
-          EN VIVO
-        </span>
-        <span style={{
-          fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.08em',
-          padding: '2px 8px', borderRadius: 999,
-          background: 'rgba(0,196,204,0.08)', border: '1px solid rgba(0,196,204,0.2)', color: '#00C4CC',
-        }}>
-          BETWEEN ECOSYSTEM
-        </span>
-      </div>
+        {/* Header Tag */}
+        <div className="flex w-full justify-between items-center mb-10">
+          <span 
+            className="text-[10px] font-black uppercase tracking-[0.3em] px-3 py-1.5 rounded-full border border-white/10 text-white/40"
+            style={{ fontFamily: 'monospace' }}
+          >
+            {tag}
+          </span>
+          <div className="flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-cyan shadow-[0_0_8px_#00C4CC]" />
+            <span className="text-[10px] font-bold text-cyan uppercase tracking-widest">Active</span>
+          </div>
+        </div>
 
-      {/* Avatar + nombre + plataformas */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
-        <NpcImg img={img} size={52} alt={name} />
-        <div>
-          <p style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff', margin: 0 }}>{name}</p>
-          <p style={{ fontSize: '0.75rem', color: NICHO_COLORS[nicho], margin: '2px 0 4px', fontWeight: 600 }}>{nicho}</p>
-          {/* Plataformas activas */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            {/* TikTok */}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-              <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 106.34 6.34V8.69a8.17 8.17 0 004.79 1.53V6.78a4.85 4.85 0 01-1.02-.09z"/>
-            </svg>
-            {/* Instagram */}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <rect x="2" y="2" width="20" height="20" rx="5" stroke="white" strokeWidth="1.8" fill="none"/>
-              <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="1.8" fill="none"/>
-              <circle cx="17.5" cy="6.5" r="1.2" fill="white"/>
-            </svg>
-            <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)' }}>5 cuentas</span>
+        {/* Series Info */}
+        <div className="text-center mb-8">
+          <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em] mb-2">{nicho}</p>
+          <h3 
+            className="text-white text-3xl md:text-5xl font-black uppercase leading-none mb-2 drop-shadow-2xl"
+            style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+          >
+            {series}
+          </h3>
+          <p className="text-cyan text-sm font-bold tracking-tight lowercase">{name}</p>
+        </div>
+
+        {/* Main Avatar Center */}
+        <div className="relative mb-12">
+          {/* Stage Light Effect */}
+          <div 
+            className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-24 h-6 opacity-40 blur-xl rounded-full"
+            style={{ background: color }}
+          />
+          <div className="w-32 h-32 md:w-40 md:h-40 rounded-full p-1 bg-gradient-to-b from-white/10 to-transparent">
+            <div className="w-full h-full rounded-full overflow-hidden border-2 border-white/5 ring-4 ring-black/50 overflow-hidden relative">
+              <img src={img} alt={name} className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-700" />
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Row */}
+        <div className="mt-auto w-full grid grid-cols-3 gap-6 pt-8 border-t border-white/5">
+          <div className="text-center">
+            <p className="text-white text-xl md:text-2xl font-black mb-0.5" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>{reach}</p>
+            <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Reach</p>
+          </div>
+          <div className="text-center">
+            <p className="text-white text-xl md:text-2xl font-black mb-0.5" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>{episodes}</p>
+            <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Eps</p>
+          </div>
+          <div className="text-center">
+            <p className="text-white text-xl md:text-2xl font-black mb-0.5" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>{continuity}</p>
+            <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Level</p>
           </div>
         </div>
       </div>
-
-      {/* Separador */}
-      <div style={{ height: 1, background: 'rgba(0,196,204,0.12)', marginBottom: 16 }} />
-
-      {/* Métricas */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-        {[
-          { label: 'Alcance Total',      val: seguidores },
-          { label: 'Videos Publicados',  val: videos     },
-          { label: 'Días en Between',    val: dias       },
-        ].map(({ label, val }) => (
-          <div key={label} style={{ textAlign: 'center' }}>
-            <p style={{ fontSize: '1.1rem', fontWeight: 800, color: '#00C4CC', margin: 0 }}>{val}</p>
-            <p style={{ fontSize: '0.58rem', color: 'rgba(255,255,255,0.4)', margin: '2px 0 0', letterSpacing: '0.04em', textTransform: 'uppercase' }}>{label}</p>
-          </div>
-        ))}
-      </div>
-      <p style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)', textAlign: 'center', margin: 0, fontStyle: 'italic' }}>
-        Suma total de todas las cuentas activas
-      </p>
-    </div>
+    </motion.div>
   )
 }
 
-function Avatar({ name, nicho, img }) {
+function SmallAvatar({ name, img }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-      <div style={{ position: 'relative' }}>
-        <NpcImg img={img} size={72} alt={name} />
-        <span style={{
-          position: 'absolute', top: 2, right: 2,
-          width: 12, height: 12, borderRadius: '50%',
-          background: '#22C55E', border: '2px solid #060D18',
-          animation: 'pulse 2s infinite',
-        }} />
+    <motion.div 
+      className="flex flex-col items-center gap-3 group"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true }}
+    >
+      <div className="w-14 h-14 rounded-full border border-white/10 p-0.5 group-hover:border-cyan/40 transition-all duration-500">
+        <div className="w-full h-full rounded-full overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-700">
+          <img src={img} alt={name} className="w-full h-full object-cover" />
+        </div>
       </div>
-      <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.75)', fontWeight: 600, textAlign: 'center', lineHeight: 1.2 }}>{name}</span>
-      <span style={{
-        fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.05em',
-        padding: '1px 7px', borderRadius: 999,
-        background: `${NICHO_COLORS[nicho]}15`,
-        border: `1px solid ${NICHO_COLORS[nicho]}40`,
-        color: NICHO_COLORS[nicho],
-        textTransform: 'uppercase', whiteSpace: 'nowrap',
-      }}>
-        {nicho}
-      </span>
-    </div>
+      <p className="text-[9px] font-black text-white/30 group-hover:text-white uppercase tracking-tighter transition-colors">{name}</p>
+    </motion.div>
   )
 }
 
 export default function Comunidad() {
   return (
-    <section className="relative py-28 overflow-hidden" style={{ background: '#060D18' }}>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" style={{
-        width: 800, height: 600,
-        background: 'radial-gradient(ellipse at center, rgba(0,196,204,0.04) 0%, transparent 70%)',
-      }} />
-      <div className="absolute inset-0 pointer-events-none opacity-20" style={{
-        backgroundImage: 'radial-gradient(circle, rgba(0,196,204,0.3) 1px, transparent 1px)',
-        backgroundSize: '40px 40px',
-      }} />
+    <section className="relative py-48 overflow-hidden bg-[#030712]">
+      {/* Editorial Grain Overlay */}
+      <div className="absolute inset-0 opacity-[0.15] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/felt.png')]" />
+      
+      {/* Background Atmosphere */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-cyan/5 blur-[120px] rounded-full" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 blur-[120px] rounded-full" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-16">
-
-        {/* Badge + Título */}
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 mb-5">
-            <div style={{ height: 1, width: 40, background: 'linear-gradient(90deg, transparent, #00C4CC)' }} />
-            <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full"
-              style={{ border: '1px solid rgba(0,196,204,0.4)', color: '#00C4CC', background: 'rgba(0,196,204,0.06)' }}>
-              Comunidad
-            </span>
-            <div style={{ height: 1, width: 40, background: 'linear-gradient(90deg, #00C4CC, transparent)' }} />
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
+        
+        {/* Editorial Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-24 pb-12 border-b border-white/5">
+          <div className="max-w-2xl">
+            <motion.p 
+              className="text-cyan text-xs font-black uppercase tracking-[0.5em] mb-6"
+              initial={{ x: -20, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+            >
+              The Authority Network
+            </motion.p>
+            <motion.h2 
+              className="text-6xl md:text-9xl font-black text-white leading-[0.8] uppercase"
+              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+            >
+              NO ESTÁS <br />
+              <span className="text-white/20">SOLO.</span>
+            </motion.h2>
           </div>
-          <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(3rem, 7vw, 5.5rem)', fontWeight: 400, letterSpacing: '0.04em', color: '#fff', margin: 0, lineHeight: 1 }}>
-            NO ESTÁS SOLO.
-          </h2>
+          <motion.p 
+            className="text-white/40 text-lg md:text-xl font-medium max-w-sm"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            Nuestros creadores no hacen contenido. Construyen sistemas de autoridad personal.
+          </motion.p>
         </div>
 
-        {/* Fila superior — 3 cards EN VIVO */}
-        <div style={{ display: 'flex', gap: 16, marginBottom: 48 }} className="flex-col sm:flex-row">
-          {liveCards.map((c) => <LiveCard key={c.initials} {...c} />)}
+        {/* Featured Gallery */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-40">
+          {liveSeries.map((series, idx) => (
+            <AuthorityCard key={idx} {...series} />
+          ))}
         </div>
 
-        {/* Grid de 14 avatares — 7 por fila en desktop, 4 en mobile */}
-        <div className="grid grid-cols-4 sm:grid-cols-7" style={{ gap: '24px 12px', marginBottom: 64 }}>
-          {avatares.map((a) => <Avatar key={a.initials} {...a} />)}
+        {/* Elite Network Grid */}
+        <div className="text-center mb-16">
+          <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] mb-12">Network Partners</p>
+          <div className="grid grid-cols-4 sm:grid-cols-7 lg:grid-cols-14 gap-8">
+            {networkPartners.map((partner, idx) => (
+              <SmallAvatar key={idx} {...partner} />
+            ))}
+          </div>
         </div>
 
-        {/* Frase final */}
-        <div className="text-center">
-          <p style={{
-            fontFamily: "'Bebas Neue', sans-serif",
-            fontSize: 'clamp(1.8rem, 3.5vw, 2.8rem)',
-            fontWeight: 400, letterSpacing: '0.04em', lineHeight: 1.2, margin: 0,
-          }}>
-            <span style={{ color: '#fff' }}>ESTAR EN BETWEEN ES UN DIFERENCIAL </span>
-            <span style={{ color: '#00C4CC' }}>EN SÍ MISMO.</span>
-          </p>
+        {/* Final Statement */}
+        <div className="text-center pt-32">
+          <motion.h4 
+            className="text-white/30 text-2xl md:text-4xl font-black italic uppercase leading-tight"
+            style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.05em' }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+          >
+            Ser parte de Between es una declaración de <br />
+            <span className="text-white">estándares superiores.</span>
+          </motion.h4>
         </div>
 
       </div>
