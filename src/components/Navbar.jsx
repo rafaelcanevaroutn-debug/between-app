@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import logo from '../assets/logosinfondoletrasblancas.png'
 
 const linkStyle = {
@@ -23,25 +24,37 @@ export default function Navbar() {
           <img
             src={logo}
             alt="Between"
-            className="h-14 md:h-24 w-auto"
+            className="h-16 md:h-24 w-auto transition-all duration-300"
             style={{ filter: 'drop-shadow(0 0 3px rgba(0,196,204,0.35))' }}
           />
         </Link>
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
-          {isHome && ['Servicios', 'Cómo funciona', 'Nichos', 'Contacto'].map((link) => (
-            <a
-              key={link}
-              href={`#${link.toLowerCase().replace(/\s/g, '-').replace('ó', 'o')}`}
+          {isHome ? (
+            ['Servicios', 'Cómo funciona', 'Nichos', 'Contacto'].map((link) => (
+              <a
+                key={link}
+                href={`#${link.toLowerCase().replace(/\s/g, '-').replace('ó', 'o')}`}
+                className="text-base font-medium transition-all duration-200"
+                style={linkStyle}
+                onMouseEnter={e => { e.currentTarget.style.opacity = '1' }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '0.7' }}
+              >
+                {link}
+              </a>
+            ))
+          ) : (
+            <Link
+              to="/"
               className="text-base font-medium transition-all duration-200"
               style={linkStyle}
               onMouseEnter={e => { e.currentTarget.style.opacity = '1' }}
               onMouseLeave={e => { e.currentTarget.style.opacity = '0.7' }}
             >
-              {link}
-            </a>
-          ))}
+              Inicio
+            </Link>
+          )}
 
           {/* Quién soy — siempre visible */}
           <Link
@@ -54,7 +67,7 @@ export default function Navbar() {
             onMouseEnter={e => { e.currentTarget.style.opacity = '1' }}
             onMouseLeave={e => { e.currentTarget.style.opacity = pathname === '/quien-soy' ? '1' : '0.7' }}
           >
-            Quién soy
+            Quienes somos
           </Link>
         </div>
 
@@ -70,48 +83,77 @@ export default function Navbar() {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden text-gray hover:text-white"
+          className="md:hidden w-10 h-10 flex items-center justify-center relative focus:outline-none"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Menu"
         >
-          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            {menuOpen
-              ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            }
-          </svg>
+          <div className="flex flex-col gap-1.5 items-center justify-center w-6">
+            <motion.span
+              animate={menuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
+              className="w-full h-0.5 bg-cyan rounded-full block origin-center"
+              transition={{ duration: 0.3 }}
+            />
+            <motion.span
+              animate={menuOpen ? { opacity: 0, x: -10 } : { opacity: 1, x: 0 }}
+              className="w-full h-0.5 bg-gray rounded-full block"
+              transition={{ duration: 0.2 }}
+            />
+            <motion.span
+              animate={menuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
+              className="w-full h-0.5 bg-cyan rounded-full block origin-center"
+              transition={{ duration: 0.3 }}
+            />
+          </div>
         </button>
       </div>
 
       {/* Mobile menu */}
-      {menuOpen && (
-        <div className="md:hidden bg-card border-t border-border px-6 py-4 flex flex-col gap-4">
-          {isHome && ['Servicios', 'Cómo funciona', 'Nichos', 'Contacto'].map((link) => (
-            <a
-              key={link}
-              href={`#${link.toLowerCase().replace(/\s/g, '-').replace('ó', 'o')}`}
-              className="text-sm text-gray hover:text-white transition-colors"
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-card border-t border-border px-6 py-4 flex flex-col gap-4 overflow-hidden"
+          >
+            {isHome ? (
+              ['Servicios', 'Cómo funciona', 'Nichos', 'Contacto'].map((link) => (
+                <a
+                  key={link}
+                  href={`#${link.toLowerCase().replace(/\s/g, '-').replace('ó', 'o')}`}
+                  className="text-sm text-gray hover:text-white transition-colors py-1"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {link}
+                </a>
+              ))
+            ) : (
+              <Link
+                to="/"
+                className="text-sm text-gray hover:text-white transition-colors py-1"
+                onClick={() => setMenuOpen(false)}
+              >
+                Inicio
+              </Link>
+            )}
+            <Link
+              to="/quien-soy"
+              className="text-sm text-gray hover:text-white transition-colors py-1"
+              style={{ color: pathname === '/quien-soy' ? '#00C4CC' : undefined }}
               onClick={() => setMenuOpen(false)}
             >
-              {link}
+              Quién soy
+            </Link>
+            <a
+              href={isHome ? '#contacto' : '/#contacto'}
+              className="btn-gradient px-5 py-3 rounded-full text-sm font-semibold text-white text-center mt-2 group"
+              onClick={() => setMenuOpen(false)}
+            >
+              Quiero ser protagonista
             </a>
-          ))}
-          <Link
-            to="/quien-soy"
-            className="text-sm text-gray hover:text-white transition-colors"
-            onClick={() => setMenuOpen(false)}
-          >
-            Quién soy
-          </Link>
-          <a
-            href={isHome ? '#contacto' : '/#contacto'}
-            className="btn-gradient px-5 py-2.5 rounded-full text-sm font-semibold text-white text-center mt-2"
-            onClick={() => setMenuOpen(false)}
-          >
-            Quiero ser protagonista
-          </a>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   )
 }

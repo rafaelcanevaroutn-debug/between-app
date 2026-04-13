@@ -1,27 +1,33 @@
 const ITEMS = [
-  { label: 'plan1', parts: [
-    { text: '3 CANALES', cyan: true },
-    { text: ' · ' },
-    { text: '156 VIDEOS/MES', cyan: true },
-    { text: ' · ' },
-    { text: '1 ENTREVISTA', cyan: true },
-  ]},
+  {
+    label: 'plan1', parts: [
+      { text: '1 entrevista mensual', cyan: true },
+      { text: ' · ' },
+      { text: 'Dirección para grabar contenido propio', cyan: true },
+      { text: ' · ' },
+      { text: 'Producción de episodios y clips del mes', cyan: true },
+    ]
+  },
   { label: 'sep1', parts: [{ text: '  ⬡  ', cyan: false }] },
-  { label: 'plan2', parts: [
-    { text: '5 CANALES', cyan: true },
-    { text: ' · ' },
-    { text: '390 VIDEOS/MES', cyan: true },
-    { text: ' · ' },
-    { text: '2 ENTREVISTAS', cyan: true },
-  ]},
+  {
+    label: 'plan2', parts: [
+      { text: '2 entrevistas mensuales', cyan: true },
+      { text: ' · ' },
+      { text: 'Mayor volumen de contenido', cyan: true },
+      { text: ' · ' },
+      { text: 'Narrativa más trabajada y con continuidad', cyan: true },
+    ]
+  },
   { label: 'sep2', parts: [{ text: '  ⬡  ', cyan: false }] },
-  { label: 'plan3', parts: [
-    { text: '10 CANALES', cyan: true },
-    { text: ' · ' },
-    { text: '780 VIDEOS/MES', cyan: true },
-    { text: ' · ' },
-    { text: '4 ENTREVISTAS', cyan: true },
-  ]},
+  {
+    label: 'plan3', parts: [
+      { text: '4 entrevistas mensuales', cyan: true },
+      { text: ' · ' },
+      { text: 'Activacion de mas canales', cyan: true },
+      { text: ' · ' },
+      { text: 'Seguimiento estrategico', cyan: true },
+    ]
+  },
   { label: 'sep3', parts: [{ text: '  ⬡  ', cyan: false }] },
 ]
 

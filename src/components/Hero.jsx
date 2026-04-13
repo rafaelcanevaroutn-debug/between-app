@@ -4,27 +4,14 @@ import Particles from './Particles'
 
 const FRASES = [
   [
-    { text: 'Dejá de construir ', color: null },
-    { text: 'en silencio.', color: '#00C4CC' },
-  ],
-  [
-    { text: 'No sos ', color: null },
-    { text: 'invisible.', color: '#00C4CC' },
-    { text: ' Todavía no\nte encontraron.', color: null },
-  ],
-  [
-    { text: 'No es lo que hacés.\nEs que ', color: null },
-    { text: 'nadie te ve.', color: '#00C4CC' },
-  ],
-  [
-    { text: 'Ya construiste lo suficiente.\nEs hora de ', color: null },
-    { text: 'que te vean.', color: '#00C4CC' },
+    { text: 'Construí tu historia ', color: null },
+    { text: 'como una serie.', color: '#00C4CC' },
   ],
 ]
 
-const STAGGER    = 38
-const ENTER_DUR  = 420
-const EXIT_DUR   = 320
+const STAGGER = 38
+const ENTER_DUR = 420
+const EXIT_DUR = 320
 const DISPLAY_MS = 4200
 
 function buildChars(phraseIdx) {
@@ -49,7 +36,7 @@ export default function Hero() {
   const chars = buildChars(phraseIdx)
   const visibleCount = chars.filter(c => !c.isBreak).length
   const enterDone = visibleCount * STAGGER + ENTER_DUR
-  const exitDone  = visibleCount * STAGGER + EXIT_DUR
+  const exitDone = visibleCount * STAGGER + EXIT_DUR
 
   useEffect(() => {
     const t1 = setTimeout(() => setCharState('visible'), enterDone)
@@ -64,7 +51,6 @@ export default function Hero() {
 
   return (
     <section
-      id="servicios"
       className="relative overflow-hidden"
       style={{
         height: '100vh',
@@ -121,12 +107,6 @@ export default function Hero() {
         className="relative flex flex-col justify-center h-full w-full md:w-[55%]"
         style={{ zIndex: 10, paddingLeft: 'clamp(1.25rem, 7vw, 7rem)', paddingRight: 'clamp(1.25rem, 4vw, 3rem)', paddingTop: '5rem' }}
       >
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-card border border-border rounded-full px-4 py-1.5 mb-8 self-start">
-          <span className="w-2 h-2 rounded-full bg-cyan animate-pulse" />
-          <span className="text-xs text-gray font-medium tracking-wider uppercase">Plataforma de visibilidad</span>
-        </div>
-
         {/* Headline rotativo */}
         <div className="mb-4" style={{ minHeight: 'clamp(100px, 25vw, 160px)' }}>
           <h1 style={{ fontSize: 'clamp(2.1rem, 9vw, 4.5rem)', fontWeight: 900, lineHeight: 1.05, letterSpacing: '0.01em', width: '100%', overflow: 'visible', fontFamily: "'Bebas Neue', sans-serif", wordBreak: 'keep-all', hyphens: 'none', overflowWrap: 'normal' }}>
@@ -153,7 +133,7 @@ export default function Hero() {
                 const charColor = color || '#fff'
                 const glow = color === '#00C4CC' ? '0 0 16px rgba(0,196,204,0.6)' : 'none'
                 if (charState === 'entering') return { display: 'inline-block', opacity: 0, color: charColor, textShadow: glow, animation: `charIn ${ENTER_DUR}ms ease forwards`, animationDelay: delay }
-                if (charState === 'visible')  return { display: 'inline-block', opacity: 1, color: charColor, textShadow: glow }
+                if (charState === 'visible') return { display: 'inline-block', opacity: 1, color: charColor, textShadow: glow }
                 return { display: 'inline-block', opacity: 1, color: charColor, textShadow: glow, animation: `charOut ${EXIT_DUR}ms ease forwards`, animationDelay: delay }
               }
 
@@ -176,13 +156,17 @@ export default function Hero() {
         </div>
 
         {/* Subheadline */}
-        <p className="leading-relaxed mb-3" style={{ maxWidth: 520, fontSize: '1rem', color: 'rgba(255,255,255,0.85)' }}>
-          Dejá de depender de una sola cuenta. Distribuimos tu contenido en un sistema de canales estratégicos para que tengas visibilidad constante y más clientes potenciales.
+        <p className="leading-relaxed mb-1 whitespace-pre-line" style={{ maxWidth: 520, fontSize: '1.05rem', color: 'rgba(255,255,255,0.9)' }}>
+          Between produce series personales de contenido recurrente desde tu experiencia.
+        </p>
+        <p className="leading-relaxed mb-6" style={{ maxWidth: 520, fontSize: '1rem', color: 'rgba(255,255,255,0.7)' }}>
+          Vos grabás con una dirección clara. Nosotros convertimos eso en episodios y contenido que se publica de forma constante en tus canales.
         </p>
 
         {/* Línea destacada */}
-        <p className="mb-10" style={{ maxWidth: 600, fontSize: '0.9rem', color: '#00C4CC', fontWeight: 600 }}>
-          Más contenido en circulación = más alcance = más oportunidades de venta.
+        <p className="mb-10 whitespace-pre-line" style={{ maxWidth: 600, fontSize: '0.95rem', color: '#00C4CC', fontWeight: 600, lineHeight: 1.5 }}>
+          No son piezas sueltas.{"\n"}
+          Es tu historia avanzando todos los meses.
         </p>
 
         {/* CTA */}
@@ -207,14 +191,14 @@ export default function Hero() {
             e.currentTarget.style.transform = 'translateY(0)'
           }}
         >
-          Quiero ser protagonista
+          Quiero empezar mi serie
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </a>
       </div>
 
-{/* Indicador SCROLL — centro inferior */}
+      {/* Indicador SCROLL — centro inferior */}
       <div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
         style={{ zIndex: 20 }}

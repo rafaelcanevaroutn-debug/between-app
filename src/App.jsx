@@ -1,37 +1,34 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
-import Nichos from './components/Nichos'
-import TickerPlanes from './components/TickerPlanes'
+import NichosAuthority from './components/NichosAuthority'
 import Hollywood from './components/Hollywood'
-import ElSet from './components/ElSet'
-import BetweenGrowth from './components/BetweenGrowth'
+import StorySeries from './components/StorySeries'
+import SeriesSystem from './components/SeriesSystem'
+import ProductionBase from './components/ProductionBase'
+import SystemImpact from './components/SystemImpact'
 import Planes from './components/Planes'
+import MissionTimeline from './components/MissionTimeline'
 import Comunidad from './components/Comunidad'
 import QuienesSomos from './components/QuienesSomos'
 import CTAFinal from './components/CTAFinal'
 import CalendlySection from './components/CalendlySection'
-import Operadores from './components/Operadores'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
-import Maintenance from './components/Maintenance'
-
-const IS_MAINTENANCE = true;
 
 function Landing() {
   return (
     <>
       <Hero />
-      <TickerPlanes />
-      <Nichos />
+      <NichosAuthority />
       <Hollywood />
-      <ElSet />
-      <BetweenGrowth />
+      <SeriesSystem />
+      <ProductionBase />
+      <MissionTimeline />
+      <SystemImpact />
       <Planes />
-      <Comunidad />
       <CalendlySection />
       <CTAFinal />
-      <Operadores />
       <Footer />
     </>
   )
@@ -47,14 +44,6 @@ function QuienSoyPage() {
 }
 
 export default function App() {
-  if (IS_MAINTENANCE) {
-    return (
-      <div className="bg-bg text-white font-sans">
-        <Maintenance />
-      </div>
-    );
-  }
-
   return (
     <BrowserRouter>
       <div className="bg-bg text-white font-sans">

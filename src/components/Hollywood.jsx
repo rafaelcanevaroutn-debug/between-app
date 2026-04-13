@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import hollywood from '../assets/Gemini_Generated_Image_j16834j16834j168.png'
+import hollywood from '../assets/hollywoodnoexistemas copy.jpg'
 
 const cards = [
   {
@@ -105,25 +105,31 @@ export default function Hollywood() {
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${hollywood})` }}
       />
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(6,13,24,0.85) 0%, rgba(6,13,24,0.4) 60%, rgba(6,13,24,0.3) 100%)' }} />
-      <div className="absolute inset-0 dot-grid opacity-30" />
+      {/* Overlay Layers */}
+      <div className="absolute inset-0 bg-[#060D18]/30" />
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(90deg, #060D18 0%, rgba(6,13,24,0.8) 35%, rgba(6,13,24,0.2) 100%)',
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'radial-gradient(circle at 20% 50%, rgba(0,196,204,0.1) 0%, transparent 60%)',
+        }}
+      />
+      <div className="absolute inset-0 dot-grid opacity-20" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6">
         <div className="max-w-2xl mb-16">
-          <h2 className="text-5xl md:text-7xl text-white leading-none mb-6" style={{ letterSpacing: '-0.02em' }}>
-            Hollywood no<br />
-            <span className="gradient-text">existe más.</span>
+          <h2 className="text-5xl md:text-9xl text-white leading-none mb-6" style={{ letterSpacing: '-0.02em' }}>
+            Hollywood no <span className="gradient-text">existe más.</span>
           </h2>
-          <p className="text-gray text-lg md:text-xl leading-relaxed">
-            Hoy cualquiera puede generar contenido,{' '}
-            <span className="text-white font-semibold">pero nadie puede generarte a vos.</span>
+          <p className="text-gray text-lg md:text-2xl leading-relaxed">
+            Hoy cualquiera puede generar contenido.{' '}
+            <span className="text-white text-lg md:text-2xl leading-relaxed font-bold"> Tenés algo real. Estás viviendo una historia.</span>
           </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {cards.map(({ icon, title, desc }) => (
-            <HollywoodCard key={title} icon={icon} title={title} desc={desc} />
-          ))}
         </div>
       </div>
     </section>
