@@ -15,6 +15,8 @@ import CTAFinal from './components/CTAFinal'
 import CalendlySection from './components/CalendlySection'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
+import Terms from './components/Terms'
+import Policy from './components/Policy'
 
 function Landing() {
   return (
@@ -51,6 +53,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/quien-soy" element={<QuienSoyPage />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/policy" element={<Policy />} />
         </Routes>
         <WhatsAppButton />
       </div>
