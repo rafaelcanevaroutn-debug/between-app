@@ -71,8 +71,14 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* CTA */}
-        <div className="hidden md:block">
+        {/* CTA Group */}
+        <div className="hidden md:flex items-center gap-4">
+          <a
+            href="https://between-mvp.vercel.app/login"
+            className="btn-outline px-6 py-2.5 rounded-full text-sm font-semibold transition-all"
+          >
+            Login
+          </a>
           <a
             href={isHome ? '#contacto' : '/#contacto'}
             className="btn-gradient px-6 py-3 rounded-full text-base font-semibold text-white"
@@ -144,13 +150,22 @@ export default function Navbar() {
             >
               Quién soy
             </Link>
-            <a
-              href={isHome ? '#contacto' : '/#contacto'}
-              className="btn-gradient px-5 py-3 rounded-full text-sm font-semibold text-white text-center mt-2 group"
-              onClick={() => setMenuOpen(false)}
-            >
-              Quiero ser protagonista
-            </a>
+            <div className="flex flex-col gap-3 mt-2">
+              <a
+                href="https://between-mvp.vercel.app/login"
+                className="btn-outline px-5 py-2.5 rounded-full text-sm font-semibold text-center transition-all"
+                onClick={() => setMenuOpen(false)}
+              >
+                Login
+              </a>
+              <a
+                href={isHome ? '#contacto' : '/#contacto'}
+                className="btn-gradient px-5 py-3 rounded-full text-sm font-semibold text-white text-center group"
+                onClick={() => setMenuOpen(false)}
+              >
+                Quiero ser protagonista
+              </a>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

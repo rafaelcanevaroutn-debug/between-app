@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import logo from '../assets/logosinfondoletrasblancas.png'
 
 export default function Footer() {
@@ -9,7 +10,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-6 py-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
-          <a href="#">
+          <Link to="/">
             <img
               src={logo}
               alt="Between"
@@ -19,19 +20,25 @@ export default function Footer() {
                 filter: 'drop-shadow(0 0 4px rgba(0,196,204,0.4))',
               }}
             />
-          </a>
+          </Link>
 
           {/* Links */}
           <nav className="flex flex-wrap items-center justify-center gap-6">
             {['Servicios', 'Cómo funciona', 'Nichos', 'Planes', 'Contacto'].map((link) => (
               <a
                 key={link}
-                href={`#${link.toLowerCase().replace(/\s/g, '-').replace('ó', 'o')}`}
+                href={`/#${link.toLowerCase().replace(/\s/g, '-').replace('ó', 'o')}`}
                 className="text-sm text-gray hover:text-white transition-colors"
               >
                 {link}
               </a>
             ))}
+            <Link to="/terms" className="text-sm text-gray hover:text-white transition-colors">
+              Terms
+            </Link>
+            <Link to="/policy" className="text-sm text-gray hover:text-white transition-colors">
+              Privacy
+            </Link>
           </nav>
 
           {/* Mail + Copyright */}
