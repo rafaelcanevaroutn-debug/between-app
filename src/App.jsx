@@ -1,18 +1,13 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
-import NichosAuthority from './components/NichosAuthority'
-import Hollywood from './components/Hollywood'
-import StorySeries from './components/StorySeries'
-import SeriesSystem from './components/SeriesSystem'
-import ProductionBase from './components/ProductionBase'
-import SystemImpact from './components/SystemImpact'
-import Planes from './components/Planes'
-import MissionTimeline from './components/MissionTimeline'
-import Comunidad from './components/Comunidad'
+import ElProblema from './components/ElProblema'
+import ComoFuncionaV2 from './components/ComoFuncionaV2'
+import ParaQuienEs from './components/ParaQuienEs'
+import EcosystemNodes from './components/EcosystemNodes'
+import PredictiveDashboard from './components/PredictiveDashboard'
 import QuienesSomos from './components/QuienesSomos'
 import CTAFinal from './components/CTAFinal'
-import CalendlySection from './components/CalendlySection'
 import Footer from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
 import Terms from './components/Terms'
@@ -22,14 +17,11 @@ function Landing() {
   return (
     <>
       <Hero />
-      <NichosAuthority />
-      <Hollywood />
-      <SeriesSystem />
-      <ProductionBase />
-      <MissionTimeline />
-      <SystemImpact />
-      <Planes />
-      <CalendlySection />
+      <ElProblema />
+      <ComoFuncionaV2 />
+      <ParaQuienEs />
+      <EcosystemNodes />
+      <PredictiveDashboard />
       <CTAFinal />
       <Footer />
     </>

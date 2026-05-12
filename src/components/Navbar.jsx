@@ -32,7 +32,7 @@ export default function Navbar() {
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
           {isHome ? (
-            ['Servicios', 'Cómo funciona', 'Nichos', 'Contacto'].map((link) => (
+            ['El Problema', 'Cómo funciona', 'Para quién es'].map((link) => (
               <a
                 key={link}
                 href={`#${link.toLowerCase().replace(/\s/g, '-').replace('ó', 'o')}`}
@@ -83,7 +83,7 @@ export default function Navbar() {
             href={isHome ? '#contacto' : '/#contacto'}
             className="btn-gradient px-6 py-3 rounded-full text-base font-semibold text-white"
           >
-            Quiero ser protagonista
+            Agendar llamada
           </a>
         </div>
 
@@ -123,7 +123,7 @@ export default function Navbar() {
             className="md:hidden bg-card border-t border-border px-6 py-4 flex flex-col gap-4 overflow-hidden"
           >
             {isHome ? (
-              ['Servicios', 'Cómo funciona', 'Nichos', 'Contacto'].map((link) => (
+              ['El Problema', 'Cómo funciona', 'Para quién es'].map((link) => (
                 <a
                   key={link}
                   href={`#${link.toLowerCase().replace(/\s/g, '-').replace('ó', 'o')}`}

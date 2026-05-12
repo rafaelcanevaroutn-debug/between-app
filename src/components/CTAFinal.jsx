@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts'
@@ -363,13 +364,25 @@ export default function CTAFinal() {
       <div className="relative z-10 max-w-6xl mx-auto px-6">
 
         {/* Header centrado */}
-        <div className="text-center mb-16">
-          <p className="text-cyan text-sm font-bold uppercase tracking-[0.4em] mb-6">Próximo paso</p>
-          <h2 className="text-5xl md:text-7xl font-black text-white leading-tight tracking-tight mb-8 uppercase" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
-            Empezá a construir <span className="text-cyan">tu serie.</span>
+        <div className="text-center mb-24 relative group">
+          {/* Intense Background Glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-cyan/10 blur-[120px] rounded-full pointer-events-none opacity-50" />
+          
+          <motion.p 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            className="text-cyan text-[10px] font-black uppercase tracking-[0.5em] mb-8 relative z-10"
+          >
+            Final Mission
+          </motion.p>
+          
+          <h2 className="text-6xl md:text-9xl font-black text-white leading-[0.85] tracking-tight mb-12 uppercase relative z-10" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>
+            TU NEGOCIO MERECE <br />
+            <span className="text-cyan drop-shadow-[0_0_30px_rgba(0,196,204,0.5)]">UN SISTEMA QUE CONVIERTA.</span>
           </h2>
-          <p className="text-white/80 text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed font-medium">
-            En una primera conversación vemos tu caso y cómo lo convertiríamos en contenido constante.
+          
+          <p className="text-white/60 text-xl md:text-2xl mb-16 max-w-2xl mx-auto leading-relaxed relative z-10">
+            Agendá una llamada para que analicemos tu marca y te mostremos cómo escalar tu volumen de contenido.
           </p>
 
           {/* Key Points */}
@@ -389,28 +402,31 @@ export default function CTAFinal() {
           </div>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 mb-12">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 mb-20 relative z-10">
             <a
               href={CALENDLY}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-gradient px-12 py-5 rounded-full text-base font-black text-white uppercase tracking-widest transition-all duration-300"
-              style={{ boxShadow: '0 0 24px rgba(0,196,204,0.3)', fontFamily: 'monospace' }}
-              onMouseEnter={e => e.currentTarget.style.boxShadow = '0 0 40px rgba(0,196,204,0.6)'}
-              onMouseLeave={e => e.currentTarget.style.boxShadow = '0 0 24px rgba(0,196,204,0.3)'}
+              className="px-14 py-6 rounded-full text-lg font-black text-white uppercase tracking-[0.1em] transition-all duration-500 relative group/btn overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, #00C4CC, #00A889)', boxShadow: '0 0 30px rgba(0,196,204,0.4)', fontFamily: "'Bebas Neue', sans-serif" }}
+              onMouseEnter={e => e.currentTarget.style.boxShadow = '0 0 50px rgba(0,196,204,0.7)'}
+              onMouseLeave={e => e.currentTarget.style.boxShadow = '0 0 30px rgba(0,196,204,0.4)'}
             >
-              Agendar llamada
+              <span className="relative z-10 flex items-center gap-3">
+                Agendar llamada
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </span>
             </a>
             <a
               href={WHATSAPP}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-10 py-5 rounded-full text-base font-bold transition-all duration-300 uppercase tracking-widest"
-              style={{ border: '1px solid rgba(0,196,204,0.3)', color: '#00C4CC', fontFamily: 'monospace' }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,196,204,0.05)'; e.currentTarget.style.borderColor = '#00C4CC' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(0,196,204,0.3)' }}
+              className="px-12 py-6 rounded-full text-lg font-black transition-all duration-500 uppercase tracking-[0.1em] border-2 border-cyan/20 text-cyan backdrop-blur-xl hover:border-cyan hover:bg-cyan/5"
+              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
             >
-              Hablar por WhatsApp
+              WhatsApp
             </a>
           </div>
         </div>
@@ -418,13 +434,15 @@ export default function CTAFinal() {
         {/* Closing Highlight */}
         <div className="mt-40 text-center relative text-balance">
           <div className="w-12 h-[1px] bg-cyan/30 mx-auto mb-8" />
-          <h4 
-            className="text-white text-3xl md:text-5xl font-black italic max-w-4xl mx-auto leading-tight uppercase"
-            style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: '0.1em' }}
-          >
-            No necesitás hacer más contenido. <br />
-            <span className="text-cyan">Necesitás empezar a construir algo que crezca en el tiempo.</span>
-          </h4>
+          <div className="relative pt-20 border-t border-white/5">
+            <h4 
+                className="text-white text-4xl md:text-6xl font-black italic max-w-4xl mx-auto leading-[0.9] uppercase tracking-wider"
+                style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+            >
+                TU NEGOCIO MERECE UN SISTEMA QUE CONVIERTA. <br />
+                <span className="text-cyan/40 text-sm md:text-base mt-8 block not-italic font-monospace tracking-[0.5em]">BETWEEN-APP-NINE.VERCEL.APP</span>
+            </h4>
+          </div>
         </div>
 
       </div>
