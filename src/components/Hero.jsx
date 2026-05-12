@@ -4,8 +4,9 @@ import Particles from './Particles'
 
 const FRASES = [
   [
-    { text: 'Construí tu historia ', color: null },
-    { text: 'como una serie.', color: '#00C4CC' },
+    { text: 'Between es una ', color: null },
+    { text: 'plataforma IA ', color: '#00C4CC' },
+    { text: 'que predice y automatiza.', color: null },
   ],
 ]
 
@@ -156,46 +157,67 @@ export default function Hero() {
         </div>
 
         {/* Subheadline */}
-        <p className="leading-relaxed mb-1 whitespace-pre-line" style={{ maxWidth: 520, fontSize: '1.05rem', color: 'rgba(255,255,255,0.9)' }}>
-          Between produce series personales de contenido recurrente desde tu experiencia.
+        <p className="leading-relaxed mb-6" style={{ maxWidth: 640, fontSize: '1.25rem', color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>
+          Between es una plataforma IA que predica y automatiza la creación de contenido en volumen para maximizar la conversión de tu marca o negocio en un ecosistema de canales.
         </p>
-        <p className="leading-relaxed mb-6" style={{ maxWidth: 520, fontSize: '1rem', color: 'rgba(255,255,255,0.7)' }}>
-          Vos grabás con una dirección clara. Nosotros convertimos eso en episodios y contenido que se publica de forma constante en tus canales.
-        </p>
-
-        {/* Línea destacada */}
-        <p className="mb-10 whitespace-pre-line" style={{ maxWidth: 600, fontSize: '0.95rem', color: '#00C4CC', fontWeight: 600, lineHeight: 1.5 }}>
-          No son piezas sueltas.{"\n"}
-          Es tu historia avanzando todos los meses.
+        <p className="leading-relaxed mb-10" style={{ maxWidth: 520, fontSize: '1.1rem', color: '#00C4CC', fontWeight: 600 }}>
+          El sistema que sabe qué crear antes de que vos lo pienses.
         </p>
 
         {/* CTA */}
-        <a
-          href="#contacto"
-          className="inline-flex items-center gap-3 rounded-full text-white transition-all duration-300 self-start"
-          style={{
-            padding: '18px 40px',
-            fontSize: '1.1rem',
-            fontWeight: 800,
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-            background: 'linear-gradient(135deg, #00C4CC, #00A889)',
-            boxShadow: '0 0 28px rgba(0,196,204,0.4)',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.boxShadow = '0 0 44px rgba(0,196,204,0.65)'
-            e.currentTarget.style.transform = 'translateY(-2px)'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.boxShadow = '0 0 28px rgba(0,196,204,0.4)'
-            e.currentTarget.style.transform = 'translateY(0)'
-          }}
-        >
-          Quiero empezar mi serie
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </a>
+        <div className="flex flex-wrap gap-4">
+          <a
+            href="https://calendly.com/rafaelcanevaroutn/30min"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 rounded-full text-white transition-all duration-300"
+            style={{
+              padding: '18px 40px',
+              fontSize: '1.1rem',
+              fontWeight: 800,
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              background: 'linear-gradient(135deg, #00C4CC, #00A889)',
+              boxShadow: '0 0 28px rgba(0,196,204,0.4)',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.boxShadow = '0 0 44px rgba(0,196,204,0.65)'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.boxShadow = '0 0 28px rgba(0,196,204,0.4)'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            Agendar llamada
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </a>
+          <a
+            href="#como-funciona"
+            className="inline-flex items-center gap-3 rounded-full text-[#00C4CC] transition-all duration-300"
+            style={{
+              padding: '18px 40px',
+              fontSize: '1.1rem',
+              fontWeight: 800,
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              border: '2px solid #00C4CC',
+              background: 'rgba(0,196,204,0.05)',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'rgba(0,196,204,0.15)'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'rgba(0,196,204,0.05)'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            Ver cómo funciona
+          </a>
+        </div>
       </div>
 
       {/* Indicador SCROLL — centro inferior */}
