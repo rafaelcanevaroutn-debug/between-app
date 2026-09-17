@@ -22,7 +22,7 @@ import {
   stripForbidden,
   validateEnvelope,
 } from './rf-core.js'
-import { insertPayload, updatePayload } from './rf-repo.js'
+import { findCase, insertPayload, updatePayload } from './rf-repo.js'
 
 const NOW = '17/9/2026, 19:11:00'
 
@@ -161,4 +161,89 @@ test('blankVendorColumns borra las cinco columnas del equipo', () => {
     assert.equal(safe[COLUMNS.indexOf(column)], '', `${column} no se limpió`)
   }
   assert.equal(safe[COLUMNS.indexOf('Nombre')], 'x')
+})
+
+// --- baja por contacto -------------------------------------------------
+// El traspaso pide baja persistente "por contacto/cuenta". Chequear solo la
+// fila del caso dejaba entrar al mismo contacto abriendo una consulta nueva.
+
+test('un contacto dado de baja no entra abriendo un caso nuevo', () => {
+  const decision = decideWrite({
+    existing: null,
+    contactBaja: true,
+    envelope: envelope({ case_id: 'rf-1384513880563214-2' }),
+  })
+  assert.equal(decision.action, 'skip')
+  assert.equal(decision.reason, 'baja_persistente_contacto')
+})
+
+test('registrar la baja en si misma siempre se permite', () => {
+  const decision = decideWrite({
+    existing: null,
+    contactBaja: true,
+    envelope: envelope({ no_contactar: true }),
+  })
+  assert.equal(decision.action, 'insert')
+})
+
+test('sin baja previa el caso nuevo entra normal', () => {
+  const decision = decideWrite({ existing: null, contactBaja: false, envelope: envelope() })
+  assert.equal(decision.action, 'insert')
+})
+
+// --- lectura de planilla y ledger --------------------------------------
+
+function fakeSheets({ ids = [], ledger = [], noContactar = '' }) {
+  return {
+    async getValues(range) {
+      if (range.includes('_integracion')) return ledger
+      if (/Consultas!A\d+:A\d+$/.test(range)) return ids
+      return [[noContactar]]
+    },
+  }
+}
+
+test('findCase ubica el caso en su fila real de la planilla', async () => {
+  const sheets = fakeSheets({
+    ids: [['rf-a-1'], ['rf-b-1'], ['rf-c-1']],
+    ledger: [['rf-c-1', '4', '999', 'ayer', 'No']],
+  })
+  const found = await findCase(sheets, { caseId: 'rf-c-1', contactId: '999' })
+  assert.equal(found.existing.row, 8) // fila 6 + offset 2
+  assert.equal(found.existing.revision, 4)
+  assert.equal(found.contactBaja, false)
+})
+
+test('findCase devuelve la primera fila libre para un caso nuevo', async () => {
+  const sheets = fakeSheets({ ids: [['rf-a-1'], ['rf-b-1']], ledger: [] })
+  const found = await findCase(sheets, { caseId: 'rf-nuevo', contactId: '999' })
+  assert.equal(found.existing, null)
+  assert.equal(found.firstFreeRow, 8)
+  assert.equal(found.ledgerRow, 2)
+})
+
+test('findCase detecta la baja del contacto en una consulta anterior', async () => {
+  const sheets = fakeSheets({
+    ids: [['rf-viejo-1']],
+    ledger: [
+      ['rf-viejo-1', '2', '1384513880563214', 'ayer', 'Sí'],
+      ['rf-otro-1', '1', '777', 'ayer', 'No'],
+    ],
+  })
+  const found = await findCase(sheets, {
+    caseId: 'rf-nuevo-9',
+    contactId: '1384513880563214',
+  })
+  assert.equal(found.existing, null, 'el caso nuevo todavia no existe')
+  assert.equal(found.contactBaja, true, 'pero el contacto ya estaba de baja')
+  assert.equal(found.ledgerRow, 4) // dos entradas ocupadas: 2 y 3
+})
+
+test('findCase no confunde la baja de otro contacto', async () => {
+  const sheets = fakeSheets({
+    ids: [],
+    ledger: [['rf-otro-1', '1', '777', 'ayer', 'Sí']],
+  })
+  const found = await findCase(sheets, { caseId: 'rf-x-1', contactId: '1384513880563214' })
+  assert.equal(found.contactBaja, false)
 })

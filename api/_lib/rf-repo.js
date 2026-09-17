@@ -16,51 +16,63 @@ import { blankVendorColumns } from './rf-core.js'
 
 /**
  * Pestaña oculta con el estado de cada caso. Es aditiva: no toca las 37
- * columnas ni las 200 filas de Consultas. Sin ella no hay forma de saber qué
- * revisión ya se aplicó, y los reintentos dejarían de ser idempotentes.
+ * columnas ni las 200 filas de Consultas.
+ *
+ *   A case_id | B revision | C contact_id | D actualizado_el | E no_contactar
+ *
+ * Sin ella no hay forma de saber qué revisión ya se aplicó, y los reintentos
+ * dejarían de ser idempotentes. La columna E existe porque la baja del
+ * traspaso es por CONTACTO, no por caso: un contacto dado de baja no puede
+ * volver a entrar abriendo una consulta nueva.
  */
 export const LEDGER_TITLE = '_integracion'
-const LEDGER_RANGE = `${LEDGER_TITLE}!A2:D501`
+export const LEDGER_COLUMNS = ['case_id', 'revision', 'contact_id', 'actualizado_el', 'no_contactar']
+const LEDGER_RANGE = `${LEDGER_TITLE}!A2:E501`
 
 const ID_COLUMN = columnLetter(COLUMN_INDEX['ID consulta'])
 const NO_CONTACTAR_COLUMN = columnLetter(COLUMN_INDEX['No contactar'])
 
+const isSi = (value) => String(value || '').trim().toLowerCase().startsWith('s')
+
 /**
- * Busca el caso en la planilla y en el ledger.
- * Devuelve null si el caso nunca se escribió.
+ * Lee planilla y ledger, y arma todo lo que decideWrite necesita saber:
+ * la fila del caso si existe, la revisión aplicada, y si el CONTACTO está
+ * dado de baja en cualquiera de sus consultas anteriores.
  */
-export async function findCase(sheets, caseId) {
+export async function findCase(sheets, { caseId, contactId }) {
   const [ids, ledger] = await Promise.all([
     sheets.getValues(`${SHEET_TITLE}!${ID_COLUMN}${FIRST_DATA_ROW}:${ID_COLUMN}${LAST_DATA_ROW}`),
     sheets.getValues(LEDGER_RANGE),
   ])
 
-  const offset = ids.findIndex((cell) => (cell[0] || '').trim() === caseId)
-  const ledgerIndex = ledger.findIndex((cell) => (cell[0] || '').trim() === caseId)
+  const contactBaja = ledger.some((entry) => (entry[2] || '').trim() === contactId && isSi(entry[4]))
+
+  const ledgerIndex = caseId
+    ? ledger.findIndex((entry) => (entry[0] || '').trim() === caseId)
+    : -1
   const ledgerEntry = ledgerIndex >= 0 ? ledger[ledgerIndex] : null
+  const ledgerRow = ledgerIndex >= 0 ? ledgerIndex + 2 : ledger.length + 2
+
+  const offset = caseId ? ids.findIndex((cell) => (cell[0] || '').trim() === caseId) : -1
 
   if (offset < 0) {
-    return {
-      existing: null,
-      firstFreeRow: firstFreeRow(ids),
-      ledgerRow: ledgerIndex >= 0 ? ledgerIndex + 2 : ledger.length + 2,
-    }
+    return { existing: null, contactBaja, firstFreeRow: firstFreeRow(ids), ledgerRow }
   }
 
   const row = FIRST_DATA_ROW + offset
   const flags = await sheets.getValues(
     `${SHEET_TITLE}!${NO_CONTACTAR_COLUMN}${row}:${NO_CONTACTAR_COLUMN}${row}`,
   )
-  const noContactar = ((flags[0] && flags[0][0]) || '').trim().toLowerCase().startsWith('s')
 
   return {
     existing: {
       row,
-      noContactar,
+      noContactar: isSi(flags[0] && flags[0][0]),
       revision: ledgerEntry ? Number.parseInt(ledgerEntry[1], 10) : null,
     },
+    contactBaja,
     firstFreeRow: null,
-    ledgerRow: ledgerIndex >= 0 ? ledgerIndex + 2 : ledger.length + 2,
+    ledgerRow,
   }
 }
 
@@ -96,10 +108,10 @@ export function updatePayload({ row, values }) {
   }))
 }
 
-/** Deja registrada la revisión aplicada para que el próximo reintento la vea. */
-export function ledgerPayload({ ledgerRow, caseId, revision, contactId, now }) {
+/** Deja registrada la revisión aplicada y la baja, para el próximo reintento. */
+export function ledgerPayload({ ledgerRow, caseId, revision, contactId, now, noContactar }) {
   return {
-    range: `${LEDGER_TITLE}!A${ledgerRow}:D${ledgerRow}`,
-    values: [[caseId, String(revision), contactId, now]],
+    range: `${LEDGER_TITLE}!A${ledgerRow}:E${ledgerRow}`,
+    values: [[caseId, String(revision), contactId, now, noContactar ? 'Sí' : 'No']],
   }
 }

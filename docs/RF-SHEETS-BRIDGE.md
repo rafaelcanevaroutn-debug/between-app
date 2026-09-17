@@ -35,7 +35,7 @@ HelpKnow (Header X-RF-Token)
 | `api/_lib/rf-core.js` | Validación, sanitización, armado de fila, idempotencia |
 | `api/_lib/rf-repo.js` | Búsqueda de fila, bloques de escritura, ledger |
 | `api/_lib/rf-sheets.js` | Cliente Sheets con JWT firmado, sin dependencias nuevas |
-| `api/_lib/rf-bridge.test.js` | 15 pruebas, `npm test` |
+| `api/_lib/rf-bridge.test.js` | 22 pruebas, `npm test` |
 
 ## Reglas del traspaso que el código hace cumplir
 
@@ -52,7 +52,9 @@ HelpKnow (Header X-RF-Token)
   `revision` son obligatorios y con formato validado. Sin ellos, 400.
 - **Idempotencia.** Una `revision` menor o igual a la guardada no pisa la fila:
   los reintentos son seguros.
-- **Baja persistente.** Una fila con `No contactar = Sí` no se reactiva.
+- **Baja persistente por contacto.** Si el contacto se dio de baja en
+  cualquier consulta anterior, una consulta nueva suya tampoco entra. La baja
+  es por persona, no por caso.
 - **Aislamiento de cuenta.** `account` distinto de `renzoyfranco.viajes` → 400.
 - **Capacidad 200 filas.** Si no hay fila libre responde 507, no pisa ocupadas.
 - **TEST_ONLY por defecto.** Con `test: false` responde 409 hasta que vos lo abras.
@@ -65,10 +67,11 @@ sin tu visto bueno explícito.
 1. **Service account de Google.** Crear uno, bajar la clave, y compartir la
    planilla **sólo con ese email**, como Editor. Nunca "Cualquier persona con
    el enlace". Scope: `https://www.googleapis.com/auth/spreadsheets`.
-2. **Pestaña `_integracion`.** Una pestaña oculta, cuatro columnas:
-   `case_id | revision | contact_id | actualizado_el`. Es aditiva: no toca las
-   37 columnas ni las 200 filas. Sin ella los reintentos dejan de ser
-   idempotentes, porque no hay dónde guardar qué revisión ya se aplicó.
+2. **Pestaña `_integracion`.** Una pestaña oculta, cinco columnas:
+   `case_id | revision | contact_id | actualizado_el | no_contactar`. Es
+   aditiva: no toca las 37 columnas ni las 200 filas. Sin ella los reintentos
+   dejan de ser idempotentes (no hay dónde guardar qué revisión ya se aplicó)
+   y la baja por contacto no se puede verificar.
 3. **Variables de entorno en Vercel.** El secreto lo generás y lo cargás vos;
    yo no lo veo ni lo escribo en el repo.
 
@@ -124,6 +127,13 @@ Respuestas: `200 {ok:true}` · `400` contrato · `401` token · `409` TEST_ONLY 
 **`stored` no es `delivered`.** Un `ok:true` prueba que la fila se escribió.
 No prueba que un vendedor la haya visto. `TEAM_READY` y los SLA de Franco
 siguen en falso hasta que el equipo tenga acceso real y probado.
+
+## Limitación conocida
+
+Dos consultas **nuevas** que lleguen en el mismo instante pueden calcular la
+misma primera fila libre y pisarse: la API de Sheets no da bloqueo. Con el
+volumen de DMs de una cuenta de Instagram es improbable, pero es real y no lo
+tapo. Si alguna vez importa, la solución es una cola o un lock externo.
 
 ## Notas
 

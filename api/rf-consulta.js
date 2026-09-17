@@ -92,17 +92,30 @@ export default async function handler(request) {
     const sheets = createSheetsClient({ token, spreadsheetId })
 
     if (body.operation === 'check_contact') {
-      const found = await findCase(sheets, body.case_id || body.contact_id)
+      // La baja se consulta por contacto: preguntar solo por el caso dejaria
+      // pasar a alguien que se dio de baja en una consulta anterior.
+      const found = await findCase(sheets, {
+        caseId: body.case_id || null,
+        contactId: body.contact_id,
+      })
+      const bajaDeLaFila = found.existing ? found.existing.noContactar : false
       return json({
         ok: true,
         operation: 'check_contact',
         existe: Boolean(found.existing),
-        no_contactar: found.existing ? found.existing.noContactar : false,
+        no_contactar: found.contactBaja || bajaDeLaFila,
       })
     }
 
-    const found = await findCase(sheets, body.case_id)
-    const decision = decideWrite({ existing: found.existing, envelope: body })
+    const found = await findCase(sheets, {
+      caseId: body.case_id,
+      contactId: body.contact_id,
+    })
+    const decision = decideWrite({
+      existing: found.existing,
+      contactBaja: found.contactBaja,
+      envelope: body,
+    })
 
     if (decision.action === 'skip') {
       return json({
@@ -138,6 +151,7 @@ export default async function handler(request) {
         revision: body.revision,
         contactId: body.contact_id,
         now,
+        noContactar: body.no_contactar === true,
       }),
     )
 

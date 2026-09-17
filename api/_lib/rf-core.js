@@ -143,15 +143,22 @@ export function buildRow({ envelope, now }) {
 /**
  * Decide qué hacer con un upsert.
  *
- * - baja persistente: una fila marcada No contactar = Sí no se reactiva
+ * - baja persistente: ni el contacto ni la fila dados de baja se reactivan
  * - revisión no monotónica: se descarta como reintento viejo
  * - fila nueva: insert, siempre que quede capacidad
  */
-export function decideWrite({ existing, envelope }) {
+export function decideWrite({ existing, contactBaja, envelope }) {
+  const esBajaNueva = envelope.no_contactar === true
+
+  // La baja del traspaso es por CONTACTO, no por consulta: un contacto dado
+  // de baja no vuelve a entrar abriendo un caso nuevo.
+  if (contactBaja === true && !esBajaNueva) {
+    return { action: 'skip', reason: 'baja_persistente_contacto' }
+  }
   if (!existing) {
     return { action: 'insert' }
   }
-  if (existing.noContactar === true && envelope.no_contactar !== true) {
+  if (existing.noContactar === true && !esBajaNueva) {
     return { action: 'skip', reason: 'baja_persistente' }
   }
   if (Number.isInteger(existing.revision) && envelope.revision <= existing.revision) {
