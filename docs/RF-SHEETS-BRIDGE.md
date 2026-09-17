@@ -35,7 +35,9 @@ HelpKnow (Header X-RF-Token)
 | `api/_lib/rf-core.js` | Validación, sanitización, armado de fila, idempotencia |
 | `api/_lib/rf-repo.js` | Búsqueda de fila, bloques de escritura, ledger |
 | `api/_lib/rf-sheets.js` | Cliente Sheets con JWT firmado, sin dependencias nuevas |
-| `api/_lib/rf-bridge.test.js` | 22 pruebas, `npm test` |
+| `api/_lib/rf-bridge.test.js` | 22 pruebas unitarias, `npm test` |
+| `scripts/rf-fake-sheets.mjs` | El endpoint real contra una planilla en memoria |
+| `scripts/rf-smoke.mjs` | 13 escenarios de punta a punta |
 
 ## Reglas del traspaso que el código hace cumplir
 
@@ -58,6 +60,32 @@ HelpKnow (Header X-RF-Token)
 - **Aislamiento de cuenta.** `account` distinto de `renzoyfranco.viajes` → 400.
 - **Capacidad 200 filas.** Si no hay fila libre responde 507, no pisa ocupadas.
 - **TEST_ONLY por defecto.** Con `test: false` responde 409 hasta que vos lo abras.
+
+## Cómo probarlo sin desplegar nada
+
+La planilla falsa levanta el endpoint **real** y le pone una hoja en memoria
+detrás, interceptando las llamadas a Google. Cubre lo que las pruebas
+unitarias no ven: los rangos A1, la numeración de filas y el cableado del
+handler.
+
+```bash
+npm run rf:fake        # en una terminal
+
+RF_FAKE=1 \
+RF_ENDPOINT=http://localhost:8787/api/rf-consulta \
+RF_BRIDGE_TOKEN=token-de-prueba npm run rf:smoke
+```
+
+Los 13 escenarios: alta, reintento idempotente, actualización sobre la misma
+fila, baja, baja que no se reactiva, baja que alcanza a un caso nuevo del
+mismo contacto, consulta de baja, aislamiento de cuenta, token inválido,
+rechazo en TEST_ONLY, y los dos que más importan: **una actualización no pisa
+el Estado ni las notas del vendedor, pero sí refresca los datos del cliente.**
+
+Contra el endpoint ya desplegado se corre igual, sin `RF_FAKE=1` (los dos
+últimos escenarios necesitan escribir celdas a mano, así que sólo corren
+contra la planilla falsa). Escribe filas sintéticas marcadas `Es prueba = Sí`
+y te dice cuáles borrar al final.
 
 ## Lo que falta y necesita tu autorización
 

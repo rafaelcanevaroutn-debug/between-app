@@ -8,7 +8,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "node --test api/_lib/*.test.js"
+    "test": "node --test api/_lib/*.test.js",
+    "rf:fake": "node scripts/rf-fake-sheets.mjs",
+    "rf:smoke": "node scripts/rf-smoke.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.85.0",
