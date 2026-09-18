@@ -12,6 +12,7 @@
 
 import { createServer } from 'node:http'
 import { generateKeyPairSync } from 'node:crypto'
+import { Readable } from 'node:stream'
 
 const PUERTO = Number(process.env.PORT || 8787)
 const TOKEN = process.env.RF_BRIDGE_TOKEN || 'token-de-prueba'
@@ -153,15 +154,15 @@ createServer(async (req, res) => {
     return
   }
 
-  const peticion = new Request(`http://localhost${req.url}`, {
+  // El handler es de estilo Node, igual que en Vercel. Se le vuelve a dar el
+  // cuerpo ya leído, porque el stream original se consumió más arriba.
+  const peticion = Object.assign(Readable.from(cuerpo.length ? [cuerpo] : []), {
     method: req.method,
     headers: req.headers,
-    body: ['GET', 'HEAD'].includes(req.method) ? undefined : cuerpo,
+    url: req.url,
   })
 
-  const respuesta = await handler(peticion)
-  res.writeHead(respuesta.status, { 'Content-Type': 'application/json' })
-  res.end(await respuesta.text())
+  await handler(peticion, res)
 }).listen(PUERTO, () => {
   console.log(`Planilla falsa escuchando en http://localhost:${PUERTO}/api/rf-consulta`)
   console.log(`Token: ${TOKEN}`)

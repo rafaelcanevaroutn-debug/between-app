@@ -1,29 +1,44 @@
+/**
+ * Genera el ecosistema de cuentas que muestra el simulador de la landing.
+ *
+ * Escrito con la forma que espera el runtime de Node de Vercel: recibe
+ * (req, res) y cierra la respuesta con res.end(). Un handler de estilo web
+ * que devuelve un Response deja el pedido colgado hasta que expira.
+ */
+
 export const config = { runtime: 'nodejs' }
 
-export default async function handler(request) {
-  if (request.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 })
+function responder(res, status, cuerpo, tipo = 'application/json; charset=utf-8') {
+  res.writeHead(status, { 'Content-Type': tipo })
+  res.end(typeof cuerpo === 'string' ? cuerpo : JSON.stringify(cuerpo))
+}
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return responder(res, 405, 'Method not allowed', 'text/plain; charset=utf-8')
   }
 
-  const buffers = [];
-  for await (const chunk of request) {
-    buffers.push(chunk);
+  const buffers = []
+  for await (const chunk of req) {
+    buffers.push(chunk)
   }
-  const { nombre, nicho, descripcion } = JSON.parse(Buffer.concat(buffers).toString());
+
+  let entrada
+  try {
+    entrada = JSON.parse(Buffer.concat(buffers).toString())
+  } catch {
+    return responder(res, 400, { error: 'cuerpo inválido' })
+  }
+
+  const { nombre, nicho, descripcion } = entrada
 
   if (!nombre || !nicho) {
-    return new Response(JSON.stringify({ error: 'nombre y nicho son requeridos' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return responder(res, 400, { error: 'nombre y nicho son requeridos' })
   }
 
   const apiKey = (process.env.ANTHROPIC_API_KEY || '').replace(/^"|"$/g, '').trim()
   if (!apiKey) {
-    return new Response(JSON.stringify({ error: 'API key no configurada' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return responder(res, 500, { error: 'API key no configurada' })
   }
 
   const body = {
@@ -56,30 +71,29 @@ Devolvé este JSON:
     ],
   }
 
-  console.log('=== PROMPT A CLAUDE ===\nSYSTEM:', body.system, '\nUSER:', body.messages[0].content, '\n======================')
-  console.log('PROMPT ENVIADO:', JSON.stringify({nombre, nicho, descripcion}))
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify(body),
+    })
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify(body),
-  })
+    if (!response.ok) {
+      const errorBody = await response.text()
+      console.error('generate: la API respondió', response.status, errorBody.slice(0, 300))
+      return responder(res, 502, { error: 'no se pudo generar el ecosistema' })
+    }
 
-  if (!response.ok) {
-    const errorBody = await response.text()
-    console.error('ERROR ANTHROPIC:', response.status, errorBody)
-    return new Response(JSON.stringify({ error: errorBody }), { status: 500 })
+    const data = await response.json()
+    const text = data.content[0].text.trim()
+
+    return responder(res, 200, text)
+  } catch (error) {
+    console.error('generate:', error.message)
+    return responder(res, 502, { error: 'no se pudo generar el ecosistema' })
   }
-
-  const data = await response.json()
-  const text = data.content[0].text.trim()
-
-  return new Response(text, {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' },
-  })
 }
