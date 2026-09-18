@@ -71,9 +71,9 @@ sólo con ese email.
 | `api/_lib/rf-sheets.js` | Cliente de la API de Sheets con JWT firmado |
 | `api/_lib/rf-appsscript.js` | Cliente de la app web de Apps Script |
 | `scripts/apps-script/Codigo.gs` | Lo que se pega en el editor de la planilla |
-| `api/_lib/rf-bridge.test.js` | 22 pruebas unitarias, `npm test` |
+| `api/_lib/rf-bridge.test.js` | 32 pruebas unitarias, `npm test` |
 | `scripts/rf-fake-sheets.mjs` | El endpoint real contra una planilla en memoria |
-| `scripts/rf-smoke.mjs` | 13 escenarios de punta a punta |
+| `scripts/rf-smoke.mjs` | 17 escenarios de punta a punta |
 
 ## Reglas del traspaso que el código hace cumplir
 
@@ -112,7 +112,7 @@ RF_ENDPOINT=http://localhost:8787/api/rf-consulta \
 RF_BRIDGE_TOKEN=token-de-prueba npm run rf:smoke
 ```
 
-Los 13 escenarios: alta, reintento idempotente, actualización sobre la misma
+Los 17 escenarios: alta, reintento idempotente, actualización sobre la misma
 fila, baja, baja que no se reactiva, baja que alcanza a un caso nuevo del
 mismo contacto, consulta de baja, aislamiento de cuenta, token inválido,
 rechazo en TEST_ONLY, y los dos que más importan: **una actualización no pisa
@@ -146,6 +146,41 @@ sin tu visto bueno explícito.
 3. **Plugin en HelpKnow.** Reutilizar `7wbvpsb78sy4kj3k` tool `461`:
    método POST, URL del endpoint, auth **Header** `X-RF-Token`.
 
+## Identidad: por qué la deriva el endpoint
+
+HelpKnow **no expone ningún identificador de contacto ni de conversación** como
+variable de sistema. Su único atributo de sistema es el número de turno de la
+IA. Verificado en la UI el 18/09/2026.
+
+Lo que sí puede inyectar en el prompt son los atributos del contacto en
+SaleSmartly, y dos de ellos juntos —**nombre** y **fecha de creación**—
+identifican a una persona de forma prácticamente única.
+
+Así que el plugin manda **una sola** `identidad` y el endpoint deriva los tres
+identificadores:
+
+| Dato | De dónde sale |
+| --- | --- |
+| `contact_id` | huella SHA-256 de `cuenta + identidad`, normalizada |
+| `case_id` | del registro: la última consulta del contacto, o una nueva |
+| `revision` | del registro: la guardada más uno |
+
+El modelo pasa de manejar tres identificadores a **ninguno**: sólo copia un
+texto que el sistema ya le puso delante. La huella además evita que el nombre
+de la persona quede escrito dentro del identificador, y garantiza el formato
+sin importar qué caracteres traiga la identidad.
+
+La normalización —espacios colapsados, minúsculas— tolera que el modelo altere
+el texto al copiarlo, que es el modo de falla realista.
+
+**Límite conocido y aceptado:** si SaleSmartly recrea el contacto, su fecha de
+creación cambia y esa persona abriría una consulta nueva. El daño es una fila
+duplicada, no dos clientes mezclados en una misma fila, que era el riesgo que
+importaba evitar.
+
+Los tres identificadores explícitos siguen aceptándose, para pruebas y para
+cualquier llamador que sí los tenga.
+
 ## Contrato
 
 ```json
@@ -175,6 +210,20 @@ sin tu visto bueno explícito.
     "datos_completos": true,
     "datos_faltantes": []
   }
+}
+```
+
+Y la forma que usa el agente, sin identificadores:
+
+```json
+{
+  "schema_version": 1,
+  "operation": "upsert",
+  "account": "renzoyfranco.viajes",
+  "identidad": "Rafa Canevaro|2026-09-17 18:12:21",
+  "test": true,
+  "reason": "datos_completos",
+  "lead": { "nombre": "Rafa", "destino": "México", "adultos": 2 }
 }
 ```
 

@@ -179,6 +179,68 @@ await paso(
   },
 )
 
+// --- identidad derivada ---------------------------------------------------
+// Así va a llamar el agente: sin case_id ni revision, sólo una identidad que
+// el sistema le inyecta en el prompt. El endpoint deriva los tres.
+
+const IDENTIDAD = `Cliente De Prueba ${SUFIJO}|2026-09-18 03:00:00`
+
+const porIdentidad = (extra = {}) => ({
+  schema_version: 1,
+  operation: 'upsert',
+  account: 'renzoyfranco.viajes',
+  identidad: IDENTIDAD,
+  test: true,
+  reason: 'prueba_por_identidad',
+  lead: { nombre: 'PRUEBA identidad', destino: 'Perú', tipo_viaje: 'Grupal', adultos: 2 },
+  ...extra,
+})
+
+let filaPorIdentidad = null
+
+await paso(
+  'una identidad sola alcanza para abrir la consulta',
+  () => llamar(porIdentidad()),
+  ({ status, json }) => {
+    if (status !== 200 || json.ok !== true) return `${status} ${JSON.stringify(json)}`
+    if (json.accion !== 'insert') return `esperaba insert, hizo ${json.accion}`
+    if (json.revision !== 1) return `esperaba revisión 1, vino ${json.revision}`
+    filaPorIdentidad = json.fila
+    return null
+  },
+)
+
+await paso(
+  'la misma identidad vuelve a la MISMA fila y avanza la revisión',
+  () => llamar(porIdentidad({ lead: { nombre: 'PRUEBA identidad', adultos: 4 } })),
+  ({ json }) => {
+    if (json.accion !== 'update') return `esperaba update, hizo ${json.accion}`
+    if (json.fila !== filaPorIdentidad) return `cambió de fila: ${filaPorIdentidad} -> ${json.fila}`
+    if (json.revision !== 2) return `esperaba revisión 2, vino ${json.revision}`
+    return null
+  },
+)
+
+await paso(
+  'la identidad tolera espacios y mayúsculas que el modelo pueda alterar',
+  () => llamar(porIdentidad({ identidad: `  CLIENTE  De   Prueba ${SUFIJO}|2026-09-18 03:00:00 ` })),
+  ({ json }) => {
+    if (json.fila !== filaPorIdentidad) return `no reconoció al mismo contacto: fila ${json.fila}`
+    if (json.revision !== 3) return `esperaba revisión 3, vino ${json.revision}`
+    return null
+  },
+)
+
+await paso(
+  'otra identidad abre una consulta distinta',
+  () => llamar(porIdentidad({ identidad: `Otra Persona ${SUFIJO}|2026-09-18 03:00:00` })),
+  ({ json }) => {
+    if (json.accion !== 'insert') return `esperaba insert, hizo ${json.accion}`
+    if (json.fila === filaPorIdentidad) return 'cayó en la fila de otro contacto'
+    return null
+  },
+)
+
 // --- sólo contra la planilla falsa ----------------------------------------
 // Comprueba la garantía más importante: que una actualización del puente no
 // pise lo que escribió el vendedor. Contra producción no corre, porque haría
