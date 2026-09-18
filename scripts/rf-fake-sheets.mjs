@@ -25,6 +25,8 @@ const { privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048 })
 process.env.RF_GOOGLE_PRIVATE_KEY = privateKey
   .export({ type: 'pkcs8', format: 'pem' })
   .toString()
+process.env.RF_APPSSCRIPT_URL = 'https://fake.apps.script/exec'
+process.env.RF_APPSSCRIPT_TOKEN = 'token-apps-script-de-prueba'
 process.env.RF_TEST_ONLY = process.env.RF_TEST_ONLY || 'true'
 
 // --- planilla en memoria ---------------------------------------------------
@@ -90,14 +92,39 @@ globalThis.fetch = async (url, opciones = {}) => {
     })
   }
 
+  // Apps Script: contesta siempre 200 y el resultado real va en el cuerpo.
+  if (href.startsWith(process.env.RF_APPSSCRIPT_URL)) {
+    const pedido = JSON.parse(opciones.body)
+    const responder = (cuerpo) =>
+      new Response(JSON.stringify(cuerpo), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+    if (pedido.token !== process.env.RF_APPSSCRIPT_TOKEN) {
+      return responder({ ok: false, error: 'no_autorizado' })
+    }
+    if (pedido.op === 'get') {
+      return responder({ ok: true, values: pedido.ranges.map(leer) })
+    }
+    if (pedido.op === 'update') {
+      const celdas = pedido.data.reduce((n, d) => n + escribir(d.range, d.values), 0)
+      return responder({ ok: true, updatedCells: celdas })
+    }
+    return responder({ ok: false, error: 'operacion_desconocida' })
+  }
+
   if (href.includes('sheets.googleapis.com')) {
     if (href.includes(':batchUpdate')) {
       const { data } = JSON.parse(opciones.body)
       const total = data.reduce((n, d) => n + escribir(d.range, d.values), 0)
       return new Response(JSON.stringify({ totalUpdatedCells: total }), { status: 200 })
     }
-    const rango = decodeURIComponent(href.split('/values/')[1])
-    return new Response(JSON.stringify({ values: leer(rango) }), { status: 200 })
+    const rangos = [...new URL(href).searchParams.getAll('ranges')]
+    return new Response(
+      JSON.stringify({ valueRanges: rangos.map((r) => ({ range: r, values: leer(r) })) }),
+      { status: 200 },
+    )
   }
 
   return fetchReal(url, opciones)

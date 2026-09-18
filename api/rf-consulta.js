@@ -6,12 +6,23 @@
  * Header o Query, y el secreto no puede viajar en la URL. Una función de
  * Vercel sí lee el header, y el token vive en una variable de entorno.
  *
+ * Detrás puede escribir de dos maneras, según lo que la cuenta de Google
+ * permita:
+ *
+ *   - Apps Script (RF_APPSSCRIPT_URL): corre con la cuenta del dueño de la
+ *     planilla. No necesita clave, así que sirve aunque la organización
+ *     bloquee la creación de claves de cuenta de servicio.
+ *   - API de Sheets (RF_GOOGLE_CLIENT_EMAIL + RF_GOOGLE_PRIVATE_KEY).
+ *
+ * Si están las dos, gana Apps Script.
+ *
  * Arranca en modo TEST_ONLY: rechaza cualquier consulta que no venga marcada
  * como prueba. Se abre a producción recién con evidencia de un E2E.
  */
 
 import crypto from 'node:crypto'
 import { getAccessToken, createSheetsClient } from './_lib/rf-sheets.js'
+import { createAppsScriptClient } from './_lib/rf-appsscript.js'
 import { buildRow, decideWrite, validateEnvelope } from './_lib/rf-core.js'
 import { findCase, insertPayload, updatePayload, ledgerPayload } from './_lib/rf-repo.js'
 
@@ -57,12 +68,17 @@ export default async function handler(request) {
   }
 
   const expectedToken = (process.env.RF_BRIDGE_TOKEN || '').trim()
+  const appsScriptUrl = (process.env.RF_APPSSCRIPT_URL || '').trim()
+  const appsScriptToken = (process.env.RF_APPSSCRIPT_TOKEN || '').trim()
   const spreadsheetId = (process.env.RF_SHEET_ID || '').trim()
   const clientEmail = (process.env.RF_GOOGLE_CLIENT_EMAIL || '').trim()
   const privateKey = (process.env.RF_GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n')
   const testOnly = (process.env.RF_TEST_ONLY || 'true').toLowerCase() !== 'false'
 
-  if (!expectedToken || !spreadsheetId || !clientEmail || !privateKey) {
+  const viaAppsScript = Boolean(appsScriptUrl && appsScriptToken)
+  const viaApiOficial = Boolean(spreadsheetId && clientEmail && privateKey)
+
+  if (!expectedToken || (!viaAppsScript && !viaApiOficial)) {
     console.error('rf-consulta: faltan variables de entorno')
     return json({ ok: false, error: 'bridge_no_configurado' }, 500)
   }
@@ -88,8 +104,12 @@ export default async function handler(request) {
   }
 
   try {
-    const token = await getAccessToken({ clientEmail, privateKey })
-    const sheets = createSheetsClient({ token, spreadsheetId })
+    const sheets = viaAppsScript
+      ? createAppsScriptClient({ url: appsScriptUrl, token: appsScriptToken })
+      : createSheetsClient({
+          token: await getAccessToken({ clientEmail, privateKey }),
+          spreadsheetId,
+        })
 
     if (body.operation === 'check_contact') {
       // La baja se consulta por contacto: preguntar solo por el caso dejaria

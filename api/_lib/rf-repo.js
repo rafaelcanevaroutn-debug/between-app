@@ -35,14 +35,17 @@ const NO_CONTACTAR_COLUMN = columnLetter(COLUMN_INDEX['No contactar'])
 const isSi = (value) => String(value || '').trim().toLowerCase().startsWith('s')
 
 /**
- * Lee planilla y ledger, y arma todo lo que decideWrite necesita saber:
- * la fila del caso si existe, la revisión aplicada, y si el CONTACTO está
- * dado de baja en cualquiera de sus consultas anteriores.
+ * Lee planilla y ledger en una sola llamada, y arma todo lo que decideWrite
+ * necesita saber: la fila del caso si existe, la revisión aplicada, y si el
+ * CONTACTO está dado de baja en cualquiera de sus consultas anteriores.
  */
 export async function findCase(sheets, { caseId, contactId }) {
-  const [ids, ledger] = await Promise.all([
-    sheets.getValues(`${SHEET_TITLE}!${ID_COLUMN}${FIRST_DATA_ROW}:${ID_COLUMN}${LAST_DATA_ROW}`),
-    sheets.getValues(LEDGER_RANGE),
+  // Una sola ida y vuelta: contra Apps Script cada llamada cuesta segundos,
+  // y HelpKnow corta la herramienta si tarda demasiado.
+  const [ids, bajas, ledger] = await sheets.getMany([
+    `${SHEET_TITLE}!${ID_COLUMN}${FIRST_DATA_ROW}:${ID_COLUMN}${LAST_DATA_ROW}`,
+    `${SHEET_TITLE}!${NO_CONTACTAR_COLUMN}${FIRST_DATA_ROW}:${NO_CONTACTAR_COLUMN}${LAST_DATA_ROW}`,
+    LEDGER_RANGE,
   ])
 
   const contactBaja = ledger.some((entry) => (entry[2] || '').trim() === contactId && isSi(entry[4]))
@@ -59,15 +62,10 @@ export async function findCase(sheets, { caseId, contactId }) {
     return { existing: null, contactBaja, firstFreeRow: firstFreeRow(ids), ledgerRow }
   }
 
-  const row = FIRST_DATA_ROW + offset
-  const flags = await sheets.getValues(
-    `${SHEET_TITLE}!${NO_CONTACTAR_COLUMN}${row}:${NO_CONTACTAR_COLUMN}${row}`,
-  )
-
   return {
     existing: {
-      row,
-      noContactar: isSi(flags[0] && flags[0][0]),
+      row: FIRST_DATA_ROW + offset,
+      noContactar: isSi(bajas[offset] && bajas[offset][0]),
       revision: ledgerEntry ? Number.parseInt(ledgerEntry[1], 10) : null,
     },
     contactBaja,

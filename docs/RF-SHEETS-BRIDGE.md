@@ -1,7 +1,7 @@
 # Puente HelpKnow → Google Sheets (Renzo y Franco)
 
-Estado: **código escrito y probado en local. NADA desplegado. NADA conectado.**
-Fecha: 17/09/2026.
+Estado: **código escrito y probado en local. NADA conectado.**
+Fecha: 18/09/2026.
 
 ## Por qué existe
 
@@ -21,10 +21,44 @@ Vercel y ya usa secretos por entorno, así que no hay infraestructura nueva.
 ```
 HelpKnow (Header X-RF-Token)
   → /api/rf-consulta            valida el token contra RF_BRIDGE_TOKEN
-  → Google Sheets API           service account, scope spreadsheets
+  → capa de datos               Apps Script o API de Sheets
   → Consultas-Renzo-Franco      upsert en la fila del caso
   → {"ok": true, ...}
 ```
+
+## Dos formas de escribir en la planilla
+
+El endpoint elige según las variables de entorno que encuentre. Si están las
+dos, gana Apps Script.
+
+### Apps Script (recomendado)
+
+```
+HelpKnow --header--> Vercel --secreto en el body--> Apps Script --> planilla
+```
+
+Apps Script corre con la cuenta del dueño de la planilla: **no necesita cuenta
+de servicio, ni clave, ni proyecto de Google Cloud**. Eso importa porque muchas
+organizaciones de Google bloquean por defecto la creación de claves
+(`iam.disableServiceAccountKeyCreation`, parte de "Secure by default"), y sin
+clave la API oficial queda fuera de alcance.
+
+El motivo por el que Apps Script no servía al principio —no lee headers— deja
+de pesar con Vercel en el medio: Vercel le manda el secreto en el cuerpo, que
+`doPost` sí lee.
+
+Se instala pegando `scripts/apps-script/Codigo.gs` en el editor de Apps Script
+de la planilla. Ese script crea la pestaña `_integracion` oculta por su cuenta,
+y toma un candado de escritura antes de tocar celdas, así que dos consultas
+simultáneas no se pisan.
+
+Variables: `RF_APPSSCRIPT_URL` y `RF_APPSSCRIPT_TOKEN`.
+
+### API de Sheets con cuenta de servicio
+
+Variables: `RF_SHEET_ID`, `RF_GOOGLE_CLIENT_EMAIL` y `RF_GOOGLE_PRIVATE_KEY`.
+Requiere poder crear una clave de cuenta de servicio y compartir la planilla
+sólo con ese email.
 
 ## Qué está hecho
 
@@ -34,7 +68,9 @@ HelpKnow (Header X-RF-Token)
 | `api/_lib/rf-mapping.js` | Las 37 columnas, los rangos, qué es del vendedor |
 | `api/_lib/rf-core.js` | Validación, sanitización, armado de fila, idempotencia |
 | `api/_lib/rf-repo.js` | Búsqueda de fila, bloques de escritura, ledger |
-| `api/_lib/rf-sheets.js` | Cliente Sheets con JWT firmado, sin dependencias nuevas |
+| `api/_lib/rf-sheets.js` | Cliente de la API de Sheets con JWT firmado |
+| `api/_lib/rf-appsscript.js` | Cliente de la app web de Apps Script |
+| `scripts/apps-script/Codigo.gs` | Lo que se pega en el editor de la planilla |
 | `api/_lib/rf-bridge.test.js` | 22 pruebas unitarias, `npm test` |
 | `scripts/rf-fake-sheets.mjs` | El endpoint real contra una planilla en memoria |
 | `scripts/rf-smoke.mjs` | 13 escenarios de punta a punta |
@@ -92,26 +128,22 @@ y te dice cuáles borrar al final.
 Nada de esto lo hice yo. Son los permisos que el traspaso dice que no se toman
 sin tu visto bueno explícito.
 
-1. **Service account de Google.** Crear uno, bajar la clave, y compartir la
-   planilla **sólo con ese email**, como Editor. Nunca "Cualquier persona con
-   el enlace". Scope: `https://www.googleapis.com/auth/spreadsheets`.
-2. **Pestaña `_integracion`.** Una pestaña oculta, cinco columnas:
-   `case_id | revision | contact_id | actualizado_el | no_contactar`. Es
-   aditiva: no toca las 37 columnas ni las 200 filas. Sin ella los reintentos
-   dejan de ser idempotentes (no hay dónde guardar qué revisión ya se aplicó)
-   y la baja por contacto no se puede verificar.
-3. **Variables de entorno en Vercel.** El secreto lo generás y lo cargás vos;
-   yo no lo veo ni lo escribo en el repo.
+1. **Publicar el Apps Script.** Pegar `scripts/apps-script/Codigo.gs` en el
+   editor de la planilla, cargar `RF_SHEET_TOKEN` en las propiedades del
+   script, e implementarlo como aplicación web con *Ejecutar como: Yo* y
+   *Quién tiene acceso: Cualquier usuario*. La pestaña `_integracion` la crea
+   el script solo.
+2. **Variables de entorno en Vercel.** Los secretos los genera y carga el
+   dueño; no hay ninguno en el repositorio.
 
    ```
-   RF_BRIDGE_TOKEN           cadena larga al azar, la misma en HelpKnow
-   RF_SHEET_ID               1_YlPorjULhc9gtpjuOQ2depb2cXU7q5As-gWuKBeOmA
-   RF_GOOGLE_CLIENT_EMAIL    ...@....iam.gserviceaccount.com
-   RF_GOOGLE_PRIVATE_KEY     la clave privada, con los \n escapados
+   RF_BRIDGE_TOKEN           el que también va en el plugin de HelpKnow
+   RF_APPSSCRIPT_URL         la URL /exec de la implementación
+   RF_APPSSCRIPT_TOKEN       el mismo valor que RF_SHEET_TOKEN del script
    RF_TEST_ONLY              true
    ```
 
-4. **Plugin en HelpKnow.** Reutilizar `7wbvpsb78sy4kj3k` tool `461`:
+3. **Plugin en HelpKnow.** Reutilizar `7wbvpsb78sy4kj3k` tool `461`:
    método POST, URL del endpoint, auth **Header** `X-RF-Token`.
 
 ## Contrato
@@ -158,10 +190,10 @@ siguen en falso hasta que el equipo tenga acceso real y probado.
 
 ## Limitación conocida
 
-Dos consultas **nuevas** que lleguen en el mismo instante pueden calcular la
-misma primera fila libre y pisarse: la API de Sheets no da bloqueo. Con el
-volumen de DMs de una cuenta de Instagram es improbable, pero es real y no lo
-tapo. Si alguna vez importa, la solución es una cola o un lock externo.
+Dos consultas **nuevas** simultáneas pueden calcular la misma primera fila
+libre y pisarse. Por el camino de Apps Script esto queda cubierto: el script
+toma un `LockService` antes de escribir. Por el camino de la API oficial sigue
+abierto, porque Sheets no ofrece bloqueo.
 
 ## Notas
 
