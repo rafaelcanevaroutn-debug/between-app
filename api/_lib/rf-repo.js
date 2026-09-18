@@ -38,6 +38,9 @@ const isSi = (value) => String(value || '').trim().toLowerCase().startsWith('s')
  * Lee planilla y ledger en una sola llamada, y arma todo lo que decideWrite
  * necesita saber: la fila del caso si existe, la revisión aplicada, y si el
  * CONTACTO está dado de baja en cualquiera de sus consultas anteriores.
+ *
+ * Si no le pasan `caseId`, lo resuelve desde el registro y además calcula la
+ * próxima revisión: así ni el caso ni la revisión dependen del modelo.
  */
 export async function findCase(sheets, { caseId, contactId }) {
   // Una sola ida y vuelta: contra Apps Script cada llamada cuesta segundos,
@@ -48,26 +51,44 @@ export async function findCase(sheets, { caseId, contactId }) {
     LEDGER_RANGE,
   ])
 
-  const contactBaja = ledger.some((entry) => (entry[2] || '').trim() === contactId && isSi(entry[4]))
+  const delContacto = ledger.filter((entry) => (entry[2] || '').trim() === contactId)
+  const contactBaja = delContacto.some((entry) => isSi(entry[4]))
 
-  const ledgerIndex = caseId
-    ? ledger.findIndex((entry) => (entry[0] || '').trim() === caseId)
-    : -1
+  // Sin case_id explícito, se resuelve desde el registro: la última consulta
+  // de este contacto, o una nueva si nunca tuvo. Así el modelo no necesita
+  // manejar identificadores.
+  const caso =
+    caseId ||
+    (delContacto.length ? (delContacto[delContacto.length - 1][0] || '').trim() : `${contactId}-1`)
+
+  const ledgerIndex = ledger.findIndex((entry) => (entry[0] || '').trim() === caso)
   const ledgerEntry = ledgerIndex >= 0 ? ledger[ledgerIndex] : null
   const ledgerRow = ledgerIndex >= 0 ? ledgerIndex + 2 : ledger.length + 2
 
-  const offset = caseId ? ids.findIndex((cell) => (cell[0] || '').trim() === caseId) : -1
+  const revisionGuardada = ledgerEntry ? Number.parseInt(ledgerEntry[1], 10) : null
+  const proximaRevision = (Number.isInteger(revisionGuardada) ? revisionGuardada : 0) + 1
+
+  const offset = ids.findIndex((cell) => (cell[0] || '').trim() === caso)
 
   if (offset < 0) {
-    return { existing: null, contactBaja, firstFreeRow: firstFreeRow(ids), ledgerRow }
+    return {
+      existing: null,
+      caso,
+      proximaRevision,
+      contactBaja,
+      firstFreeRow: firstFreeRow(ids),
+      ledgerRow,
+    }
   }
 
   return {
     existing: {
       row: FIRST_DATA_ROW + offset,
       noContactar: isSi(bajas[offset] && bajas[offset][0]),
-      revision: ledgerEntry ? Number.parseInt(ledgerEntry[1], 10) : null,
+      revision: revisionGuardada,
     },
+    caso,
+    proximaRevision,
     contactBaja,
     firstFreeRow: null,
     ledgerRow,

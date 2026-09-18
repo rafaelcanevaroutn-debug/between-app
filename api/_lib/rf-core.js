@@ -3,6 +3,8 @@
  * Sin red y sin Google, para poder probarla entera en local.
  */
 
+import crypto from 'node:crypto'
+
 import {
   COLUMNS,
   COLUMN_INDEX,
@@ -47,6 +49,11 @@ export function stripForbidden(lead) {
  * Valida el sobre del contrato. Identidad, caso y revisión tienen que venir
  * del sistema, nunca del cliente ni del modelo: si faltan, se rechaza.
  */
+/** Una consulta identificada por identidad deja que el endpoint derive el resto. */
+export function identificaPorIdentidad(body) {
+  return typeof body?.identidad === 'string' && body.identidad.trim().length > 0
+}
+
 export function validateEnvelope(body) {
   const errors = []
   if (!body || typeof body !== 'object') return ['cuerpo ausente o no es JSON']
@@ -60,24 +67,54 @@ export function validateEnvelope(body) {
   if (body.account !== ACCOUNT) {
     errors.push(`account debe ser ${ACCOUNT}`)
   }
-  if (!body.contact_id || !/^[0-9A-Za-z_-]{3,64}$/.test(String(body.contact_id))) {
+  if (identificaPorIdentidad(body)) {
+    const identidad = String(body.identidad).trim()
+    if (identidad.length < 3 || identidad.length > 200) {
+      errors.push('identidad debe tener entre 3 y 200 caracteres')
+    }
+  } else if (!body.contact_id || !/^[0-9A-Za-z_-]{3,64}$/.test(String(body.contact_id))) {
     errors.push('contact_id ausente o con formato inválido')
   }
   if (body.operation === 'upsert') {
-    if (!body.case_id || !/^[0-9A-Za-z_-]{3,64}$/.test(String(body.case_id))) {
-      errors.push('case_id ausente o con formato inválido')
-    }
-    if (!Number.isInteger(body.revision) || body.revision < 1) {
-      errors.push('revision debe ser entero >= 1')
-    }
     if (typeof body.test !== 'boolean') {
       errors.push('test debe ser booleano explícito')
+    }
+    // Dos formas válidas de identificar la consulta: los tres identificadores
+    // explícitos, o una identidad de la que el endpoint los deriva.
+    if (!identificaPorIdentidad(body)) {
+      if (!body.case_id || !/^[0-9A-Za-z_-]{3,64}$/.test(String(body.case_id))) {
+        errors.push('case_id ausente o con formato inválido')
+      }
+      if (!Number.isInteger(body.revision) || body.revision < 1) {
+        errors.push('revision debe ser entero >= 1')
+      }
     }
   }
   if (body.estado !== undefined && !ESTADOS.includes(body.estado)) {
     errors.push('estado fuera de la lista de la Guía')
   }
   return errors
+}
+
+/**
+ * HelpKnow no expone ningún identificador de contacto ni de conversación como
+ * variable de sistema: el único atributo de sistema que ofrece es el número
+ * de turno de la IA. Lo que sí puede inyectar en el prompt son los atributos
+ * del contacto en SaleSmartly, y dos de ellos juntos —nombre y fecha de
+ * creación— identifican a una persona de forma prácticamente única.
+ *
+ * De ahí sale `contact_id`: una huella digital de la cuenta más esa identidad.
+ * El modelo deja de manejar identificadores y sólo copia un texto que el
+ * sistema ya le puso delante.
+ *
+ * Que sea huella y no el texto crudo tiene dos ventajas: el nombre de la
+ * persona no queda escrito dentro del identificador, y el formato siempre
+ * cumple la validación sin importar qué caracteres traiga la identidad.
+ */
+export function derivarContactId({ account, identidad }) {
+  const normalizada = String(identidad).trim().replace(/\s+/g, ' ').toLowerCase()
+  const huella = crypto.createHash('sha256').update(`${account}|${normalizada}`).digest('hex')
+  return `c${huella.slice(0, 24)}`
 }
 
 const SI = 'Sí'

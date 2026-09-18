@@ -18,6 +18,7 @@ import {
   blankVendorColumns,
   buildRow,
   decideWrite,
+  derivarContactId,
   sanitizeCell,
   stripForbidden,
   validateEnvelope,
@@ -248,4 +249,94 @@ test('findCase no confunde la baja de otro contacto', async () => {
   })
   const found = await findCase(sheets, { caseId: 'rf-x-1', contactId: '1384513880563214' })
   assert.equal(found.contactBaja, false)
+})
+
+// --- identidad derivada -------------------------------------------------
+// HelpKnow no expone ningún ID de contacto ni de conversación, así que el
+// endpoint deriva los tres identificadores de una identidad que el sistema
+// inyecta en el prompt. El modelo deja de manejarlos.
+
+test('la misma identidad da siempre el mismo contacto', () => {
+  const a = derivarContactId({ account: 'renzoyfranco.viajes', identidad: 'Rafa Canevaro|2026-09-17 18:12' })
+  const b = derivarContactId({ account: 'renzoyfranco.viajes', identidad: 'Rafa Canevaro|2026-09-17 18:12' })
+  assert.equal(a, b)
+})
+
+test('tolera espacios de más y mayúsculas, que el modelo puede alterar', () => {
+  const base = derivarContactId({ account: 'renzoyfranco.viajes', identidad: 'Rafa Canevaro|2026-09-17 18:12' })
+  const sucia = derivarContactId({ account: 'renzoyfranco.viajes', identidad: '  RAFA   Canevaro|2026-09-17 18:12  ' })
+  assert.equal(sucia, base)
+})
+
+test('dos personas distintas nunca comparten contacto', () => {
+  const rafa = derivarContactId({ account: 'renzoyfranco.viajes', identidad: 'Rafa Canevaro|2026-09-17 18:12' })
+  const otro = derivarContactId({ account: 'renzoyfranco.viajes', identidad: 'Rafa Canevaro|2026-09-17 18:13' })
+  assert.notEqual(rafa, otro)
+})
+
+test('la misma persona en otra cuenta es otro contacto', () => {
+  const aqui = derivarContactId({ account: 'renzoyfranco.viajes', identidad: 'Rafa|x' })
+  const alla = derivarContactId({ account: 'caminantes', identidad: 'Rafa|x' })
+  assert.notEqual(aqui, alla)
+})
+
+test('el contacto derivado cumple el formato que exige el contrato', () => {
+  const id = derivarContactId({ account: 'renzoyfranco.viajes', identidad: 'Ana Gómez / "La Flaca" <ana@x.com>' })
+  assert.match(id, /^[0-9A-Za-z_-]{3,64}$/)
+})
+
+test('con identidad, el contrato no exige case_id ni revision', () => {
+  const sobre = {
+    schema_version: 1,
+    operation: 'upsert',
+    account: 'renzoyfranco.viajes',
+    identidad: 'Rafa Canevaro|2026-09-17 18:12',
+    test: true,
+    lead: {},
+  }
+  assert.equal(validateEnvelope(sobre).length, 0)
+})
+
+test('una identidad demasiado corta se rechaza', () => {
+  assert.ok(
+    validateEnvelope({
+      schema_version: 1,
+      operation: 'upsert',
+      account: 'renzoyfranco.viajes',
+      identidad: 'ab',
+      test: true,
+      lead: {},
+    }).length,
+  )
+})
+
+test('sin identidad siguen haciendo falta los tres identificadores', () => {
+  const errores = validateEnvelope({
+    schema_version: 1,
+    operation: 'upsert',
+    account: 'renzoyfranco.viajes',
+    test: true,
+    lead: {},
+  })
+  assert.ok(errores.some((e) => e.includes('contact_id')))
+  assert.ok(errores.some((e) => e.includes('case_id')))
+  assert.ok(errores.some((e) => e.includes('revision')))
+})
+
+test('sin case_id, findCase abre el primer caso del contacto en revisión 1', async () => {
+  const sheets = fakeSheets({ ids: [], ledger: [] })
+  const found = await findCase(sheets, { caseId: null, contactId: 'cabc123' })
+  assert.equal(found.caso, 'cabc123-1')
+  assert.equal(found.proximaRevision, 1)
+})
+
+test('sin case_id, findCase reusa el caso abierto y avanza la revisión', async () => {
+  const sheets = fakeSheets({
+    ids: [['cabc123-1']],
+    ledger: [['cabc123-1', '3', 'cabc123', 'ayer', 'No']],
+  })
+  const found = await findCase(sheets, { caseId: null, contactId: 'cabc123' })
+  assert.equal(found.caso, 'cabc123-1')
+  assert.equal(found.proximaRevision, 4)
+  assert.equal(found.existing.row, 6)
 })

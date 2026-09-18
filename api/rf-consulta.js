@@ -27,7 +27,13 @@
 import crypto from 'node:crypto'
 import { getAccessToken, createSheetsClient } from './_lib/rf-sheets.js'
 import { createAppsScriptClient } from './_lib/rf-appsscript.js'
-import { buildRow, decideWrite, validateEnvelope } from './_lib/rf-core.js'
+import {
+  buildRow,
+  decideWrite,
+  derivarContactId,
+  identificaPorIdentidad,
+  validateEnvelope,
+} from './_lib/rf-core.js'
 import { findCase, insertPayload, updatePayload, ledgerPayload } from './_lib/rf-repo.js'
 
 const TIMEZONE = 'America/Argentina/Tucuman'
@@ -134,12 +140,20 @@ export async function procesar({ method, token, body, jsonInvalido = false }) {
           spreadsheetId,
         })
 
+    // La identidad, cuando viene, reemplaza a los tres identificadores: el
+    // contacto sale de una huella digital y el caso y la revisión los resuelve
+    // el registro. El modelo no maneja ninguno de los tres.
+    const porIdentidad = identificaPorIdentidad(body)
+    const contactId = porIdentidad
+      ? derivarContactId({ account: body.account, identidad: body.identidad })
+      : body.contact_id
+
     if (body.operation === 'check_contact') {
       // La baja se consulta por contacto: preguntar solo por el caso dejaria
       // pasar a alguien que se dio de baja en una consulta anterior.
       const found = await findCase(sheets, {
-        caseId: body.case_id || null,
-        contactId: body.contact_id,
+        caseId: porIdentidad ? null : body.case_id || null,
+        contactId,
       })
       const bajaDeLaFila = found.existing ? found.existing.noContactar : false
       return responder({
@@ -151,13 +165,19 @@ export async function procesar({ method, token, body, jsonInvalido = false }) {
     }
 
     const found = await findCase(sheets, {
-      caseId: body.case_id,
-      contactId: body.contact_id,
+      caseId: porIdentidad ? null : body.case_id,
+      contactId,
     })
+
+    // A partir de acá se trabaja con el sobre ya resuelto, venga como venga.
+    const sobre = porIdentidad
+      ? { ...body, contact_id: contactId, case_id: found.caso, revision: found.proximaRevision }
+      : body
+
     const decision = decideWrite({
       existing: found.existing,
       contactBaja: found.contactBaja,
-      envelope: body,
+      envelope: sobre,
     })
 
     if (decision.action === 'skip') {
@@ -171,7 +191,7 @@ export async function procesar({ method, token, body, jsonInvalido = false }) {
     }
 
     const now = nowInArgentina()
-    const values = buildRow({ envelope: body, now })
+    const values = buildRow({ envelope: sobre, now })
 
     let targetRow
     let data
@@ -190,11 +210,11 @@ export async function procesar({ method, token, body, jsonInvalido = false }) {
     data.push(
       ledgerPayload({
         ledgerRow: found.ledgerRow,
-        caseId: body.case_id,
-        revision: body.revision,
-        contactId: body.contact_id,
+        caseId: sobre.case_id,
+        revision: sobre.revision,
+        contactId: sobre.contact_id,
         now,
-        noContactar: body.no_contactar === true,
+        noContactar: sobre.no_contactar === true,
       }),
     )
 
@@ -206,7 +226,8 @@ export async function procesar({ method, token, body, jsonInvalido = false }) {
       aplicado: true,
       accion: decision.action,
       fila: targetRow,
-      revision: body.revision,
+      caso: sobre.case_id,
+      revision: sobre.revision,
       celdas: result.totalUpdatedCells ?? null,
     })
   } catch (error) {
