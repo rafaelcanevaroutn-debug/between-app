@@ -35,7 +35,7 @@ de Renzo, TikTok y Facebook.
 | Transferencia a humano | Funciona, pero **cae en cola desatendida** |
 | Puente a la planilla | **Desplegado y probado a mano**: escribió la fila 6 el 18/09 |
 | Plugin de HelpKnow | **Configurado y conectado al agente** 16103 |
-| Prueba de punta a punta | **Falló el 18/09 y está corregida, sin reprobar** |
+| Prueba de punta a punta | **Probada el 18/09**: el bot registró la fila solo |
 | Flujo de comentarios nuevo | **Nunca se ejecutó** |
 
 ---
@@ -105,8 +105,14 @@ otra ronda de pruebas contra Instagram. Ahora el log dice los motivos y la forma
 de lo que llegó —nombres y tipos, nunca los valores, porque el cuerpo trae datos
 personales del cliente.
 
-**Lo que esta prueba dejó demostrado, más allá del error:** el cableado completo
-funciona. El agente conoce la herramienta, la dispara sola en el momento
+### La segunda corrida, 11:50: verde
+
+Con el arreglo desplegado se repitió la prueba y **el bot escribió la fila solo**.
+Instagram → agente → herramienta → planilla, sin intervención humana en el medio.
+Es la primera vez que el circuito cierra entero.
+
+**Lo que la primera prueba ya había dejado demostrado, más allá del error:** el
+cableado completo funciona. El agente conoce la herramienta, la dispara sola en el momento
 correcto, y el pedido llega a Vercel autenticado. Faltaba el formato.
 
 ### Lo que la prueba dejó pendiente y no es un bug
@@ -183,43 +189,60 @@ comentarios en un README:
   contactado no vuelve a entrar abriendo un caso nuevo.
 - `TEST_ONLY` por defecto: rechaza consultas reales hasta que se abra.
 
-22 pruebas unitarias y 13 escenarios de punta a punta contra una planilla falsa
+43 pruebas unitarias y 17 escenarios de punta a punta contra una planilla falsa
 que ejercita el endpoint real.
 
 ---
 
 ## Lo que falta, en orden
 
-### 1. Terminar de conectar el puente
+### Hecho el 18/09
 
-- Publicar el Apps Script como aplicación web y copiar la URL `/exec`
-- Cargar en Vercel: `RF_BRIDGE_TOKEN`, `RF_APPSSCRIPT_URL`,
-  `RF_APPSSCRIPT_TOKEN`, `RF_TEST_ONLY=true`
-- Redesplegar
-- Correr `npm run rf:smoke` contra el endpoint real
+- Apps Script publicado, URL `/exec` cargada, variables en Vercel, redesplegado
+- Plugin de HelpKnow configurado con POST + header `X-RF-Token`, y la
+  herramienta conectada al agente 16103
+- **Identidad resuelta.** HelpKnow no expone ningún identificador de contacto
+  ni de conversación como variable de sistema. Lo que sí inyecta son los
+  atributos del contacto en SaleSmartly, y dos juntos —nombre y fecha de
+  creación— identifican a una persona. El endpoint deriva de ahí los tres
+  identificadores, así que el modelo no maneja ninguno.
+- **Prueba de punta a punta en verde**: el bot escribió la fila solo
 
-### 2. El plugin de HelpKnow — acá está el nudo
+### 1. El prompt: no prometer sin registrar
 
-Reutilizar el plugin `7wbvpsb78sy4kj3k`, tool `461`, que ya existe vacío:
-método POST, URL del endpoint, auth **Header** `X-RF-Token`.
+El bot dice "una persona del equipo va a tomar tu consulta" sin haber llamado a
+la herramienta. Aunque ahora la herramienta funcione, el orden está mal: si la
+llamada falla, le prometió a un cliente algo que no va a pasar.
 
-**El problema sin resolver:** el puente exige que `contact_id`, `case_id` y
-`revision` vengan de variables confiables del sistema, no del modelo. Si el bot
-los inventa, mezcla clientes entre sí. Por eso se rechazan con 400.
+Dos cambios:
 
-Nunca se verificó qué variables de sistema expone HelpKnow para esto. **Es lo
-primero que hay que averiguar** antes de configurar nada. Si no las expone, la
-arquitectura de identidad hay que repensarla.
+- **Regla dura.** No nombrar al equipo sin un `ok: true` de
+  `guardar_consulta_rf` en la mano.
+- **Invertir el pedido de contacto.** Dejar de preguntar "¿querés que te
+  pasemos con alguien?" —que habilita un no y deja la consulta sin registrar—
+  y pedir el WhatsApp directo apenas hay interés real.
 
-### 3. Prueba real de punta a punta
+### 2. Abrir a producción
 
-DM desde `@rafacanevaro` → la IA califica → llama la herramienta → aparece la
-fila. Después borrar las filas de prueba y recién ahí evaluar `TEST_ONLY=false`.
+Hoy **todo entra marcado `Es prueba = Sí`**, porque el parámetro `test` del
+plugin tiene el valor fijo `true` y `RF_TEST_ONLY` está en `true`. Son dos
+perillas y hay que moverlas juntas, en este orden:
 
-### 4. El prompt, una vez conectado
+1. Borrar las filas de prueba de la planilla
+2. Dar acceso a la planilla a los vendedores de Franco y verificar que entran
+3. Cambiar `test` a `false` en el plugin y `RF_TEST_ONLY` a `false` en Vercel
 
-Reescribir la regla de seguimiento: con la planilla viva, el bot ya puede decir
-que la consulta quedó registrada sin mentir.
+Si se mueve una sola, o el puente rechaza todo con 409, o las consultas reales
+quedan marcadas como prueba y los vendedores las ignoran.
+
+### 3. `stored` no es `delivered`
+
+Que la fila se escriba no prueba que un vendedor la haya visto. Los SLA de
+Franco siguen en falso hasta que el equipo tenga acceso real y probado.
+
+### 4. El tono
+
+El bot suena repetitivo. Es pulido, va después de que el circuito esté cerrado.
 
 ### 5. Comentarios — sesión aparte
 
