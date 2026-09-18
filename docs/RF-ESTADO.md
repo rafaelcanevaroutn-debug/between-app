@@ -33,8 +33,9 @@ de Renzo, TikTok y Facebook.
 | Base de conocimiento | **Auditada**, sin restos de promociones vencidas |
 | Prompt del agente | **Publicado**, con una corrección verificada |
 | Transferencia a humano | Funciona, pero **cae en cola desatendida** |
-| Puente a la planilla | **Escrito y probado en local**, sin conectar |
-| Plugin de HelpKnow | **No configurado** |
+| Puente a la planilla | **Desplegado y probado a mano**: escribió la fila 6 el 18/09 |
+| Plugin de HelpKnow | **Configurado y conectado al agente** 16103 |
+| Prueba de punta a punta | **Falló el 18/09 y está corregida, sin reprobar** |
 | Flujo de comentarios nuevo | **Nunca se ejecutó** |
 
 ---
@@ -64,6 +65,61 @@ explícitamente: un DM nuevo no disparó reasignación automática.
 del equipo para que sigan tu consulta"*— cuando su propio prompt se lo prohíbe
 mientras no haya integración. Esa regla **hay que reescribirla recién cuando la
 planilla esté conectada**, porque ahí la frase deja de ser mentira.
+
+---
+
+## La prueba de punta a punta del 18/09
+
+La primera corrida real: Instagram → bot → herramienta → planilla. **No escribió
+la fila.** Lo que pasó, con evidencia:
+
+| Dónde | Qué mostró |
+| --- | --- |
+| Instagram | El bot respondió bien y dijo "una persona del equipo continúa" |
+| Planilla | Ninguna fila nueva |
+| Logs de Vercel | **4 POST a `/api/rf-consulta`, los 4 con 400**, 6-9 ms, sin salida a Google |
+
+Los 4 pedidos caen exactos en los dos momentos en que el bot se despidió: dos
+intentos por cada despedida. O sea que **el agente sí llamó a la herramienta**.
+Lo rechazó el endpoint.
+
+El motivo, reproducido después en local:
+
+```
+schema_version debe ser 1
+test debe ser booleano explícito
+```
+
+El plugin arma el cuerpo desde un formulario web, y un formulario manda texto:
+`"1"` y `"true"`. La validación exigía los tipos nativos `1` y `true`. Rechazaba
+por las comillas sobres que eran correctos en todo lo demás.
+
+Se arregló en el borde, con `normalizeEnvelope`: el cuerpo se normaliza antes de
+validarse. Adentro la lógica sigue trabajando con tipos nativos y ninguna regla
+de seguridad se aflojó — un `test` vacío o ambiguo sigue siendo inválido, nunca
+se interpreta como `true`.
+
+De paso, el endpoint ahora **registra por qué rechaza**. Antes un 400 era mudo:
+Vercel guardaba el status pero no el cuerpo, y averiguar qué campo falló costaba
+otra ronda de pruebas contra Instagram. Ahora el log dice los motivos y la forma
+de lo que llegó —nombres y tipos, nunca los valores, porque el cuerpo trae datos
+personales del cliente.
+
+**Lo que esta prueba dejó demostrado, más allá del error:** el cableado completo
+funciona. El agente conoce la herramienta, la dispara sola en el momento
+correcto, y el pedido llega a Vercel autenticado. Faltaba el formato.
+
+### Lo que la prueba dejó pendiente y no es un bug
+
+El bot preguntó *"¿querés que el equipo revise la seña?"* y, con el sí, contestó
+*"listo, una persona continúa"*. Eso está mal de diseño aunque la herramienta
+funcione: el bot no puede prometer contacto sin haber registrado antes. El
+arreglo va en el prompt, no en el código:
+
+- Nunca decir que una persona va a continuar sin haber llamado a
+  `guardar_consulta_rf` y recibido `ok: true`.
+- Dejar de preguntar si el cliente quiere que lo pasen. Pedir el WhatsApp
+  directo apenas hay destino y cantidad, y registrar.
 
 ---
 

@@ -66,7 +66,7 @@ sólo con ese email.
 | --- | --- |
 | `api/rf-consulta.js` | Endpoint: auth por header, contrato, modo TEST_ONLY |
 | `api/_lib/rf-mapping.js` | Las 37 columnas, los rangos, qué es del vendedor |
-| `api/_lib/rf-core.js` | Validación, sanitización, armado de fila, idempotencia |
+| `api/_lib/rf-core.js` | Normalización, validación, sanitización, armado, idempotencia |
 | `api/_lib/rf-repo.js` | Búsqueda de fila, bloques de escritura, ledger |
 | `api/_lib/rf-sheets.js` | Cliente de la API de Sheets con JWT firmado |
 | `api/_lib/rf-appsscript.js` | Cliente de la app web de Apps Script |
@@ -180,6 +180,32 @@ importaba evitar.
 
 Los tres identificadores explícitos siguen aceptándose, para pruebas y para
 cualquier llamador que sí los tenga.
+
+## El cuerpo llega como texto
+
+El llamador real es un plugin de HelpKnow configurado desde un formulario web, y
+un formulario manda todo como texto: `"1"` en vez de `1`, `"true"` en vez de
+`true`. La validación exigía tipos nativos y devolvía 400 a sobres correctos en
+todo salvo las comillas. Pasó en producción el 18/09 y costó una ronda entera de
+pruebas contra Instagram.
+
+`normalizeEnvelope` lo arregla en el borde, antes de validar:
+
+- `schema_version` y `revision` de texto a entero, sólo si son puros dígitos.
+- `test`, `no_contactar`, `permiso_contacto` y `datos_completos` de texto a
+  booleano, sólo para valores inequívocos (`true/false/sí/no/1/0`).
+- El `lead` se acepta anidado, como texto JSON, o con los campos sueltos en la
+  raíz. El anidado siempre gana.
+- Los campos vacíos se descartan: un campo que el modelo no completó no ocupa
+  celda.
+
+Lo que no se puede interpretar sin ambigüedad se deja como vino, para que la
+validación lo rechace. Un `test` vacío o raro **nunca** se convierte en `true`:
+esa garantía es la que impide escribir una consulta real en modo de pruebas.
+
+Cuando aun así rechaza, el endpoint lo registra: motivos y forma del cuerpo
+—nombres y tipos, nunca los valores, porque traen datos personales del cliente.
+Sin eso, un 400 en Vercel es mudo.
 
 ## Contrato
 

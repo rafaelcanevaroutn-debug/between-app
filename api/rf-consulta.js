@@ -32,6 +32,7 @@ import {
   decideWrite,
   derivarContactId,
   identificaPorIdentidad,
+  normalizeEnvelope,
   validateEnvelope,
 } from './_lib/rf-core.js'
 import { findCase, insertPayload, updatePayload, ledgerPayload } from './_lib/rf-repo.js'
@@ -54,6 +55,20 @@ export function readToken(headers = {}) {
   const auth = String(headers.authorization || '')
   if (auth.toLowerCase().startsWith('bearer ')) return auth.slice(7).trim()
   return null
+}
+
+/**
+ * Describe la forma del cuerpo para los logs: qué claves llegaron y de qué
+ * tipo. Nunca los valores, porque son datos personales de un cliente.
+ */
+function describirForma(valor, profundidad = 0) {
+  if (valor === null) return 'null'
+  if (Array.isArray(valor)) return `array(${valor.length})`
+  if (typeof valor !== 'object') return typeof valor
+  if (profundidad > 1) return 'object'
+  const forma = {}
+  for (const [clave, v] of Object.entries(valor)) forma[clave] = describirForma(v, profundidad + 1)
+  return forma
 }
 
 function nowInArgentina() {
@@ -120,8 +135,23 @@ export async function procesar({ method, token, body, jsonInvalido = false }) {
     return responder({ ok: false, error: 'json_invalido' }, 400)
   }
 
+  // El plugin arma el cuerpo desde un formulario y manda los valores como
+  // texto. Se normalizan acá, en el borde, antes de validar.
+  body = normalizeEnvelope(body)
+
   const errors = validateEnvelope(body)
   if (errors.length) {
+    // Sin esto un 400 es mudo: Vercel registra el status pero no el cuerpo, y
+    // averiguar qué campo falló cuesta otra ronda de pruebas contra Instagram.
+    // Se registran los nombres y tipos de lo que llegó, nunca los valores:
+    // el cuerpo trae datos personales del cliente.
+    console.error(
+      'rf-consulta contrato_invalido:',
+      JSON.stringify({
+        motivos: errors,
+        recibido: describirForma(body),
+      }),
+    )
     return responder({ ok: false, error: 'contrato_invalido', detalle: errors }, 400)
   }
 

@@ -19,6 +19,7 @@ import {
   buildRow,
   decideWrite,
   derivarContactId,
+  normalizeEnvelope,
   sanitizeCell,
   stripForbidden,
   validateEnvelope,
@@ -339,4 +340,96 @@ test('sin case_id, findCase reusa el caso abierto y avanza la revisión', async 
   assert.equal(found.caso, 'cabc123-1')
   assert.equal(found.proximaRevision, 4)
   assert.equal(found.existing.row, 6)
+})
+
+
+// --- normalización del borde ------------------------------------------------
+// El plugin de HelpKnow arma el cuerpo desde un formulario web y manda los
+// valores como texto. Estas pruebas existen porque esa diferencia —"1" contra
+// 1— hizo que el endpoint rechazara con 400 llamadas del bot que eran buenas.
+
+test('un sobre con todo en texto pasa la validación', () => {
+  const crudo = {
+    schema_version: '1',
+    operation: 'upsert',
+    account: 'renzoyfranco.viajes',
+    identidad: 'Rafa Canevaro|2026-09-17 18:12:21',
+    test: 'true',
+    reason: 'datos_completos',
+    lead: { nombre: 'Rafa', destino: 'México' },
+  }
+  assert.deepEqual(validateEnvelope(normalizeEnvelope(crudo)), [])
+})
+
+test('los booleanos en texto se interpretan en los dos sentidos', () => {
+  assert.equal(normalizeEnvelope({ test: 'true' }).test, true)
+  assert.equal(normalizeEnvelope({ test: ' TRUE ' }).test, true)
+  assert.equal(normalizeEnvelope({ test: 'false' }).test, false)
+  assert.equal(normalizeEnvelope({ no_contactar: 'Sí' }).no_contactar, true)
+  assert.equal(normalizeEnvelope({ no_contactar: 'no' }).no_contactar, false)
+})
+
+test('un test ambiguo NO se convierte en true', () => {
+  for (const valor of ['', 'tal vez', 'prueba', '   ']) {
+    const sobre = normalizeEnvelope({ test: valor })
+    assert.notEqual(sobre.test, true, `"${valor}" no puede valer true`)
+    assert.ok(
+      validateEnvelope({ ...sobre, schema_version: 1, operation: 'upsert', account: 'renzoyfranco.viajes', identidad: 'x|y' })
+        .some((e) => e.includes('test')),
+      `"${valor}" tiene que seguir siendo inválido`,
+    )
+  }
+})
+
+test('la revisión en texto se vuelve entera', () => {
+  assert.equal(normalizeEnvelope({ revision: '3' }).revision, 3)
+  assert.equal(normalizeEnvelope({ revision: 'tres' }).revision, 'tres')
+})
+
+test('un lead mandado como texto JSON se desarma', () => {
+  const sobre = normalizeEnvelope({ lead: '{"nombre":"Rafa","adultos":"2"}' })
+  assert.equal(sobre.lead.nombre, 'Rafa')
+  assert.equal(sobre.lead.adultos, '2')
+})
+
+test('un lead con JSON roto no rompe el endpoint', () => {
+  const sobre = normalizeEnvelope({ lead: '{roto' })
+  assert.deepEqual(sobre.lead, {})
+})
+
+test('los campos del lead sueltos en la raíz se agrupan', () => {
+  const sobre = normalizeEnvelope({
+    account: 'renzoyfranco.viajes',
+    nombre: 'Rafa',
+    whatsapp: '+5493815551234',
+    destino: 'México',
+    permiso_contacto: 'true',
+  })
+  assert.equal(sobre.lead.nombre, 'Rafa')
+  assert.equal(sobre.lead.whatsapp, '+5493815551234')
+  assert.equal(sobre.lead.destino, 'México')
+  assert.equal(sobre.lead.permiso_contacto, true)
+})
+
+test('el lead anidado le gana al campo suelto del mismo nombre', () => {
+  const sobre = normalizeEnvelope({ nombre: 'raíz', lead: { nombre: 'anidado' } })
+  assert.equal(sobre.lead.nombre, 'anidado')
+})
+
+test('los campos vacíos del lead no ocupan celda', () => {
+  const sobre = normalizeEnvelope({ lead: { nombre: 'Rafa', whatsapp: '', correo: null } })
+  assert.deepEqual(Object.keys(sobre.lead), ['nombre'])
+})
+
+test('normalizar no convierte account ni operation en otra cosa', () => {
+  const sobre = normalizeEnvelope({ account: ' caminantes ', operation: ' upsert ' })
+  assert.equal(sobre.account, 'caminantes')
+  assert.equal(sobre.operation, 'upsert')
+  assert.ok(validateEnvelope(sobre).some((e) => e.includes('account')))
+})
+
+test('normalizar tolera un cuerpo que no es objeto', () => {
+  assert.equal(normalizeEnvelope(null), null)
+  assert.equal(normalizeEnvelope('texto'), 'texto')
+  assert.deepEqual(normalizeEnvelope([1, 2]), [1, 2])
 })
