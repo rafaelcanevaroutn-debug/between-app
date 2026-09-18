@@ -18,6 +18,10 @@
  *
  * Arranca en modo TEST_ONLY: rechaza cualquier consulta que no venga marcada
  * como prueba. Se abre a producción recién con evidencia de un E2E.
+ *
+ * La lógica vive en `procesar`, que no sabe nada de HTTP: recibe método,
+ * token y cuerpo, y devuelve estado y respuesta. El handler de abajo es sólo
+ * el adaptador al runtime de Node, que es el que corre en este proyecto.
  */
 
 import crypto from 'node:crypto'
@@ -26,16 +30,7 @@ import { createAppsScriptClient } from './_lib/rf-appsscript.js'
 import { buildRow, decideWrite, validateEnvelope } from './_lib/rf-core.js'
 import { findCase, insertPayload, updatePayload, ledgerPayload } from './_lib/rf-repo.js'
 
-export const config = { runtime: 'nodejs' }
-
 const TIMEZONE = 'America/Argentina/Tucuman'
-
-function json(payload, status = 200) {
-  return new Response(JSON.stringify(payload), {
-    status,
-    headers: { 'Content-Type': 'application/json' },
-  })
-}
 
 /** Comparación en tiempo constante: evita distinguir el token por latencia. */
 function tokenMatches(provided, expected) {
@@ -46,10 +41,11 @@ function tokenMatches(provided, expected) {
   return crypto.timingSafeEqual(a, b)
 }
 
-function readToken(request) {
-  const header = request.headers.get('x-rf-token')
-  if (header) return header.trim()
-  const auth = request.headers.get('authorization') || ''
+/** Los headers de Node llegan en minúsculas y ya normalizados. */
+export function readToken(headers = {}) {
+  const header = headers['x-rf-token']
+  if (header) return String(header).trim()
+  const auth = String(headers.authorization || '')
   if (auth.toLowerCase().startsWith('bearer ')) return auth.slice(7).trim()
   return null
 }
@@ -62,7 +58,13 @@ function nowInArgentina() {
   }).format(new Date())
 }
 
-export default async function handler(request) {
+/**
+ * Toda la decisión del endpoint, sin HTTP de por medio.
+ * Devuelve { status, cuerpo }.
+ */
+export async function procesar({ method, token, body, jsonInvalido = false }) {
+  const responder = (cuerpo, status = 200) => ({ status, cuerpo })
+
   const expectedToken = (process.env.RF_BRIDGE_TOKEN || '').trim()
   const appsScriptUrl = (process.env.RF_APPSSCRIPT_URL || '').trim()
   const appsScriptToken = (process.env.RF_APPSSCRIPT_TOKEN || '').trim()
@@ -80,8 +82,8 @@ export default async function handler(request) {
    * presente. Sirve para verificar un despliegue desde el navegador, sin
    * herramientas ni credenciales.
    */
-  if (request.method === 'GET') {
-    return json({
+  if (method === 'GET') {
+    return responder({
       ok: viaAppsScript || viaApiOficial,
       servicio: 'rf-consulta',
       configurado: Boolean(expectedToken) && (viaAppsScript || viaApiOficial),
@@ -95,33 +97,33 @@ export default async function handler(request) {
     })
   }
 
-  if (request.method !== 'POST') {
-    return json({ ok: false, error: 'method_not_allowed' }, 405)
+  if (method !== 'POST') {
+    return responder({ ok: false, error: 'method_not_allowed' }, 405)
   }
 
   if (!expectedToken || (!viaAppsScript && !viaApiOficial)) {
     console.error('rf-consulta: faltan variables de entorno')
-    return json({ ok: false, error: 'bridge_no_configurado' }, 500)
+    return responder({ ok: false, error: 'bridge_no_configurado' }, 500)
   }
 
-  if (!tokenMatches(readToken(request), expectedToken)) {
-    return json({ ok: false, error: 'no_autorizado' }, 401)
+  if (!tokenMatches(token, expectedToken)) {
+    return responder({ ok: false, error: 'no_autorizado' }, 401)
   }
 
-  let body
-  try {
-    body = await request.json()
-  } catch {
-    return json({ ok: false, error: 'json_invalido' }, 400)
+  if (jsonInvalido) {
+    return responder({ ok: false, error: 'json_invalido' }, 400)
   }
 
   const errors = validateEnvelope(body)
   if (errors.length) {
-    return json({ ok: false, error: 'contrato_invalido', detalle: errors }, 400)
+    return responder({ ok: false, error: 'contrato_invalido', detalle: errors }, 400)
   }
 
   if (testOnly && body.test !== true) {
-    return json({ ok: false, error: 'modo_test_only', detalle: 'el puente todavía no acepta consultas reales' }, 409)
+    return responder(
+      { ok: false, error: 'modo_test_only', detalle: 'el puente todavía no acepta consultas reales' },
+      409,
+    )
   }
 
   try {
@@ -140,7 +142,7 @@ export default async function handler(request) {
         contactId: body.contact_id,
       })
       const bajaDeLaFila = found.existing ? found.existing.noContactar : false
-      return json({
+      return responder({
         ok: true,
         operation: 'check_contact',
         existe: Boolean(found.existing),
@@ -159,7 +161,7 @@ export default async function handler(request) {
     })
 
     if (decision.action === 'skip') {
-      return json({
+      return responder({
         ok: true,
         operation: 'upsert',
         aplicado: false,
@@ -176,7 +178,7 @@ export default async function handler(request) {
     if (decision.action === 'insert') {
       if (found.firstFreeRow === -1) {
         console.error('rf-consulta: planilla sin filas libres')
-        return json({ ok: false, error: 'planilla_llena' }, 507)
+        return responder({ ok: false, error: 'planilla_llena' }, 507)
       }
       targetRow = found.firstFreeRow
       data = insertPayload({ row: targetRow, values })
@@ -198,7 +200,7 @@ export default async function handler(request) {
 
     const result = await sheets.batchUpdate(data)
 
-    return json({
+    return responder({
       ok: true,
       operation: 'upsert',
       aplicado: true,
@@ -209,6 +211,39 @@ export default async function handler(request) {
     })
   } catch (error) {
     console.error('rf-consulta:', error.message)
-    return json({ ok: false, error: 'fallo_escritura' }, 502)
+    return responder({ ok: false, error: 'fallo_escritura' }, 502)
   }
+}
+
+/**
+ * Adaptador al runtime de Node de Vercel, que entrega (req, res) y espera que
+ * la respuesta se cierre con res.end(). Un handler de estilo web que devuelve
+ * un Response deja el pedido colgado hasta que expira.
+ */
+export default async function handler(req, res) {
+  let body = null
+  let jsonInvalido = false
+
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    const trozos = []
+    for await (const trozo of req) trozos.push(trozo)
+    const crudo = Buffer.concat(trozos).toString()
+    if (crudo) {
+      try {
+        body = JSON.parse(crudo)
+      } catch {
+        jsonInvalido = true
+      }
+    }
+  }
+
+  const { status, cuerpo } = await procesar({
+    method: req.method,
+    token: readToken(req.headers),
+    body,
+    jsonInvalido,
+  })
+
+  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' })
+  res.end(JSON.stringify(cuerpo))
 }
