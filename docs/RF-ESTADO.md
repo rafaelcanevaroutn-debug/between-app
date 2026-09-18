@@ -35,7 +35,8 @@ de Renzo, TikTok y Facebook.
 | Transferencia a humano | Funciona, pero **cae en cola desatendida** |
 | Puente a la planilla | **Desplegado y probado a mano**: escribió la fila 6 el 18/09 |
 | Plugin de HelpKnow | **Configurado y conectado al agente** 16103 |
-| Prueba de punta a punta | **Falló el 18/09 y está corregida, sin reprobar** |
+| Prueba de punta a punta | **Probada el 18/09**: el bot registró la fila solo |
+| Sistema en producción | **Vivo el 18/09**: atiende y registra sin intervención |
 | Flujo de comentarios nuevo | **Nunca se ejecutó** |
 
 ---
@@ -105,8 +106,14 @@ otra ronda de pruebas contra Instagram. Ahora el log dice los motivos y la forma
 de lo que llegó —nombres y tipos, nunca los valores, porque el cuerpo trae datos
 personales del cliente.
 
-**Lo que esta prueba dejó demostrado, más allá del error:** el cableado completo
-funciona. El agente conoce la herramienta, la dispara sola en el momento
+### La segunda corrida, 11:50: verde
+
+Con el arreglo desplegado se repitió la prueba y **el bot escribió la fila solo**.
+Instagram → agente → herramienta → planilla, sin intervención humana en el medio.
+Es la primera vez que el circuito cierra entero.
+
+**Lo que la primera prueba ya había dejado demostrado, más allá del error:** el
+cableado completo funciona. El agente conoce la herramienta, la dispara sola en el momento
 correcto, y el pedido llega a Vercel autenticado. Faltaba el formato.
 
 ### Lo que la prueba dejó pendiente y no es un bug
@@ -183,45 +190,92 @@ comentarios en un README:
   contactado no vuelve a entrar abriendo un caso nuevo.
 - `TEST_ONLY` por defecto: rechaza consultas reales hasta que se abra.
 
-22 pruebas unitarias y 13 escenarios de punta a punta contra una planilla falsa
+43 pruebas unitarias y 17 escenarios de punta a punta contra una planilla falsa
 que ejercita el endpoint real.
 
 ---
 
-## Lo que falta, en orden
+## Lo que se hizo el 18/09
 
-### 1. Terminar de conectar el puente
+### Hecho el 18/09
 
-- Publicar el Apps Script como aplicación web y copiar la URL `/exec`
-- Cargar en Vercel: `RF_BRIDGE_TOKEN`, `RF_APPSSCRIPT_URL`,
-  `RF_APPSSCRIPT_TOKEN`, `RF_TEST_ONLY=true`
-- Redesplegar
-- Correr `npm run rf:smoke` contra el endpoint real
+- Apps Script publicado, URL `/exec` cargada, variables en Vercel, redesplegado
+- Plugin de HelpKnow configurado con POST + header `X-RF-Token`, y la
+  herramienta conectada al agente 16103
+- **Identidad resuelta.** HelpKnow no expone ningún identificador de contacto
+  ni de conversación como variable de sistema. Lo que sí inyecta son los
+  atributos del contacto en SaleSmartly, y dos juntos —nombre y fecha de
+  creación— identifican a una persona. El endpoint deriva de ahí los tres
+  identificadores, así que el modelo no maneja ninguno.
+- **Prueba de punta a punta en verde**: el bot escribió la fila solo
 
-### 2. El plugin de HelpKnow — acá está el nudo
+### El sistema pasó a producción, esa misma tarde
 
-Reutilizar el plugin `7wbvpsb78sy4kj3k`, tool `461`, que ya existe vacío:
-método POST, URL del endpoint, auth **Header** `X-RF-Token`.
+Cuatro cambios, en el orden que importa:
 
-**El problema sin resolver:** el puente exige que `contact_id`, `case_id` y
-`revision` vengan de variables confiables del sistema, no del modelo. Si el bot
-los inventa, mezcla clientes entre sí. Por eso se rechazan con 400.
+1. **El prompt.** Regla dura: no nombrar al equipo sin un `ok: true` de la
+   herramienta en la mano. Y se invirtió el pedido de contacto: se dejó de
+   preguntar "¿querés que te pasemos con alguien?" —que habilita un no y deja
+   la consulta sin registrar— por pedir el WhatsApp apenas hay interés real.
+   Verificado en una conversación real: el bot registró **antes** de prometer.
+2. **`RF_TEST_ONLY=false`** en Vercel, con redespliegue. El chequeo de salud
+   devuelve `modo: acepta_consultas_reales`.
+3. **`test=false`** en el parámetro del plugin. Las dos perillas van juntas y
+   en este orden: mover sólo la del plugin habría hecho que el puente
+   rechazara con 409 todas las consultas reales.
+4. **Capacidad del miembro IA de 0 a 9999.**
 
-Nunca se verificó qué variables de sistema expone HelpKnow para esto. **Es lo
-primero que hay que averiguar** antes de configurar nada. Si no las expone, la
-arquitectura de identidad hay que repensarla.
+El cuarto era el freno real y estuvo escondido todo el día. Con el máximo en 0
+no le entraba ninguna conversación sola: **cada prueba anterior había
+funcionado sólo porque el dueño asignaba el chat a mano.** El sistema parecía
+autónomo y no lo era.
 
-### 3. Prueba real de punta a punta
+**La asignación automática ya existía.** Nunca hizo falta crear una regla: al
+subir el límite, la cola pendiente se drenó sola y el bot atendió a un contacto
+que llevaba horas esperando sin respuesta. Esa es la primera conversación que
+el sistema resolvió entera, de punta a punta, sin una persona en el medio.
 
-DM desde `@rafacanevaro` → la IA califica → llama la herramienta → aparece la
-fila. Después borrar las filas de prueba y recién ahí evaluar `TEST_ONLY=false`.
+También se limpió la herramienta en HelpKnow. Se llamaba "RF Sheets — BORRADOR
+sin conexión" y su descripción decía "no agregar al agente ni publicar". Eso no
+es decoración: **la descripción de una herramienta es lo que el modelo lee para
+decidir si usarla.** Le estaba diciendo al bot que no la usara. Además hizo que
+dos sesiones distintas diagnosticaran mal el problema, creyendo que la conexión
+estaba a medio hacer. Ahora se llama "Guardar consulta Renzo/Franco" y la
+descripción dice qué hace y cuándo llamarla.
 
-### 4. El prompt, una vez conectado
+---
 
-Reescribir la regla de seguimiento: con la planilla viva, el bot ya puede decir
-que la consulta quedó registrada sin mentir.
+## Lo único que falta
 
-### 5. Comentarios — sesión aparte
+### El equipo de Franco
+
+El circuito llega hasta la planilla. **No llega hasta la venta**, porque los
+vendedores de Franco todavía no tienen acceso.
+
+Desde ahora se acumulan consultas reales de clientes reales, bien registradas,
+que nadie está llamando. Mientras siga así, el dueño tiene que mirar la
+planilla él y pasar los casos calientes a mano.
+
+Se le mandaron a Franco ocho preguntas, cada una anclada a una contradicción o
+un hueco de su propio material: las seis de precios que ya estaban abiertas
+—incluidas dos nuevas que aparecieron en las pruebas, el **suplemento single**
+y la **tarifa triple**, porque las dos salidas se publican en base doble y el
+bot no puede cotizar a quien viaja solo o de a tres— más los mails de su equipo
+y si alguien suyo va a tener usuario en SaleSmartly.
+
+La más urgente es la de los mails. Es la única que no se resuelve del lado
+técnico.
+
+### `stored` no es `delivered`
+
+Que la fila se escriba no prueba que un vendedor la haya visto. Los SLA de
+Franco siguen en falso hasta que el equipo tenga acceso real y probado.
+
+### El tono
+
+El bot suena repetitivo. Es pulido, va después de que el circuito esté cerrado.
+
+### Comentarios — sesión aparte
 
 El flujo **1050327** está ON y en producción respondiendo comentarios reales. El
 borrador nuevo **1055144** (28 nodos, 12 DMs, 6 disparadores) **nunca se
@@ -232,7 +286,7 @@ Probarlo exige comentar en posts reales sin que el viejo y el nuevo respondan
 dos veces. Es lo único que hoy toca clientes de verdad, así que no conviene
 apurarlo.
 
-### 6. Vendedores
+### Vendedores
 
 No existen como usuarios en ningún lado. Hay que darles acceso a la planilla y
 confirmar que la miran.
