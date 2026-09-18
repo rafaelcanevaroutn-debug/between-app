@@ -74,10 +74,14 @@ export function createSheetsClient({ token, spreadsheetId }) {
   }
 
   return {
-    /** Lee un rango en notación A1. Devuelve filas, sin rellenar los huecos. */
-    async getValues(range) {
-      const data = await call(`/values/${encodeURIComponent(range)}`)
-      return data.values || []
+    /**
+     * Lee varios rangos en una sola llamada. Una sola ida y vuelta importa:
+     * el otro backend es Apps Script, donde cada llamada cuesta segundos.
+     */
+    async getMany(ranges) {
+      const query = ranges.map((r) => `ranges=${encodeURIComponent(r)}`).join('&')
+      const data = await call(`/values:batchGet?${query}`)
+      return (data.valueRanges || []).map((v) => v.values || [])
     },
 
     /** Escribe varios rangos en una sola llamada atómica. */

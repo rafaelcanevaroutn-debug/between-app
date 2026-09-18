@@ -193,12 +193,14 @@ test('sin baja previa el caso nuevo entra normal', () => {
 
 // --- lectura de planilla y ledger --------------------------------------
 
-function fakeSheets({ ids = [], ledger = [], noContactar = '' }) {
+function fakeSheets({ ids = [], ledger = [], bajas = [] }) {
   return {
-    async getValues(range) {
-      if (range.includes('_integracion')) return ledger
-      if (/Consultas!A\d+:A\d+$/.test(range)) return ids
-      return [[noContactar]]
+    async getMany(ranges) {
+      return ranges.map((range) => {
+        if (range.includes('_integracion')) return ledger
+        if (/Consultas!A\d+:A\d+$/.test(range)) return ids
+        return bajas
+      })
     },
   }
 }
