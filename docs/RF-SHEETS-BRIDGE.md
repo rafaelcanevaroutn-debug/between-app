@@ -184,6 +184,23 @@ sin escribir nada.
 Respuestas: `200 {ok:true}` · `400` contrato · `401` token · `409` TEST_ONLY ·
 `502` fallo contra Google · `507` planilla llena.
 
+## Chequeo de salud
+
+Un `GET` al endpoint dice si quedó configurado y por dónde va a escribir, sin
+revelar ningún secreto: informa si cada variable está presente, nunca su valor.
+Se abre desde el navegador, sin herramientas ni credenciales.
+
+```json
+{
+  "ok": true,
+  "servicio": "rf-consulta",
+  "configurado": true,
+  "backend": "apps_script",
+  "modo": "solo_pruebas",
+  "variables": { "RF_BRIDGE_TOKEN": true, "RF_APPSSCRIPT_URL": true, "RF_APPSSCRIPT_TOKEN": true }
+}
+```
+
 **`stored` no es `delivered`.** Un `ok:true` prueba que la fila se escribió.
 No prueba que un vendedor la haya visto. `TEAM_READY` y los SLA de Franco
 siguen en falso hasta que el equipo tenga acceso real y probado.

@@ -63,10 +63,6 @@ function nowInArgentina() {
 }
 
 export default async function handler(request) {
-  if (request.method !== 'POST') {
-    return json({ ok: false, error: 'method_not_allowed' }, 405)
-  }
-
   const expectedToken = (process.env.RF_BRIDGE_TOKEN || '').trim()
   const appsScriptUrl = (process.env.RF_APPSSCRIPT_URL || '').trim()
   const appsScriptToken = (process.env.RF_APPSSCRIPT_TOKEN || '').trim()
@@ -77,6 +73,31 @@ export default async function handler(request) {
 
   const viaAppsScript = Boolean(appsScriptUrl && appsScriptToken)
   const viaApiOficial = Boolean(spreadsheetId && clientEmail && privateKey)
+
+  /**
+   * Chequeo de salud. Dice si el puente quedó configurado y por dónde va a
+   * escribir, sin revelar ningún secreto: sólo informa si cada variable está
+   * presente. Sirve para verificar un despliegue desde el navegador, sin
+   * herramientas ni credenciales.
+   */
+  if (request.method === 'GET') {
+    return json({
+      ok: viaAppsScript || viaApiOficial,
+      servicio: 'rf-consulta',
+      configurado: Boolean(expectedToken) && (viaAppsScript || viaApiOficial),
+      backend: viaAppsScript ? 'apps_script' : viaApiOficial ? 'api_sheets' : null,
+      modo: testOnly ? 'solo_pruebas' : 'acepta_consultas_reales',
+      variables: {
+        RF_BRIDGE_TOKEN: Boolean(expectedToken),
+        RF_APPSSCRIPT_URL: Boolean(appsScriptUrl),
+        RF_APPSSCRIPT_TOKEN: Boolean(appsScriptToken),
+      },
+    })
+  }
+
+  if (request.method !== 'POST') {
+    return json({ ok: false, error: 'method_not_allowed' }, 405)
+  }
 
   if (!expectedToken || (!viaAppsScript && !viaApiOficial)) {
     console.error('rf-consulta: faltan variables de entorno')
