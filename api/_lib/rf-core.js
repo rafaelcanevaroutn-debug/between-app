@@ -46,6 +46,99 @@ export function stripForbidden(lead) {
 }
 
 /**
+ * Claves que el contrato espera dentro de `lead`. Se listan acá porque un
+ * llamador que arma el cuerpo desde un formulario puede mandarlas sueltas en
+ * la raíz en vez de anidadas.
+ */
+const LEAD_FIELDS = [
+  'nombre', 'whatsapp', 'correo', 'destino', 'tipo_viaje', 'resumen',
+  'usuario_instagram', 'enlace_conversacion', 'id_publicacion', 'fecha_viaje',
+  'flexibilidad', 'ciudad_salida', 'noches', 'adultos', 'menores',
+  'edades_menores', 'total_viajeros', 'perfil', 'presupuesto', 'moneda',
+  'base_presupuesto', 'permiso_contacto', 'datos_faltantes', 'datos_completos',
+]
+
+const VERDADEROS = new Set(['true', 'si', 'sí', 'yes', '1'])
+const FALSOS = new Set(['false', 'no', '0'])
+
+/**
+ * Texto a booleano, sólo para valores inequívocos. Lo que no reconoce lo
+ * devuelve intacto para que la validación lo rechace: un `test` vacío o raro
+ * no puede terminar valiendo true por descuido.
+ */
+function aBooleano(valor) {
+  if (typeof valor !== 'string') return valor
+  const texto = valor.trim().toLowerCase()
+  if (VERDADEROS.has(texto)) return true
+  if (FALSOS.has(texto)) return false
+  return valor
+}
+
+/** Texto a entero, sólo si son puros dígitos. */
+function aEntero(valor) {
+  if (typeof valor !== 'string') return valor
+  const texto = valor.trim()
+  return /^\d+$/.test(texto) ? Number.parseInt(texto, 10) : valor
+}
+
+/**
+ * Normaliza el cuerpo antes de validarlo.
+ *
+ * El llamador real es un plugin de HelpKnow configurado desde un formulario
+ * web, y un formulario manda todo como texto: `"1"` en vez de `1`, `"true"`
+ * en vez de `true`. La validación exigía tipos nativos y rechazaba con 400
+ * sobres que eran correctos en todo salvo las comillas. Eso costó una ronda
+ * entera de pruebas contra Instagram.
+ *
+ * Acá se arregla en el borde, que es donde corresponde: adentro la lógica
+ * sigue trabajando con tipos nativos y las reglas de seguridad no se aflojan.
+ * Un valor que no se puede interpretar sin ambigüedad se deja como vino.
+ */
+export function normalizeEnvelope(body) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return body
+
+  const sobre = { ...body }
+
+  if (typeof sobre.operation === 'string') sobre.operation = sobre.operation.trim()
+  if (typeof sobre.account === 'string') sobre.account = sobre.account.trim()
+
+  sobre.schema_version = aEntero(sobre.schema_version)
+  sobre.revision = aEntero(sobre.revision)
+  sobre.test = aBooleano(sobre.test)
+  sobre.no_contactar = aBooleano(sobre.no_contactar)
+
+  // El lead puede venir como objeto, como texto JSON, o desarmado en la raíz.
+  let lead = sobre.lead
+  if (typeof lead === 'string') {
+    try {
+      const parsed = JSON.parse(lead)
+      lead = parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {}
+    } catch {
+      lead = {}
+    }
+  }
+  if (!lead || typeof lead !== 'object' || Array.isArray(lead)) lead = {}
+
+  const planos = {}
+  for (const campo of LEAD_FIELDS) {
+    if (lead[campo] === undefined && sobre[campo] !== undefined) planos[campo] = sobre[campo]
+  }
+
+  const combinado = { ...planos, ...lead }
+  for (const campo of ['permiso_contacto', 'datos_completos']) {
+    if (campo in combinado) combinado[campo] = aBooleano(combinado[campo])
+  }
+
+  // Un campo vacío es un campo que el modelo no completó: que no ocupe celda.
+  for (const [clave, valor] of Object.entries(combinado)) {
+    if (valor === '' || valor === null || valor === undefined) delete combinado[clave]
+  }
+
+  sobre.lead = combinado
+  return sobre
+}
+
+/**
  * Valida el sobre del contrato. Identidad, caso y revisión tienen que venir
  * del sistema, nunca del cliente ni del modelo: si faltan, se rechaza.
  */
