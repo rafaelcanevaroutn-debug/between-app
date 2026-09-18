@@ -36,6 +36,7 @@ de Renzo, TikTok y Facebook.
 | Puente a la planilla | **Desplegado y probado a mano**: escribió la fila 6 el 18/09 |
 | Plugin de HelpKnow | **Configurado y conectado al agente** 16103 |
 | Prueba de punta a punta | **Probada el 18/09**: el bot registró la fila solo |
+| Sistema en producción | **Vivo el 18/09**: atiende y registra sin intervención |
 | Flujo de comentarios nuevo | **Nunca se ejecutó** |
 
 ---
@@ -194,7 +195,7 @@ que ejercita el endpoint real.
 
 ---
 
-## Lo que falta, en orden
+## Lo que se hizo el 18/09
 
 ### Hecho el 18/09
 
@@ -208,43 +209,73 @@ que ejercita el endpoint real.
   identificadores, así que el modelo no maneja ninguno.
 - **Prueba de punta a punta en verde**: el bot escribió la fila solo
 
-### 1. El prompt: no prometer sin registrar
+### El sistema pasó a producción, esa misma tarde
 
-El bot dice "una persona del equipo va a tomar tu consulta" sin haber llamado a
-la herramienta. Aunque ahora la herramienta funcione, el orden está mal: si la
-llamada falla, le prometió a un cliente algo que no va a pasar.
+Cuatro cambios, en el orden que importa:
 
-Dos cambios:
+1. **El prompt.** Regla dura: no nombrar al equipo sin un `ok: true` de la
+   herramienta en la mano. Y se invirtió el pedido de contacto: se dejó de
+   preguntar "¿querés que te pasemos con alguien?" —que habilita un no y deja
+   la consulta sin registrar— por pedir el WhatsApp apenas hay interés real.
+   Verificado en una conversación real: el bot registró **antes** de prometer.
+2. **`RF_TEST_ONLY=false`** en Vercel, con redespliegue. El chequeo de salud
+   devuelve `modo: acepta_consultas_reales`.
+3. **`test=false`** en el parámetro del plugin. Las dos perillas van juntas y
+   en este orden: mover sólo la del plugin habría hecho que el puente
+   rechazara con 409 todas las consultas reales.
+4. **Capacidad del miembro IA de 0 a 9999.**
 
-- **Regla dura.** No nombrar al equipo sin un `ok: true` de
-  `guardar_consulta_rf` en la mano.
-- **Invertir el pedido de contacto.** Dejar de preguntar "¿querés que te
-  pasemos con alguien?" —que habilita un no y deja la consulta sin registrar—
-  y pedir el WhatsApp directo apenas hay interés real.
+El cuarto era el freno real y estuvo escondido todo el día. Con el máximo en 0
+no le entraba ninguna conversación sola: **cada prueba anterior había
+funcionado sólo porque el dueño asignaba el chat a mano.** El sistema parecía
+autónomo y no lo era.
 
-### 2. Abrir a producción
+**La asignación automática ya existía.** Nunca hizo falta crear una regla: al
+subir el límite, la cola pendiente se drenó sola y el bot atendió a un contacto
+que llevaba horas esperando sin respuesta. Esa es la primera conversación que
+el sistema resolvió entera, de punta a punta, sin una persona en el medio.
 
-Hoy **todo entra marcado `Es prueba = Sí`**, porque el parámetro `test` del
-plugin tiene el valor fijo `true` y `RF_TEST_ONLY` está en `true`. Son dos
-perillas y hay que moverlas juntas, en este orden:
+También se limpió la herramienta en HelpKnow. Se llamaba "RF Sheets — BORRADOR
+sin conexión" y su descripción decía "no agregar al agente ni publicar". Eso no
+es decoración: **la descripción de una herramienta es lo que el modelo lee para
+decidir si usarla.** Le estaba diciendo al bot que no la usara. Además hizo que
+dos sesiones distintas diagnosticaran mal el problema, creyendo que la conexión
+estaba a medio hacer. Ahora se llama "Guardar consulta Renzo/Franco" y la
+descripción dice qué hace y cuándo llamarla.
 
-1. Borrar las filas de prueba de la planilla
-2. Dar acceso a la planilla a los vendedores de Franco y verificar que entran
-3. Cambiar `test` a `false` en el plugin y `RF_TEST_ONLY` a `false` en Vercel
+---
 
-Si se mueve una sola, o el puente rechaza todo con 409, o las consultas reales
-quedan marcadas como prueba y los vendedores las ignoran.
+## Lo único que falta
 
-### 3. `stored` no es `delivered`
+### El equipo de Franco
+
+El circuito llega hasta la planilla. **No llega hasta la venta**, porque los
+vendedores de Franco todavía no tienen acceso.
+
+Desde ahora se acumulan consultas reales de clientes reales, bien registradas,
+que nadie está llamando. Mientras siga así, el dueño tiene que mirar la
+planilla él y pasar los casos calientes a mano.
+
+Se le mandaron a Franco ocho preguntas, cada una anclada a una contradicción o
+un hueco de su propio material: las seis de precios que ya estaban abiertas
+—incluidas dos nuevas que aparecieron en las pruebas, el **suplemento single**
+y la **tarifa triple**, porque las dos salidas se publican en base doble y el
+bot no puede cotizar a quien viaja solo o de a tres— más los mails de su equipo
+y si alguien suyo va a tener usuario en SaleSmartly.
+
+La más urgente es la de los mails. Es la única que no se resuelve del lado
+técnico.
+
+### `stored` no es `delivered`
 
 Que la fila se escriba no prueba que un vendedor la haya visto. Los SLA de
 Franco siguen en falso hasta que el equipo tenga acceso real y probado.
 
-### 4. El tono
+### El tono
 
 El bot suena repetitivo. Es pulido, va después de que el circuito esté cerrado.
 
-### 5. Comentarios — sesión aparte
+### Comentarios — sesión aparte
 
 El flujo **1050327** está ON y en producción respondiendo comentarios reales. El
 borrador nuevo **1055144** (28 nodos, 12 DMs, 6 disparadores) **nunca se
@@ -255,7 +286,7 @@ Probarlo exige comentar en posts reales sin que el viejo y el nuevo respondan
 dos veces. Es lo único que hoy toca clientes de verdad, así que no conviene
 apurarlo.
 
-### 6. Vendedores
+### Vendedores
 
 No existen como usuarios en ningún lado. Hay que darles acceso a la planilla y
 confirmar que la miran.
