@@ -130,8 +130,22 @@ export function normalizeEnvelope(body) {
   }
 
   // Un campo vacío es un campo que el modelo no completó: que no ocupe celda.
+  // Sólo espacios cuenta como vacío, porque si no una celda que se ve en
+  // blanco igual tapa los respaldos de más abajo.
   for (const [clave, valor] of Object.entries(combinado)) {
-    if (valor === '' || valor === null || valor === undefined) delete combinado[clave]
+    const limpio = typeof valor === 'string' ? valor.trim() : valor
+    if (limpio === '' || limpio === null || limpio === undefined) delete combinado[clave]
+    else combinado[clave] = limpio
+  }
+
+  // Si el cliente nunca dijo su nombre, el modelo manda el lead sin nombre y
+  // la fila llega en blanco: el vendedor no sabe a quién está llamando. La
+  // identidad ya trae delante el nombre del contacto en SaleSmartly —para
+  // Instagram, su usuario— así que sirve de respaldo. Es preferible un usuario
+  // de Instagram a una celda vacía.
+  if (!combinado.nombre && identificaPorIdentidad(sobre)) {
+    const delContacto = String(sobre.identidad).split('|')[0].trim()
+    if (delContacto) combinado.nombre = delContacto
   }
 
   sobre.lead = combinado

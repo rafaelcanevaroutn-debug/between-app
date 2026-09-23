@@ -197,7 +197,13 @@ pruebas contra Instagram.
 - El `lead` se acepta anidado, como texto JSON, o con los campos sueltos en la
   raíz. El anidado siempre gana.
 - Los campos vacíos se descartan: un campo que el modelo no completó no ocupa
-  celda.
+  celda. Sólo espacios cuenta como vacío, porque una celda que se ve en blanco
+  igual taparía el respaldo de abajo.
+- **El nombre nunca queda vacío.** Si el cliente nunca dijo cómo se llama, se
+  toma el del contacto en SaleSmartly, que viene delante de la identidad: para
+  Instagram, su usuario. Un vendedor que abre la planilla necesita saber a
+  quién está llamando, y un usuario de Instagram sirve; una celda vacía no. Un
+  nombre que el cliente sí dio siempre gana.
 
 Lo que no se puede interpretar sin ambigüedad se deja como vino, para que la
 validación lo rechace. Un `test` vacío o raro **nunca** se convierte en `true`:

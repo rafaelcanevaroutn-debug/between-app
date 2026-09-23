@@ -433,3 +433,56 @@ test('normalizar tolera un cuerpo que no es objeto', () => {
   assert.equal(normalizeEnvelope('texto'), 'texto')
   assert.deepEqual(normalizeEnvelope([1, 2]), [1, 2])
 })
+
+// --- el nombre nunca queda vacío -------------------------------------------
+// Si el cliente no dice cómo se llama, el vendedor recibe una fila sin nombre
+// y no sabe a quién está llamando. La identidad ya trae el nombre del contacto
+// en SaleSmartly: para Instagram, su usuario.
+
+test('sin nombre, la fila toma el de Instagram desde la identidad', () => {
+  const sobre = normalizeEnvelope({
+    account: 'renzoyfranco.viajes',
+    identidad: 'rafacanevaro|2026-09-17 18:12:21',
+    lead: { destino: 'México', adultos: 2 },
+  })
+  assert.equal(sobre.lead.nombre, 'rafacanevaro')
+})
+
+test('un nombre dado por el cliente le gana al de Instagram', () => {
+  const sobre = normalizeEnvelope({
+    identidad: 'rafacanevaro|2026-09-17 18:12:21',
+    lead: { nombre: 'Rafa Canevaro' },
+  })
+  assert.equal(sobre.lead.nombre, 'Rafa Canevaro')
+})
+
+test('un nombre vacío tampoco bloquea el respaldo', () => {
+  const sobre = normalizeEnvelope({
+    identidad: 'rafacanevaro|2026-09-17 18:12:21',
+    lead: { nombre: '   ' },
+  })
+  assert.equal(sobre.lead.nombre, 'rafacanevaro')
+})
+
+test('sin identidad no se inventa ningún nombre', () => {
+  const sobre = normalizeEnvelope({ contact_id: 'abc123', lead: { destino: 'Perú' } })
+  assert.equal(sobre.lead.nombre, undefined)
+})
+
+test('una identidad sin barra sirve igual de respaldo', () => {
+  const sobre = normalizeEnvelope({ identidad: 'rafacanevaro', lead: {} })
+  assert.equal(sobre.lead.nombre, 'rafacanevaro')
+})
+
+test('el nombre de respaldo llega a la celda Nombre de la fila', () => {
+  const sobre = normalizeEnvelope({
+    schema_version: '1',
+    operation: 'upsert',
+    account: 'renzoyfranco.viajes',
+    identidad: 'rafacanevaro|2026-09-17 18:12:21',
+    test: 'true',
+    lead: { destino: 'México' },
+  })
+  const fila = buildRow({ envelope: { ...sobre, case_id: 'c1-1', revision: 1 }, now: NOW })
+  assert.equal(fila[COLUMNS.indexOf('Nombre')], 'rafacanevaro')
+})
