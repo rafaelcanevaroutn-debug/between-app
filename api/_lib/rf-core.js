@@ -14,7 +14,20 @@ import {
 } from './rf-mapping.js'
 
 export const SCHEMA_VERSION = 1
+
+/**
+ * La cuenta del primer cliente. Sigue siendo el valor por defecto para que
+ * nada que ya funcione dependa de configurar algo nuevo.
+ */
 export const ACCOUNT = 'renzoyfranco.viajes'
+
+/**
+ * Normaliza un nombre de cuenta: lo que llega del modelo puede traer espacios,
+ * mayúsculas o una arroba de más.
+ */
+export function normalizarCuenta(valor) {
+  return String(valor || '').trim().toLowerCase().replace(/^@/, '')
+}
 
 const CONTROL_CHARS = /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g
 const FORMULA_START = /^[=+\-@\t\r]/
@@ -100,7 +113,7 @@ export function normalizeEnvelope(body) {
   const sobre = { ...body }
 
   if (typeof sobre.operation === 'string') sobre.operation = sobre.operation.trim()
-  if (typeof sobre.account === 'string') sobre.account = sobre.account.trim()
+  if (sobre.account !== undefined) sobre.account = normalizarCuenta(sobre.account)
 
   sobre.schema_version = aEntero(sobre.schema_version)
   sobre.revision = aEntero(sobre.revision)
@@ -161,7 +174,12 @@ export function identificaPorIdentidad(body) {
   return typeof body?.identidad === 'string' && body.identidad.trim().length > 0
 }
 
-export function validateEnvelope(body) {
+/**
+ * `cuentas` son las cuentas que este despliegue atiende. Por defecto, sólo la
+ * del primer cliente: un cliente nuevo no existe hasta que alguien lo agrega
+ * explícitamente a la configuración, y una cuenta desconocida se rechaza.
+ */
+export function validateEnvelope(body, { cuentas = [ACCOUNT] } = {}) {
   const errors = []
   if (!body || typeof body !== 'object') return ['cuerpo ausente o no es JSON']
 
@@ -171,8 +189,8 @@ export function validateEnvelope(body) {
   if (!['upsert', 'check_contact'].includes(body.operation)) {
     errors.push('operation debe ser upsert o check_contact')
   }
-  if (body.account !== ACCOUNT) {
-    errors.push(`account debe ser ${ACCOUNT}`)
+  if (!cuentas.includes(normalizarCuenta(body.account))) {
+    errors.push(`account debe ser una de: ${cuentas.join(', ')}`)
   }
   if (identificaPorIdentidad(body)) {
     const identidad = String(body.identidad).trim()
