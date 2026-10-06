@@ -93,7 +93,9 @@ sólo con ese email.
 - **Baja persistente por contacto.** Si el contacto se dio de baja en
   cualquier consulta anterior, una consulta nueva suya tampoco entra. La baja
   es por persona, no por caso.
-- **Aislamiento de cuenta.** `account` distinto de `renzoyfranco.viajes` → 400.
+- **Aislamiento de cuenta.** Una `account` que no esté en `RF_CUENTAS` → 400.
+  Y cada cuenta escribe en SU planilla: sin variables propias responde 500,
+  nunca cae en la planilla de otro cliente. Ver `docs/RF-NUEVO-CLIENTE.md`.
 - **Capacidad 200 filas.** Si no hay fila libre responde 507, no pisa ocupadas.
 - **TEST_ONLY por defecto.** Con `test: false` responde 409 hasta que vos lo abras.
 
@@ -197,7 +199,13 @@ pruebas contra Instagram.
 - El `lead` se acepta anidado, como texto JSON, o con los campos sueltos en la
   raíz. El anidado siempre gana.
 - Los campos vacíos se descartan: un campo que el modelo no completó no ocupa
-  celda.
+  celda. Sólo espacios cuenta como vacío, porque una celda que se ve en blanco
+  igual taparía el respaldo de abajo.
+- **El nombre nunca queda vacío.** Si el cliente nunca dijo cómo se llama, se
+  toma el del contacto en SaleSmartly, que viene delante de la identidad: para
+  Instagram, su usuario. Un vendedor que abre la planilla necesita saber a
+  quién está llamando, y un usuario de Instagram sirve; una celda vacía no. Un
+  nombre que el cliente sí dio siempre gana.
 
 Lo que no se puede interpretar sin ambigüedad se deja como vino, para que la
 validación lo rechace. Un `test` vacío o raro **nunca** se convierte en `true`:

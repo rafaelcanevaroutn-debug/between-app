@@ -19,6 +19,7 @@ import {
   buildRow,
   decideWrite,
   derivarContactId,
+  normalizarCuenta,
   normalizeEnvelope,
   sanitizeCell,
   stripForbidden,
@@ -432,4 +433,160 @@ test('normalizar tolera un cuerpo que no es objeto', () => {
   assert.equal(normalizeEnvelope(null), null)
   assert.equal(normalizeEnvelope('texto'), 'texto')
   assert.deepEqual(normalizeEnvelope([1, 2]), [1, 2])
+})
+
+// --- el nombre nunca queda vacío -------------------------------------------
+// Si el cliente no dice cómo se llama, el vendedor recibe una fila sin nombre
+// y no sabe a quién está llamando. La identidad ya trae el nombre del contacto
+// en SaleSmartly: para Instagram, su usuario.
+
+test('sin nombre, la fila toma el de Instagram desde la identidad', () => {
+  const sobre = normalizeEnvelope({
+    account: 'renzoyfranco.viajes',
+    identidad: 'rafacanevaro|2026-09-17 18:12:21',
+    lead: { destino: 'México', adultos: 2 },
+  })
+  assert.equal(sobre.lead.nombre, 'rafacanevaro')
+})
+
+test('un nombre dado por el cliente le gana al de Instagram', () => {
+  const sobre = normalizeEnvelope({
+    identidad: 'rafacanevaro|2026-09-17 18:12:21',
+    lead: { nombre: 'Rafa Canevaro' },
+  })
+  assert.equal(sobre.lead.nombre, 'Rafa Canevaro')
+})
+
+test('un nombre vacío tampoco bloquea el respaldo', () => {
+  const sobre = normalizeEnvelope({
+    identidad: 'rafacanevaro|2026-09-17 18:12:21',
+    lead: { nombre: '   ' },
+  })
+  assert.equal(sobre.lead.nombre, 'rafacanevaro')
+})
+
+test('sin identidad no se inventa ningún nombre', () => {
+  const sobre = normalizeEnvelope({ contact_id: 'abc123', lead: { destino: 'Perú' } })
+  assert.equal(sobre.lead.nombre, undefined)
+})
+
+test('una identidad sin barra sirve igual de respaldo', () => {
+  const sobre = normalizeEnvelope({ identidad: 'rafacanevaro', lead: {} })
+  assert.equal(sobre.lead.nombre, 'rafacanevaro')
+})
+
+test('el nombre de respaldo llega a la celda Nombre de la fila', () => {
+  const sobre = normalizeEnvelope({
+    schema_version: '1',
+    operation: 'upsert',
+    account: 'renzoyfranco.viajes',
+    identidad: 'rafacanevaro|2026-09-17 18:12:21',
+    test: 'true',
+    lead: { destino: 'México' },
+  })
+  const fila = buildRow({ envelope: { ...sobre, case_id: 'c1-1', revision: 1 }, now: NOW })
+  assert.equal(fila[COLUMNS.indexOf('Nombre')], 'rafacanevaro')
+})
+
+// --- varias cuentas ---------------------------------------------------------
+// Cada cliente tiene su propia planilla. Lo que no puede pasar nunca es que
+// las consultas de un cliente terminen en la planilla de otro.
+
+import { cuentasPermitidas, procesar } from '../rf-consulta.js'
+
+const conEntorno = async (vars, fn) => {
+  const previo = {}
+  for (const [k, v] of Object.entries(vars)) {
+    previo[k] = process.env[k]
+    if (v === undefined) delete process.env[k]
+    else process.env[k] = v
+  }
+  try {
+    return await fn()
+  } finally {
+    for (const [k, v] of Object.entries(previo)) {
+      if (v === undefined) delete process.env[k]
+      else process.env[k] = v
+    }
+  }
+}
+
+test('la cuenta se normaliza: espacios, mayúsculas y arroba', () => {
+  assert.equal(normalizarCuenta('  @RenzoYFranco.Viajes '), 'renzoyfranco.viajes')
+  assert.equal(normalizeEnvelope({ account: ' @Otra.Cuenta ' }).account, 'otra.cuenta')
+})
+
+test('por defecto sólo entra la cuenta del primer cliente', () => {
+  assert.deepEqual(validateEnvelope(envelope()), [])
+  const errores = validateEnvelope(envelope({ account: 'renzo.aventura' }))
+  assert.ok(errores.some((e) => e.includes('account')))
+})
+
+test('con dos cuentas configuradas, las dos entran', () => {
+  const cuentas = ['renzoyfranco.viajes', 'renzo.aventura']
+  assert.deepEqual(validateEnvelope(envelope(), { cuentas }), [])
+  assert.deepEqual(validateEnvelope(envelope({ account: 'renzo.aventura' }), { cuentas }), [])
+})
+
+test('una cuenta que no está en la lista sigue afuera', () => {
+  const cuentas = ['renzoyfranco.viajes', 'renzo.aventura']
+  const errores = validateEnvelope(envelope({ account: 'caminantes' }), { cuentas })
+  assert.ok(errores.some((e) => e.includes('account')))
+})
+
+test('RF_CUENTAS define la lista, y sin ella queda el primer cliente', async () => {
+  await conEntorno({ RF_CUENTAS: ' renzoyfranco.viajes , @Renzo.Aventura ' }, () => {
+    assert.deepEqual(cuentasPermitidas(), ['renzoyfranco.viajes', 'renzo.aventura'])
+  })
+  await conEntorno({ RF_CUENTAS: undefined }, () => {
+    assert.deepEqual(cuentasPermitidas(), ['renzoyfranco.viajes'])
+  })
+  await conEntorno({ RF_CUENTAS: '  ,  ' }, () => {
+    assert.deepEqual(cuentasPermitidas(), ['renzoyfranco.viajes'])
+  })
+})
+
+test('el chequeo de salud muestra una fila por cliente', async () => {
+  await conEntorno(
+    {
+      RF_BRIDGE_TOKEN: 'x',
+      RF_CUENTAS: 'renzoyfranco.viajes,renzo.aventura',
+      RF_APPSSCRIPT_URL: undefined,
+      RF_APPSSCRIPT_TOKEN: undefined,
+      RF_APPSSCRIPT_URL_RENZOYFRANCO_VIAJES: 'https://script.google.com/a/exec',
+      RF_APPSSCRIPT_TOKEN_RENZOYFRANCO_VIAJES: 't1',
+    },
+    async () => {
+      const { cuerpo } = await procesar({ method: 'GET' })
+      assert.deepEqual(cuerpo.cuentas, [
+        { cuenta: 'renzoyfranco.viajes', backend: 'apps_script' },
+        { cuenta: 'renzo.aventura', backend: null },
+      ])
+      // Falta configurar una: el chequeo no puede decir que está todo listo.
+      assert.equal(cuerpo.configurado, false)
+    },
+  )
+})
+
+test('un cliente sin planilla propia no escribe en la del otro', async () => {
+  await conEntorno(
+    {
+      RF_BRIDGE_TOKEN: 'x',
+      RF_TEST_ONLY: 'false',
+      RF_CUENTAS: 'renzoyfranco.viajes,renzo.aventura',
+      RF_APPSSCRIPT_URL: undefined,
+      RF_APPSSCRIPT_TOKEN: undefined,
+      RF_APPSSCRIPT_URL_RENZOYFRANCO_VIAJES: 'https://script.google.com/a/exec',
+      RF_APPSSCRIPT_TOKEN_RENZOYFRANCO_VIAJES: 't1',
+    },
+    async () => {
+      const { status, cuerpo } = await procesar({
+        method: 'POST',
+        token: 'x',
+        body: { ...envelope({ account: 'renzo.aventura' }), identidad: 'Alguien|2026-10-06 10:00' },
+      })
+      assert.equal(status, 500)
+      assert.equal(cuerpo.error, 'cuenta_sin_configurar')
+    },
+  )
 })
