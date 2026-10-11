@@ -31,7 +31,9 @@ import {
   buildRow,
   decideWrite,
   derivarContactId,
+  ACCOUNT,
   identificaPorIdentidad,
+  normalizarCuenta,
   normalizeEnvelope,
   validateEnvelope,
 } from './_lib/rf-core.js'
@@ -71,6 +73,52 @@ function describirForma(valor, profundidad = 0) {
   return forma
 }
 
+/**
+ * Las cuentas que este despliegue atiende. Un cliente nuevo no existe hasta
+ * que alguien lo agrega acá: una cuenta que no esté en la lista se rechaza.
+ */
+export function cuentasPermitidas() {
+  const crudo = process.env.RF_CUENTAS || ACCOUNT
+  const lista = crudo.split(',').map(normalizarCuenta).filter(Boolean)
+  return lista.length ? lista : [ACCOUNT]
+}
+
+/** `renzoyfranco.viajes` -> `RENZOYFRANCO_VIAJES`, para nombrar variables. */
+function sufijo(cuenta) {
+  return cuenta.toUpperCase().replace(/[^A-Z0-9]+/g, '_')
+}
+
+/**
+ * La configuración de una cuenta. Cada cliente tiene su propia planilla, así
+ * que cada uno lleva sus variables con el nombre de la cuenta al final:
+ *
+ *   RF_APPSSCRIPT_URL_RENZOYFRANCO_VIAJES
+ *   RF_APPSSCRIPT_TOKEN_RENZOYFRANCO_VIAJES
+ *
+ * Si no están, se usan las variables sin sufijo. Eso deja al primer cliente
+ * funcionando exactamente como hasta ahora, sin tocarle nada.
+ */
+function configuracionDe(cuenta) {
+  const s = sufijo(cuenta)
+  const env = (nombre) => (process.env[`${nombre}_${s}`] ?? process.env[nombre] ?? '').trim()
+  return {
+    appsScriptUrl: env('RF_APPSSCRIPT_URL'),
+    appsScriptToken: env('RF_APPSSCRIPT_TOKEN'),
+    spreadsheetId: env('RF_SHEET_ID'),
+    clientEmail: env('RF_GOOGLE_CLIENT_EMAIL'),
+    privateKey: (process.env[`RF_GOOGLE_PRIVATE_KEY_${s}`] ?? process.env.RF_GOOGLE_PRIVATE_KEY ?? '')
+      .replace(/\\n/g, '\n'),
+  }
+}
+
+/** Por dónde va a escribir una cuenta, o null si no quedó configurada. */
+function backendDe(cuenta) {
+  const c = configuracionDe(cuenta)
+  if (c.appsScriptUrl && c.appsScriptToken) return 'apps_script'
+  if (c.spreadsheetId && c.clientEmail && c.privateKey) return 'api_sheets'
+  return null
+}
+
 function nowInArgentina() {
   return new Intl.DateTimeFormat('es-AR', {
     timeZone: TIMEZONE,
@@ -87,15 +135,10 @@ export async function procesar({ method, token, body, jsonInvalido = false }) {
   const responder = (cuerpo, status = 200) => ({ status, cuerpo })
 
   const expectedToken = (process.env.RF_BRIDGE_TOKEN || '').trim()
-  const appsScriptUrl = (process.env.RF_APPSSCRIPT_URL || '').trim()
-  const appsScriptToken = (process.env.RF_APPSSCRIPT_TOKEN || '').trim()
-  const spreadsheetId = (process.env.RF_SHEET_ID || '').trim()
-  const clientEmail = (process.env.RF_GOOGLE_CLIENT_EMAIL || '').trim()
-  const privateKey = (process.env.RF_GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n')
   const testOnly = (process.env.RF_TEST_ONLY || 'true').toLowerCase() !== 'false'
-
-  const viaAppsScript = Boolean(appsScriptUrl && appsScriptToken)
-  const viaApiOficial = Boolean(spreadsheetId && clientEmail && privateKey)
+  const cuentas = cuentasPermitidas()
+  const backends = Object.fromEntries(cuentas.map((c) => [c, backendDe(c)]))
+  const algunaConfigurada = Object.values(backends).some(Boolean)
 
   /**
    * Chequeo de salud. Dice si el puente quedó configurado y por dónde va a
@@ -105,16 +148,13 @@ export async function procesar({ method, token, body, jsonInvalido = false }) {
    */
   if (method === 'GET') {
     return responder({
-      ok: viaAppsScript || viaApiOficial,
+      ok: algunaConfigurada,
       servicio: 'rf-consulta',
-      configurado: Boolean(expectedToken) && (viaAppsScript || viaApiOficial),
-      backend: viaAppsScript ? 'apps_script' : viaApiOficial ? 'api_sheets' : null,
+      configurado: Boolean(expectedToken) && cuentas.every((c) => backends[c]),
       modo: testOnly ? 'solo_pruebas' : 'acepta_consultas_reales',
-      variables: {
-        RF_BRIDGE_TOKEN: Boolean(expectedToken),
-        RF_APPSSCRIPT_URL: Boolean(appsScriptUrl),
-        RF_APPSSCRIPT_TOKEN: Boolean(appsScriptToken),
-      },
+      token_cargado: Boolean(expectedToken),
+      // Una fila por cliente: se ve de un vistazo cuál quedó a medio configurar.
+      cuentas: cuentas.map((c) => ({ cuenta: c, backend: backends[c] })),
     })
   }
 
@@ -122,7 +162,7 @@ export async function procesar({ method, token, body, jsonInvalido = false }) {
     return responder({ ok: false, error: 'method_not_allowed' }, 405)
   }
 
-  if (!expectedToken || (!viaAppsScript && !viaApiOficial)) {
+  if (!expectedToken || !algunaConfigurada) {
     console.error('rf-consulta: faltan variables de entorno')
     return responder({ ok: false, error: 'bridge_no_configurado' }, 500)
   }
@@ -139,7 +179,7 @@ export async function procesar({ method, token, body, jsonInvalido = false }) {
   // texto. Se normalizan acá, en el borde, antes de validar.
   body = normalizeEnvelope(body)
 
-  const errors = validateEnvelope(body)
+  const errors = validateEnvelope(body, { cuentas })
   if (errors.length) {
     // Sin esto un 400 es mudo: Vercel registra el status pero no el cuerpo, y
     // averiguar qué campo falló cuesta otra ronda de pruebas contra Instagram.
@@ -163,12 +203,26 @@ export async function procesar({ method, token, body, jsonInvalido = false }) {
   }
 
   try {
-    const sheets = viaAppsScript
-      ? createAppsScriptClient({ url: appsScriptUrl, token: appsScriptToken })
-      : createSheetsClient({
-          token: await getAccessToken({ clientEmail, privateKey }),
-          spreadsheetId,
-        })
+    // Cada cuenta escribe en SU planilla. Sin esto, el segundo cliente
+    // terminaria cargando sus consultas en la del primero.
+    const cuenta = normalizarCuenta(body.account)
+    const config = configuracionDe(cuenta)
+
+    if (!backends[cuenta]) {
+      console.error(`rf-consulta: la cuenta ${cuenta} no tiene planilla configurada`)
+      return responder({ ok: false, error: 'cuenta_sin_configurar' }, 500)
+    }
+
+    const sheets =
+      backends[cuenta] === 'apps_script'
+        ? createAppsScriptClient({ url: config.appsScriptUrl, token: config.appsScriptToken })
+        : createSheetsClient({
+            token: await getAccessToken({
+              clientEmail: config.clientEmail,
+              privateKey: config.privateKey,
+            }),
+            spreadsheetId: config.spreadsheetId,
+          })
 
     // La identidad, cuando viene, reemplaza a los tres identificadores: el
     // contacto sale de una huella digital y el caso y la revisión los resuelve
