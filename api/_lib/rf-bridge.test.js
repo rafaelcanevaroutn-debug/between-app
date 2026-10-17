@@ -492,7 +492,7 @@ test('el nombre de respaldo llega a la celda Nombre de la fila', () => {
 // Cada cliente tiene su propia planilla. Lo que no puede pasar nunca es que
 // las consultas de un cliente terminen en la planilla de otro.
 
-import { cuentasPermitidas, procesar } from '../rf-consulta.js'
+import { cuentasPermitidas, procesar, resolverAutenticacion } from '../rf-consulta.js'
 
 const conEntorno = async (vars, fn) => {
   const previo = {}
@@ -559,8 +559,8 @@ test('el chequeo de salud muestra una fila por cliente', async () => {
     async () => {
       const { cuerpo } = await procesar({ method: 'GET' })
       assert.deepEqual(cuerpo.cuentas, [
-        { cuenta: 'renzoyfranco.viajes', backend: 'apps_script' },
-        { cuenta: 'renzo.aventura', backend: null },
+        { cuenta: 'renzoyfranco.viajes', backend: 'apps_script', token: true },
+        { cuenta: 'renzo.aventura', backend: null, token: true },
       ])
       // Falta configurar una: el chequeo no puede decir que está todo listo.
       assert.equal(cuerpo.configurado, false)
@@ -587,6 +587,85 @@ test('un cliente sin planilla propia no escribe en la del otro', async () => {
       })
       assert.equal(status, 500)
       assert.equal(cuerpo.error, 'cuenta_sin_configurar')
+    },
+  )
+})
+
+
+// --- un token por cliente ---------------------------------------------------
+// El token general abre todas las cuentas. El de un cliente abre la suya y
+// ninguna otra: si se filtra el de uno, los demás siguen cerrados.
+
+const CUENTAS_DOS = ['renzoyfranco.viajes', 'renzo.caminantes']
+
+test('el token general vale para cualquier cuenta', async () => {
+  await conEntorno({ RF_BRIDGE_TOKEN: 'general' }, () => {
+    const auth = resolverAutenticacion('general', CUENTAS_DOS)
+    assert.equal(auth.ok, true)
+    assert.equal(auth.cuenta, null)
+  })
+})
+
+test('el token de un cliente lo identifica', async () => {
+  await conEntorno(
+    { RF_BRIDGE_TOKEN: undefined, RF_BRIDGE_TOKEN_RENZO_CAMINANTES: 'propio-de-caminantes' },
+    () => {
+      const auth = resolverAutenticacion('propio-de-caminantes', CUENTAS_DOS)
+      assert.equal(auth.ok, true)
+      assert.equal(auth.cuenta, 'renzo.caminantes')
+    },
+  )
+})
+
+test('un token que no es de nadie no entra', async () => {
+  await conEntorno(
+    { RF_BRIDGE_TOKEN: 'general', RF_BRIDGE_TOKEN_RENZO_CAMINANTES: 'propio' },
+    () => {
+      assert.equal(resolverAutenticacion('cualquier-cosa', CUENTAS_DOS).ok, false)
+      assert.equal(resolverAutenticacion('', CUENTAS_DOS).ok, false)
+      assert.equal(resolverAutenticacion(null, CUENTAS_DOS).ok, false)
+    },
+  )
+})
+
+test('el token de un cliente NO abre la planilla de otro', async () => {
+  await conEntorno(
+    {
+      RF_BRIDGE_TOKEN: undefined,
+      RF_BRIDGE_TOKEN_RENZO_CAMINANTES: 'propio-de-caminantes',
+      RF_TEST_ONLY: 'false',
+      RF_CUENTAS: 'renzoyfranco.viajes,renzo.caminantes',
+      RF_APPSSCRIPT_URL: 'https://script.google.com/a/exec',
+      RF_APPSSCRIPT_TOKEN: 't',
+    },
+    async () => {
+      const { status, cuerpo } = await procesar({
+        method: 'POST',
+        token: 'propio-de-caminantes',
+        body: {
+          ...envelope({ account: 'renzoyfranco.viajes' }),
+          identidad: 'Alguien|2026-10-17 19:00',
+        },
+      })
+      assert.equal(status, 403)
+      assert.equal(cuerpo.error, 'cuenta_ajena')
+    },
+  )
+})
+
+test('una cuenta sin ningún token no deja pasar nada', async () => {
+  await conEntorno(
+    {
+      RF_BRIDGE_TOKEN: undefined,
+      RF_BRIDGE_TOKEN_RENZOYFRANCO_VIAJES: undefined,
+      RF_CUENTAS: 'renzoyfranco.viajes',
+      RF_APPSSCRIPT_URL: 'https://script.google.com/a/exec',
+      RF_APPSSCRIPT_TOKEN: 't',
+    },
+    async () => {
+      const { status, cuerpo } = await procesar({ method: 'POST', token: 'lo-que-sea', body: {} })
+      assert.equal(status, 500)
+      assert.equal(cuerpo.error, 'bridge_no_configurado')
     },
   )
 })

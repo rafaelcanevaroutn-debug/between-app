@@ -64,9 +64,18 @@ RF_CUENTAS = renzoyfranco.viajes,cuenta.del.cliente
 
 RF_APPSSCRIPT_URL_CUENTA_DEL_CLIENTE    = la URL /exec del paso 3
 RF_APPSSCRIPT_TOKEN_CUENTA_DEL_CLIENTE  = el mismo valor que RF_SHEET_TOKEN
+RF_BRIDGE_TOKEN_CUENTA_DEL_CLIENTE      = un token nuevo, sólo para este cliente
 ```
 
-`RF_BRIDGE_TOKEN` y `RF_TEST_ONLY` son del despliegue, no de cada cliente.
+El tercero es el que va en el plugin de HelpKnow. **Dale uno propio a cada
+cliente:** ese token abre su cuenta y ninguna otra, así una filtración en un
+cliente no toca a los demás. `RF_BRIDGE_TOKEN`, sin sufijo, sigue valiendo para
+todas y es lo que usan los clientes que ya estaban andando.
+
+Generá uno distinto por cliente, por ejemplo con
+`node -e "console.log(require('crypto').randomBytes(24).toString('base64url'))"`.
+
+`RF_TEST_ONLY` es del despliegue, no de cada cliente.
 
 **Redesplegar.** Sin redespliegue las variables no toman efecto.
 
@@ -102,7 +111,9 @@ Lo que **no** se toca, porque es la mecánica y ya está probada:
 Un plugin nuevo, apuntando al mismo endpoint:
 
 - Método **POST**, URL `/api/rf-consulta`
-- Auth **Header**, `X-RF-Token`, con el `RF_BRIDGE_TOKEN` del despliegue
+- Auth **Header**, `X-RF-Token`, con el **valor** del token de este cliente.
+  Ojo: va el valor, no el nombre de la variable. Pegar `RF_BRIDGE_TOKEN` como
+  texto da 401 y el bot no escribe nada — ya pasó una vez y costó una tarde.
 - Parámetros fijos: `schema_version` = `1`, `operation` = `upsert`,
   `account` = **la cuenta del cliente**, `test` = `true` mientras se prueba
 - Parámetros que completa la IA: `identidad`, `reason`, `lead`
@@ -140,3 +151,10 @@ Si `RF_TEST_ONLY` ya está en `false` para los otros clientes, el paso 4 es lo
   Parece autónomo y no lo es.
 - **El cupo de mensajes es mensual.** Free da 200 por mes. Cuando se agota, el
   bot deja de contestar sin avisar y vuelve solo al mes siguiente.
+- **Un token mal pegado no se nota desde la conversación.** El bot contesta
+  perfecto y la planilla queda vacía, porque el 401 lo ve el endpoint, no el
+  cliente. Depurá la herramienta en HelpKnow antes de dar el circuito por
+  bueno: un `ok: true` ahí vale más que diez conversaciones lindas.
+- **Un token de Vercel marcado como Secret no se puede volver a leer.** Por eso
+  cada cliente lleva el suyo: para sumar uno nuevo no hace falta rotar el de
+  los que ya andan.
