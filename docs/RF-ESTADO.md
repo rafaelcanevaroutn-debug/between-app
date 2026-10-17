@@ -37,6 +37,7 @@ de Renzo, TikTok y Facebook.
 | Plugin de HelpKnow | **Configurado y conectado al agente** 16103 |
 | Prueba de punta a punta | **Probada el 18/09**: el bot registró la fila solo |
 | Sistema en producción | **Vivo el 18/09**: atiende y registra sin intervención |
+| Segundo cliente | **Caminantes de Montaña, vivo el 17/10** |
 | Flujo de comentarios nuevo | **Nunca se ejecutó** |
 
 ---
@@ -242,6 +243,68 @@ decidir si usarla.** Le estaba diciendo al bot que no la usara. Además hizo que
 dos sesiones distintas diagnosticaran mal el problema, creyendo que la conexión
 estaba a medio hacer. Ahora se llama "Guardar consulta Renzo/Franco" y la
 descripción dice qué hace y cuándo llamarla.
+
+---
+
+## El segundo cliente: Caminantes de Montaña
+
+El 17/10 entró @renzo.caminantes, el Instagram de Renzo Di Berto, que vende dos
+salidas grupales a El Chaltén. Mismo endpoint, planilla propia, bot propio.
+
+| Pieza | Dónde |
+| --- | --- |
+| SaleSmartly | workspace `g23wi8i`, plan Free (1 canal, 2 miembros, 200 mensajes/mes) |
+| Miembro IA | `1338728`, online, recepción 9999 |
+| Agente HelpKnow | `17622`, prompt propio de 11.269 caracteres |
+| Planilla | copia del molde, vaciada y renombrada |
+| Cuenta en el puente | `renzo.caminantes` |
+
+Alas quedó en su cuenta y Caminantes en la suya: dos cuentas Free en vez de
+una Pro. Cuesta cero y ninguno de los dos puede romper al otro. Cuando haya
+un tercer cliente conviene juntarlos en Pro, que trae 10 canales por
+USD 15,90 al mes más USD 10 por bot.
+
+### El bot es el dueño, no "el asistente"
+
+A diferencia del de Alas, este habla en primera persona: es Renzo. Eso obligó a
+revisar cada frase donde el prompt decía "el equipo" o "una persona", porque un
+dueño que te manda con otro suena a excusa. Fueron tres pasadas: el modelo se
+escapa a la tercera persona en cuanto queda una sola frase sin corregir.
+
+El tono se escribió distinto a propósito: minúsculas, sin signo de apertura,
+abreviaturas y algún acento que se escapa. Con una regla dura que vale más que
+el resto: **las informalidades nunca tocan un precio, una fecha ni un nombre.**
+
+Y el argumento de venta no es la montaña, es la gente. El lema de la casa —"es
+más fácil hacer amigos en un viaje que organizar un viaje con tus amigos"—
+tiene sección propia, con tres ramas según quién escriba: el que viaja solo, el
+que duda porque no tiene con quién, y el que ya viene acompañado. A este último
+nunca se le dice que es mejor hacer amigos que viajar con los suyos.
+
+### Lo que costó esta vez
+
+Un token mal pegado. El header `X-RF-Token` del plugin llevaba el **texto**
+`RF_BRIDGE_TOKEN` en vez del valor, así que el endpoint respondía 401 y la
+planilla quedaba vacía.
+
+**Desde la conversación no se nota.** El bot contestaba bien, con buen tono y
+precios correctos, y no registraba nada. Hicieron falta dos conversaciones de
+prueba y una depuración de la herramienta para verlo.
+
+De ahí salieron dos cambios que quedan para siempre:
+
+- **Cada cliente tiene su propio token de entrada.** El de Vercel estaba
+  marcado Secret y no se puede releer, así que corregirlo significaba rotarlo
+  y dejar mudo a Alas. Con `RF_BRIDGE_TOKEN_<CUENTA>` cada cliente entra con el
+  suyo, que abre su cuenta y ninguna otra.
+- **Depurar la herramienta antes de dar nada por bueno.** Un `ok: true` ahí
+  vale más que diez conversaciones lindas.
+
+### Lo que no se puede
+
+SaleSmartly **no ingiere respuestas a historias** de Instagram: sólo mensajes
+directos y comentarios. Y el "me gusta" automático a comentarios existe sólo
+para Facebook, no para Instagram.
 
 ---
 
