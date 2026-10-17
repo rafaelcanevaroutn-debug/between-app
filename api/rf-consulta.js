@@ -89,6 +89,35 @@ function sufijo(cuenta) {
 }
 
 /**
+ * Resuelve con qué token entró el pedido.
+ *
+ * Cada cliente puede tener el suyo (`RF_BRIDGE_TOKEN_<CUENTA>`), y ese token
+ * abre únicamente su cuenta: si el de un cliente se filtra, los demás siguen
+ * cerrados. `RF_BRIDGE_TOKEN` sigue valiendo para todas, así lo que ya anda no
+ * necesita tocarse.
+ *
+ * Devuelve `{ ok, cuenta }`. `cuenta: null` significa que entró con el token
+ * general y no queda atado a ninguna.
+ */
+export function resolverAutenticacion(token, cuentas) {
+  const general = (process.env.RF_BRIDGE_TOKEN || '').trim()
+  if (general && tokenMatches(token, general)) return { ok: true, cuenta: null }
+
+  for (const cuenta of cuentas) {
+    const propio = (process.env[`RF_BRIDGE_TOKEN_${sufijo(cuenta)}`] || '').trim()
+    if (propio && tokenMatches(token, propio)) return { ok: true, cuenta }
+  }
+  return { ok: false, cuenta: null }
+}
+
+/** Si una cuenta no tiene token propio, entra con el general. */
+function tieneToken(cuenta) {
+  const general = (process.env.RF_BRIDGE_TOKEN || '').trim()
+  const propio = (process.env[`RF_BRIDGE_TOKEN_${sufijo(cuenta)}`] || '').trim()
+  return Boolean(general || propio)
+}
+
+/**
  * La configuración de una cuenta. Cada cliente tiene su propia planilla, así
  * que cada uno lleva sus variables con el nombre de la cuenta al final:
  *
@@ -150,11 +179,15 @@ export async function procesar({ method, token, body, jsonInvalido = false }) {
     return responder({
       ok: algunaConfigurada,
       servicio: 'rf-consulta',
-      configurado: Boolean(expectedToken) && cuentas.every((c) => backends[c]),
+      configurado: cuentas.every((c) => backends[c] && tieneToken(c)),
       modo: testOnly ? 'solo_pruebas' : 'acepta_consultas_reales',
       token_cargado: Boolean(expectedToken),
       // Una fila por cliente: se ve de un vistazo cuál quedó a medio configurar.
-      cuentas: cuentas.map((c) => ({ cuenta: c, backend: backends[c] })),
+      cuentas: cuentas.map((c) => ({
+        cuenta: c,
+        backend: backends[c],
+        token: tieneToken(c),
+      })),
     })
   }
 
@@ -162,12 +195,13 @@ export async function procesar({ method, token, body, jsonInvalido = false }) {
     return responder({ ok: false, error: 'method_not_allowed' }, 405)
   }
 
-  if (!expectedToken || !algunaConfigurada) {
+  if (!cuentas.some(tieneToken) || !algunaConfigurada) {
     console.error('rf-consulta: faltan variables de entorno')
     return responder({ ok: false, error: 'bridge_no_configurado' }, 500)
   }
 
-  if (!tokenMatches(token, expectedToken)) {
+  const auth = resolverAutenticacion(token, cuentas)
+  if (!auth.ok) {
     return responder({ ok: false, error: 'no_autorizado' }, 401)
   }
 
@@ -206,6 +240,14 @@ export async function procesar({ method, token, body, jsonInvalido = false }) {
     // Cada cuenta escribe en SU planilla. Sin esto, el segundo cliente
     // terminaria cargando sus consultas en la del primero.
     const cuenta = normalizarCuenta(body.account)
+
+    // Un token de cliente abre su cuenta y ninguna otra. Sin esto, el token de
+    // un cliente podria escribir en la planilla de otro.
+    if (auth.cuenta && auth.cuenta !== cuenta) {
+      console.error(`rf-consulta: el token de ${auth.cuenta} intento escribir en ${cuenta}`)
+      return responder({ ok: false, error: 'cuenta_ajena' }, 403)
+    }
+
     const config = configuracionDe(cuenta)
 
     if (!backends[cuenta]) {

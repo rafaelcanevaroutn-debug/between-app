@@ -93,6 +93,9 @@ sólo con ese email.
 - **Baja persistente por contacto.** Si el contacto se dio de baja en
   cualquier consulta anterior, una consulta nueva suya tampoco entra. La baja
   es por persona, no por caso.
+- **Un token por cliente.** `RF_BRIDGE_TOKEN_<CUENTA>` abre esa cuenta y
+  ninguna otra: usarlo contra otra responde 403. El `RF_BRIDGE_TOKEN` sin
+  sufijo sigue valiendo para todas, para no tocar lo que ya anda.
 - **Aislamiento de cuenta.** Una `account` que no esté en `RF_CUENTAS` → 400.
   Y cada cuenta escribe en SU planilla: sin variables propias responde 500,
   nunca cae en la planilla de otro cliente. Ver `docs/RF-NUEVO-CLIENTE.md`.
