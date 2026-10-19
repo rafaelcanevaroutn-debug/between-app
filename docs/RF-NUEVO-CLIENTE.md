@@ -140,6 +140,56 @@ Sin esto, las conversaciones nuevas se reparten entre los agentes disponibles.
 Si `RF_TEST_ONLY` ya está en `false` para los otros clientes, el paso 4 es lo
 único que separa a este cliente de producción.
 
+## 9. Los comentarios: el flujo que abre el privado
+
+Un comentario y un mensaje directo son dos canales distintos, y el bot **no
+puede distinguirlos**: le llega el mismo texto pelado, sin ninguna marca de que
+es público. Por eso no sirve pedirle en el prompt que se comporte distinto en
+un comentario — no tiene cómo saberlo, y termina publicando precios a la vista
+de todos.
+
+La solución es sacarlo de ahí y poner un flujo en su lugar:
+
+```
+alguien comenta
+  → el flujo responde en público una línea, sin precios
+  → el flujo le manda un mensaje privado
+  → la persona contesta el privado
+  → ahí entra el bot, que sí sabe de precios, y registra
+```
+
+**Dónde está, que es lo que más cuesta encontrar:** en Workflows, el mismo
+menú de siempre. Lo que cambia es el canal al crearlo: hay que elegir
+**"Instagram Post Comments"** y no "Instagram". Con el canal equivocado las
+acciones de comentarios no aparecen y parece que la función no existe.
+
+Cómo se arma:
+
+1. **Sacar la IA de los comentarios.** En Connections → Instagram → Assign
+   Member, apagar "los miembros de Post Comments e Instagram son idénticos" y
+   dejar en la pestaña de comentarios sólo al humano. Esto va **antes** de
+   crear el flujo, o hay dos respuestas públicas.
+2. **Crear el Workflow** con canal *Instagram Post Comments*.
+   - Disparador: *Visitor message sent*, modo *Trigger by Keywords*, con
+     coincidencia aproximada.
+   - Acción **DM Instagram Commenter**: el mensaje privado que abre la charla.
+     Una pregunta, nada de catálogo.
+   - Acción **Process Instagram comments**: la respuesta pública. Una línea,
+     sin precios ni cupos.
+3. **Varias prioridades** si el cliente tiene más de una salida: cada una con
+   sus palabras y su propio mensaje privado, y todas terminando en la misma
+   respuesta pública.
+
+Dos cosas que no se pueden:
+
+- **No hay "me gusta" automático** a comentarios de Instagram. Verificado en
+  Workflows y en el módulo viejo: existe sólo para Facebook.
+- **Un comentario sin palabras clave no dispara nada.** Un "🔥" o un "qué
+  lindo" quedan para el humano, que está bien: no son consultas.
+
+Cuidado con las palabras cortas. Con coincidencia aproximada, `27` dispara con
+"tengo 27 años". Usá palabras que no aparezcan por casualidad.
+
 ## Lo que se aprendió haciéndolo la primera vez
 
 - **Un 400 mudo cuesta un día.** El endpoint registra por qué rechaza: nombres
@@ -158,3 +208,14 @@ Si `RF_TEST_ONLY` ya está en `false` para los otros clientes, el paso 4 es lo
 - **Un token de Vercel marcado como Secret no se puede volver a leer.** Por eso
   cada cliente lleva el suyo: para sumar uno nuevo no hace falta rotar el de
   los que ya andan.
+- **El idioma de salida del agente.** HelpKnow viene en "coincidencia
+  automática" y SaleSmartly le pone "English" por defecto a todo contacto de
+  Instagram. Resultado: el bot contesta en inglés con el contenido perfecto.
+  No es una traducción, lo genera así. Se fija el idioma en la configuración
+  del agente y listo.
+- **Registrar es silencioso.** El bot tiene que anotar la consulta apenas
+  tiene los datos, pero no anunciarlo: decir "ya quedó anotado" en el primer
+  mensaje suena a trámite y apura al cliente. Se avisa una vez, al cerrar.
+- **Lo que está al principio del prompt pesa más.** Una regla enterrada bajo
+  12.000 caracteres de catálogo la ignora. Las que no se negocian van arriba,
+  en un bloque propio.
