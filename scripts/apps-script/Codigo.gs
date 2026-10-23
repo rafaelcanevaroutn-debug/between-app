@@ -27,6 +27,19 @@
 var LEDGER_TITLE = '_integracion';
 var LEDGER_HEADERS = ['case_id', 'revision', 'contact_id', 'actualizado_el', 'no_contactar'];
 
+var SHEET_TITLE = 'Consultas';
+var HEADER_ROW = 5;
+
+/** Campos que entran en el cuerpo del aviso por mail, en orden. */
+var AVISO_CAMPOS = [
+  'Nombre',
+  'WhatsApp',
+  'Correo',
+  'Usuario Instagram',
+  'Fecha del viaje y año',
+  'Adultos',
+];
+
 function responder(objeto) {
   return ContentService.createTextOutput(JSON.stringify(objeto)).setMimeType(
     ContentService.MimeType.JSON
@@ -119,6 +132,7 @@ function doPost(e) {
           celdas += bloque.values.length * bloque.values[0].length;
         }
         SpreadsheetApp.flush();
+        avisar(planilla, pedido.data);
         return responder({ ok: true, updatedCells: celdas });
       } finally {
         candado.releaseLock();
@@ -128,6 +142,102 @@ function doPost(e) {
     return responder({ ok: false, error: 'operacion_desconocida' });
   } catch (error) {
     return responder({ ok: false, error: String(error && error.message ? error.message : error) });
+  }
+}
+
+/**
+ * Aviso por mail cuando entra una consulta nueva.
+ *
+ * Vive acá y no en Vercel porque el aviso quiere la fila ya escrita, que es
+ * justo lo que la planilla tiene a mano. Se configura con propiedades del
+ * script, así que el mismo código sirve para cualquier cliente sin tocar una
+ * línea:
+ *
+ *   RF_AVISO_MAIL     destinatarios separados por coma. Vacío = sin aviso.
+ *   RF_AVISO_CUENTA   la cuenta de Instagram, para el cuerpo.
+ *   RF_AVISO_DESTINO  el destino, para el asunto.
+ *
+ * El enlace y la pestaña los saca de la planilla, no de la configuración.
+ */
+var AVISO_MAIL = 'RF_AVISO_MAIL';
+var AVISO_CUENTA = 'RF_AVISO_CUENTA';
+var AVISO_DESTINO = 'RF_AVISO_DESTINO';
+
+/**
+ * Devuelve la fila recién creada, o 0 si la escritura fue una actualización.
+ *
+ * El único signo que hace falta: crear una fila escribe desde la columna A,
+ * actualizarla nunca toca la clave. Lo decide rf-mapping del lado de Vercel,
+ * y no hay forma de que eso cambie sin que cambie también el mapeo.
+ */
+function filaNuevaDe(bloques) {
+  if (!bloques) return 0;
+  for (var i = 0; i < bloques.length; i++) {
+    var rango = String(bloques[i] && bloques[i].range);
+    var partes = rango.match(/^(?:'?([^'!]+)'?!)?A(\d+):[A-Z]+\d+$/);
+    if (!partes) continue;
+    if (partes[1] && partes[1] !== SHEET_TITLE) continue;
+    return Number(partes[2]);
+  }
+  return 0;
+}
+
+function avisar(planilla, bloques) {
+  // Un aviso que falla no puede tirar abajo una consulta ya guardada: la fila
+  // es el producto, el mail es la comodidad.
+  try {
+    var props = PropertiesService.getScriptProperties();
+    var para = String(props.getProperty(AVISO_MAIL) || '').trim();
+    if (!para) return;
+
+    var fila = filaNuevaDe(bloques);
+    if (!fila) return;
+
+    var hoja = planilla.getSheetByName(SHEET_TITLE);
+    if (!hoja) return;
+
+    var ancho = hoja.getLastColumn();
+    var encabezados = hoja.getRange(HEADER_ROW, 1, 1, ancho).getValues()[0];
+    var valores = hoja.getRange(fila, 1, 1, ancho).getValues()[0];
+
+    function dato(nombre) {
+      var i = encabezados.indexOf(nombre);
+      if (i === -1) return '';
+      return String(valores[i]).trim();
+    }
+
+    var cuenta = String(props.getProperty(AVISO_CUENTA) || '').trim();
+    var destino = String(props.getProperty(AVISO_DESTINO) || '').trim();
+    var nombre = dato('Nombre') || 'sin nombre';
+    var prueba = dato('Es prueba') === 'Sí';
+
+    var lineas = [];
+    lineas.push('Entró una consulta nueva' + (cuenta ? ' de ' + cuenta : '') + '.');
+    lineas.push('');
+    for (var i = 0; i < AVISO_CAMPOS.length; i++) {
+      lineas.push(AVISO_CAMPOS[i] + ': ' + (dato(AVISO_CAMPOS[i]) || '-'));
+    }
+    lineas.push('');
+    lineas.push('Motivo: ' + (dato('Motivo de derivación') || '-'));
+    lineas.push('Resumen: ' + (dato('Resumen y preferencias') || '-'));
+    lineas.push('');
+    lineas.push('Ver en la planilla (fila ' + fila + '):');
+    lineas.push(
+      planilla.getUrl() + '#gid=' + hoja.getSheetId() + '&range=A' + fila
+    );
+
+    MailApp.sendEmail({
+      to: para,
+      subject:
+        (prueba ? '[PRUEBA] ' : '') +
+        'Nueva consulta' +
+        (destino ? ' ' + destino : '') +
+        ' — ' +
+        nombre,
+      body: lineas.join('\n'),
+    });
+  } catch (error) {
+    console.error('aviso: ' + (error && error.message ? error.message : error));
   }
 }
 

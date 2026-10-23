@@ -50,9 +50,19 @@ copia. Hay que publicarla de nuevo.
 1. Extensiones → Apps Script
 2. Propiedades del script: cargar `RF_SHEET_TOKEN` con un valor nuevo,
    distinto del de los otros clientes
-3. Implementar como aplicación web: *Ejecutar como: Yo*, *Quién tiene acceso:
+3. En las mismas propiedades, el aviso por mail:
+   - `RF_AVISO_MAIL`: los mails del equipo, separados por coma. Si queda
+     vacío no se manda nada y el resto sigue funcionando igual.
+   - `RF_AVISO_CUENTA`: la cuenta de Instagram, p. ej. `@renzo.caminantes`
+   - `RF_AVISO_DESTINO`: el destino, para el asunto, p. ej. `El Chaltén`
+4. Implementar como aplicación web: *Ejecutar como: Yo*, *Quién tiene acceso:
    Cualquier usuario*
-4. Guardar la URL `/exec`
+5. Guardar la URL `/exec`
+
+El aviso sale sólo cuando se crea una fila, nunca cuando se actualiza, y el
+mail lo manda la cuenta dueña del script (cuota: 100 por día, de sobra). Si
+el envío falla, la fila ya está guardada: el aviso no puede tirar abajo una
+consulta.
 
 ## 4. Las variables en Vercel
 

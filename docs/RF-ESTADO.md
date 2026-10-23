@@ -139,7 +139,9 @@ tiene usuario.
 Consecuencias verificadas:
 
 - Una consulta transferida a humano queda en la cola *Unassigned*.
-- La única notificación para esa cola es del navegador: no hay mail ni push.
+- La única notificación de esa cola es del navegador: no hay mail ni push.
+  El aviso por mail del Apps Script no la cubre: avisa de la **fila**, no de
+  la conversación sin asignar. Son dos colas distintas.
 - A los 30 días las conversaciones sin asignar se cierran solas.
 
 **La planilla no es un complemento del inbox: es el canal de entrega.** No hay
@@ -328,6 +330,21 @@ y si alguien suyo va a tener usuario en SaleSmartly.
 
 La más urgente es la de los mails. Es la única que no se resuelve del lado
 técnico.
+
+### El aviso por mail
+
+Resuelto del lado técnico, en el Apps Script y no en Vercel: el aviso quiere la
+fila ya escrita, que es justo lo que la planilla tiene a mano. Se configura con
+tres propiedades del script (`RF_AVISO_MAIL`, `RF_AVISO_CUENTA`,
+`RF_AVISO_DESTINO`), así que el mismo código sirve para cualquier cliente sin
+tocar una línea.
+
+Detecta que la fila es nueva por la única señal que ya existe: crear una fila
+escribe desde la columna A, actualizarla nunca toca la clave. Si el envío
+falla, la fila igual queda guardada.
+
+Andando en Caminantes desde el 19/10, a `equipocaminantes@gmail.com`. En Alas
+falta: el script de esa planilla todavía es la versión sin aviso.
 
 ### `stored` no es `delivered`
 
